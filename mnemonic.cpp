@@ -29,7 +29,7 @@ Error* deinit()
     return nullptr;
 }
 
-Error* make_mnemonic(EntropySource entropySource, const char *const* mnemonic)
+Error* make_mnemonic(EntropySource entropySource, const char ** mnemonic)
 {
     static const size_t entropy_size = BIP39_ENTROPY_LEN_256;
     unsigned char entropy[entropy_size] = {'\0'};
@@ -42,19 +42,19 @@ Error* make_mnemonic(EntropySource entropySource, const char *const* mnemonic)
     if (result != WALLY_OK) {
         return MakeError("Failed to obtain wordlist");
     }
-    char** out = nullptr;
-    result = bip39_mnemonic_from_bytes(dictionary, entropy, entropy_size, out);
+    char* out = nullptr;
+    result = bip39_mnemonic_from_bytes(dictionary, entropy, entropy_size, &out);
     if (result != WALLY_OK) {
         return MakeError("Failed to generated mnemonic");
     }
-    mnemonic = out;
+    *mnemonic = out;
 
     return nullptr;
 }
 
 Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
 {
-    static const size_t max_seed_size = 1024; /// TODO: shrink the buffer size if possible.
+    static const size_t max_seed_size = BIP39_SEED_LEN_512;
     size_t written = 0;
 
     std::unique_ptr<unsigned char[]> data(new unsigned char[max_seed_size]);
@@ -92,6 +92,6 @@ void free_binarydata(BinaryData* data)
     if (!data) {
         return;
     }
-    delete [] static_cast<const char*>(data->data);
+    delete [] data->data;
     delete data;
 }

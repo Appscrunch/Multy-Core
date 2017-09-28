@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.1)
 
 project(wallet)
 
-add_library(wally STATIC IMPORTED)
+add_library(wally SHARED IMPORTED)
 set_target_properties(wally PROPERTIES IMPORTED_LOCATION "${WALLY_LIB_PATH}")
 
 add_executable(${PROJECT_NAME}

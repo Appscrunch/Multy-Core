@@ -17,13 +17,13 @@ extern "C" {
  * Holds information about error occured inside generator.
  */
 struct Error {
-	const char* message;
+    const char* message;
 };
 
 /** Binary data, just a pointer and a size in bytes. */
 struct BinaryData {
-	const void* data;
-	size_t len;
+    const unsigned char* data;
+    size_t len;
 };
 
 /** Entropy generator interface.
@@ -53,7 +53,7 @@ Error* deinit();
  *	list of words from dictionary.
  * @return - non-null on error.
  */
-Error* make_mnemonic(EntropySource entropySource, const char *const* mnemonic);
+Error* make_mnemonic(EntropySource entropySource, const char ** mnemonic);
 
 /** Generates a pseudo-random seed from given mnemonic and password.
  * @param mnemonic - space-separated list of mnemonic words.
