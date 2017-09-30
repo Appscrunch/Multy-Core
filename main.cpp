@@ -1,7 +1,5 @@
 #include "mnemonic.h"
 
-#include "wally_core.h"
-
 #include <string.h>
 #include <iostream>
 #include <memory>
@@ -10,7 +8,7 @@ size_t entropySource(size_t size, void* dest)
 {
     /** Poor man's entropy, using uninitialized data from stack, which is:
      * - Fast;
-     * - Non-secure;
+     * - Unsecure;
      * - Somewhat predictable;
      * And hence SHOULD not be used in production, but Ok in POC driver program.
      */
@@ -30,7 +28,8 @@ int main()
 {
     const char* mnemonic = nullptr;
     std::unique_ptr<Error> e(make_mnemonic(&entropySource, &mnemonic));
-    if (e) {
+    if (e)
+    {
         std::cerr << "Got error: " << e->message << std::endl;
         return -1;
     }
@@ -41,18 +40,21 @@ int main()
 
     BinaryData* seed = nullptr;
     e.reset(make_seed(mnemonic, password.c_str(), &seed));
-    if (e) {
+    if (e)
+    {
         std::cerr << "Got error: " << e->message << std::endl;
         return -2;
     }
-    char* seed_string = nullptr;
-    if (wally_base58_from_bytes(seed->data, seed->len, 0, &seed_string) != WALLY_OK) {
-        std::cerr << "Got error: " << "can't convert seed to printable format" << std::endl;
+    const char* seed_string = nullptr;
+    e.reset(seed_to_string(seed, &seed_string));
+    if (e)
+    {
+        std::cerr << "Got error: " << e->message << std::endl;
         return -3;
     }
     std::cout << "Seed: " << seed_string << std::endl;
 
-    wally_free_string(seed_string);
+    free_seed_string(seed_string);
     free_binarydata(seed);
     free_mnemonic(mnemonic);
     return 0;

@@ -7,7 +7,9 @@ set_target_properties(wally PROPERTIES IMPORTED_LOCATION "${WALLY_LIB_PATH}")
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    common.cpp
     mnemonic.cpp
+    keys.cpp
 )
 target_include_directories(wallet PRIVATE ./third-party/libwally-core/include/)
 target_link_libraries(wallet wally)

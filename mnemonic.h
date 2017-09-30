@@ -1,10 +1,10 @@
-#ifndef WALLET_SEED_GENERATOR_H
-#define WALLET_SEED_GENERATOR_H
+#ifndef WALLET_MNEMONIC_H
+#define WALLET_MNEMONIC_H
+
+#include "common.h"
 
 #include <stdint.h>
 #include <stddef.h>
-
-typedef uint32_t seed_t;
 
 /** Exposing bare C interface to the users.
  * That greatly simplifies integration with any language/paltform.
@@ -12,26 +12,6 @@ typedef uint32_t seed_t;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-/** GeneratorError
- * Holds information about error occured inside generator.
- */
-struct Error {
-    const char* message;
-};
-
-/** Binary data, just a pointer and a size in bytes. */
-struct BinaryData {
-    const unsigned char* data;
-    size_t len;
-};
-
-/** Entropy generator interface.
- * Fill `dest` with `size` random bytes.
- * Caller ensures that `dest` has enough space.
- * Implementation should return 0 on error, or size of generated entropy.
- */
-typedef size_t (*EntropySource)(size_t size, void* dest);
 
 /** Generator interface.
  * Each function returns a pointer to a GeneratorError, which is null on no error.
@@ -62,15 +42,12 @@ Error* make_mnemonic(EntropySource entropySource, const char ** mnemonic);
  * @return - non-null on error
  */
 Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed);
-
-/** Frees GeneratorError, can take null */
-void free_error(Error* error);
+Error* seed_to_string(const BinaryData* seed, const char** str);
 
 /** Frees mnemonic, can take null */
 void free_mnemonic(const char* mnemonic);
+void free_seed_string(const char* str);
 
-/** Frees BinaryData, can take null */
-void free_binarydata(BinaryData*);
 
 #ifdef __cplusplus
 } // extern "C"
