@@ -4,6 +4,9 @@
 #include <iostream>
 #include <memory>
 
+namespace
+{
+
 size_t entropySource(size_t size, void* dest)
 {
     /** Poor man's entropy, using uninitialized data from stack, which is:
@@ -24,38 +27,90 @@ size_t entropySource(size_t size, void* dest)
     return size;
 }
 
+void throw_if_error(Error* err)
+{
+    if (err)
+    {
+        throw err;
+    }
+}
+
+template <typename T, typename D>
+std::unique_ptr<T, D> up(T* ptr, D deleter)
+{
+    return std::unique_ptr<T, D>(ptr, deleter);
+}
+
+/** Convenience to simplify passing C++ smart_pointers (like std::unique_ptr<T>)
+ * to C-like functions than take T** and store address of new object there.
+ * Should be used in conjunction with reset_sp() function.
+ * Resets value of smart pointer if it was requested to be converted to pointer-to-pointer (T**)
+ * and that value was modified during lifetime of the object.
+ */
+template <typename SP>
+class UniquePointerUpdater
+{
+    typedef typename SP::pointer Pointer;
+    SP& sp;
+    mutable Pointer p;
+public:
+    explicit UniquePointerUpdater(SP& sp)
+        : sp(sp),
+          p(sp.get())
+    {}
+    ~UniquePointerUpdater()
+    {
+        if (p != sp.get())
+        {
+            sp.reset(p);
+        }
+    }
+    operator Pointer*() const
+    {
+        p = sp.get();
+        return &p;
+    }
+};
+
+/// See UniquePointerUpdater.
+template <typename SP>
+UniquePointerUpdater<SP> reset_sp(SP& sp)
+{
+    return UniquePointerUpdater<SP>(sp);
+}
+
+template <typename T, typename D>
+std::unique_ptr<T, D> null_unique_ptr(D deleter)
+{
+    return std::unique_ptr<T, D>(nullptr, deleter);
+}
+
+} // namespace
+
 int main()
 {
-    const char* mnemonic = nullptr;
-    std::unique_ptr<Error> e(make_mnemonic(&entropySource, &mnemonic));
-    if (e)
+    try
+    {
+        auto mnemonic = null_unique_ptr<const char>(free_mnemonic);
+        throw_if_error(make_mnemonic(&entropySource, reset_sp(mnemonic)));
+        std::cout << "Generated mnemonic: " << mnemonic.get() << std::endl;
+
+        std::cout << "Enter password: ";
+        std::string password;
+        std::cin >> password;
+
+        auto seed = null_unique_ptr<BinaryData>(free_binarydata);
+        throw_if_error(make_seed(mnemonic.get(), password.c_str(), reset_sp(seed)));
+
+        auto seed_string = null_unique_ptr<const char>(free_seed_string);
+        throw_if_error(seed_to_string(seed.get(), reset_sp(seed_string)));
+        std::cout << "Seed: " << seed_string.get() << std::endl;
+    }
+    catch(Error* e)
     {
         std::cerr << "Got error: " << e->message << std::endl;
+        free_error(e);
         return -1;
     }
-    std::cout << "Generated mnemonic: " << mnemonic << std::endl;
-    std::cout << "Enter password: ";
-    std::string password;
-    std::cin >> password;
-
-    BinaryData* seed = nullptr;
-    e.reset(make_seed(mnemonic, password.c_str(), &seed));
-    if (e)
-    {
-        std::cerr << "Got error: " << e->message << std::endl;
-        return -2;
-    }
-    const char* seed_string = nullptr;
-    e.reset(seed_to_string(seed, &seed_string));
-    if (e)
-    {
-        std::cerr << "Got error: " << e->message << std::endl;
-        return -3;
-    }
-    std::cout << "Seed: " << seed_string << std::endl;
-
-    free_seed_string(seed_string);
-    free_binarydata(seed);
-    free_mnemonic(mnemonic);
     return 0;
 }

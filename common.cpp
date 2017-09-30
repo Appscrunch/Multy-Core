@@ -1,6 +1,5 @@
 #include "common.h"
 
-
 void free_error(Error* error)
 {
      if (!error) {
