@@ -1,9 +1,11 @@
 #ifndef WALLET_KEYS_H
 #define WALLET_KEYS_H
 
+#include "error.h"
 #include "common.h"
 
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {

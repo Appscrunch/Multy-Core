@@ -8,6 +8,7 @@ set_target_properties(wally PROPERTIES IMPORTED_LOCATION "${WALLY_LIB_PATH}")
 add_executable(${PROJECT_NAME}
     main.cpp
     common.cpp
+    error.cpp
     mnemonic.cpp
     keys.cpp
 )

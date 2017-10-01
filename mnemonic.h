@@ -2,6 +2,7 @@
 #define WALLET_MNEMONIC_H
 
 #include "common.h"
+#include "error.h"
 
 #include <stdint.h>
 #include <stddef.h>

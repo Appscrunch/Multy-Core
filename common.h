@@ -14,21 +14,11 @@ extern "C" {
  */
 typedef size_t (*EntropySource)(size_t size, void* dest);
 
-/** GeneratorError
- * Holds information about error occured inside generator.
- */
-struct Error {
-    const char* message;
-};
-
 /** Binary data, just a pointer and a size in bytes. */
 struct BinaryData {
     const unsigned char* data;
     size_t len;
 };
-
-/** Frees GeneratorError, can take null */
-void free_error(Error* error);
 
 /** Frees BinaryData, can take null */
 void free_binarydata(BinaryData*);

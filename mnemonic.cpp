@@ -7,18 +7,6 @@
 #include <memory>
 #include <stdlib.h>
 
-namespace
-{
-
-Error* MakeError(const char* message)
-{
-    Error* result = new Error;
-    result->message = message;
-    return result;
-}
-
-}  // namespace
-
 Error* init()
 {
     return nullptr;
@@ -33,22 +21,29 @@ Error* make_mnemonic(EntropySource entropySource, const char ** mnemonic)
 {
     static const size_t entropy_size = BIP39_ENTROPY_LEN_256;
     unsigned char entropy[entropy_size] = {'\0'};
+
+    if (!entropySource || !*mnemonic)
+    {
+        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
+    }
+
     if (entropySource(entropy_size, &entropy) != entropy_size)
     {
-        return MakeError("Unable to get required amount of entropy");
+        return make_error(ERROR_BAD_ENTROPY,
+                "Unable to get required amount of entropy");
     }
 
     const words* dictionary = nullptr;
     int result = bip39_get_wordlist(nullptr, &dictionary);
     if (result != WALLY_OK)
     {
-        return MakeError("Failed to obtain wordlist");
+        return internal_make_error(result, "Failed to obtain wordlist");
     }
     char* out = nullptr;
     result = bip39_mnemonic_from_bytes(dictionary, entropy, entropy_size, &out);
     if (result != WALLY_OK)
     {
-        return MakeError("Failed to generated mnemonic");
+        return internal_make_error(result, "Failed to generated mnemonic");
     }
     *mnemonic = out;
 
@@ -60,11 +55,17 @@ Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
     static const size_t max_seed_size = BIP39_SEED_LEN_512;
     size_t written = 0;
 
+    if (!mnemonic || !*seed)
+    {
+        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
+    }
+
     std::unique_ptr<unsigned char[]> data(new unsigned char[max_seed_size]);
-    int result = bip39_mnemonic_to_seed(mnemonic, password, data.get(), max_seed_size, &written);
+    int result = bip39_mnemonic_to_seed(mnemonic, password, data.get(),
+            max_seed_size, &written);
     if (result != WALLY_OK)
     {
-        return MakeError("Faield to generate seed");
+        return internal_make_error(result, "Faield to generate seed");
     }
 
     BinaryData* out = new BinaryData;
@@ -78,10 +79,15 @@ Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
 Error* seed_to_string(const BinaryData* seed, const char** str)
 {
     char* out = nullptr;
+    if (!seed || !str)
+    {
+        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
+    }
+
     int result = wally_base58_from_bytes(seed->data, seed->len, 0, &out);
     if (result != WALLY_OK)
     {
-        return MakeError("Failed to convert seed to string");
+        return internal_make_error(result, "Failed to convert seed to string");
     }
     *str = out;
     return nullptr;
