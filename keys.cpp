@@ -3,26 +3,93 @@
 #include "wally_core.h"
 #include "wally_bip32.h"
 
-Error* make_master_key(const BinaryData* seed, Key* key)
+#include <memory>
+
+static_assert(CHILD_KEY_TYPE_PRIVATE == BIP32_FLAG_KEY_PRIVATE,
+        "invalid CHILD_KEY_TYPE_PRIVATE value");
+static_assert(CHILD_KEY_TYPE_PUBLIC == BIP32_FLAG_KEY_PUBLIC,
+        "invalid CHILD_KEY_TYPE_PUBLIC value");
+
+struct Key
 {
+    ext_key key;
+};
+
+Error* make_master_key(const BinaryData* seed, Key** master_key)
+{
+    if (!seed || !*master_key)
+    {
+        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
+    }
+
+    std::unique_ptr<Key> key(new Key);
+    const int result = bip32_key_from_seed(seed->data, seed->len,
+            BIP32_VER_MAIN_PRIVATE, 0, &key->key);
+    if (result == WALLY_ERROR)
+    {
+        return make_error(ERROR_BAD_ENTROPY,
+                "Can't generate master key with given entropy");
+    } else if (result != WALLY_OK)
+    {
+        return internal_make_error(result, "Failed to generate master key");
+    }
+    *master_key = key.release();
     return nullptr;
 }
 
-Error* make_child_key(const Key* parent_key, Key* key)
+Error* make_child_key(const Key* parent_key, ChildKeyType type,
+        uint32_t chain_code, Key** child_key)
 {
+    if (!parent_key || !*child_key)
+    {
+        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
+    }
+
+    std::unique_ptr<Key> key(new Key);
+    const int result = bip32_key_from_parent(&parent_key->key, chain_code, type,
+            &key->key);
+    if (result != WALLY_OK)
+    {
+        return internal_make_error(result, "Failed to make child key");
+    }
+
+    *child_key = key.release();
     return nullptr;
 }
 
-Error* key_to_string(const Key*, const char **str)
+Error* key_to_string(const Key* key, const char **str)
 {
+    if (!key || !*str)
+    {
+        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
+    }
+    static const size_t size = BIP32_SERIALIZED_LEN;
+    unsigned char serialized_key[size];
+
+    /// !CAUTION! fragile, based on libwally internal funtion key_is_private().
+    const uint32_t flag = (key->key.priv_key[0] == BIP32_FLAG_KEY_PRIVATE) ?
+            BIP32_FLAG_KEY_PRIVATE : BIP32_FLAG_KEY_PUBLIC;
+    int result = bip32_key_serialize(&key->key, flag, serialized_key, size);
+    if (result != WALLY_OK)
+    {
+        return internal_make_error(result,
+                "Failed to convert key to serialize key");
+    }
+    result = wally_base58_from_bytes(serialized_key, size, 0,
+            const_cast<char**>(str));
+    if (result != WALLY_OK)
+    {
+        return internal_make_error(result, "Failed to covert key to string");
+    }
+
     return nullptr;
 }
 
-void free_key(Key* /*root*/)
+void free_key(Key* key)
 {
-}
-
-void free_key_strnig(char */*str*/)
-{
-
+    if (key)
+    {
+        return;
+    }
+    delete key;
 }

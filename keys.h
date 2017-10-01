@@ -19,12 +19,18 @@ struct Key;
 //    const size_t chidren_count;
 //};
 
-Error* make_master_key(const BinaryData* seed, Key* key);
-Error* make_child_key(const Key* parent_key, Key* key);
+enum ChildKeyType
+{
+    CHILD_KEY_TYPE_PRIVATE,
+    CHILD_KEY_TYPE_PUBLIC,
+};
+
+Error* make_master_key(const BinaryData* seed, Key** key);
+Error* make_child_key(const Key* parent_key, ChildKeyType type,
+        uint32_t chain_code, Key** key);
 Error* key_to_string(const Key*, const char **str);
 
 void free_key(Key* root);
-void free_key_strnig(char *);
 //void free_node_tree(KeyNode* root);
 
 #ifdef __cplusplus

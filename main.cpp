@@ -100,9 +100,10 @@ int main()
         std::cin >> password;
 
         auto seed = null_unique_ptr<BinaryData>(free_binarydata);
-        throw_if_error(make_seed(mnemonic.get(), password.c_str(), reset_sp(seed)));
+        throw_if_error(make_seed(mnemonic.get(), password.c_str(),
+                reset_sp(seed)));
 
-        auto seed_string = null_unique_ptr<const char>(free_seed_string);
+        auto seed_string = null_unique_ptr<const char>(free_string);
         throw_if_error(seed_to_string(seed.get(), reset_sp(seed_string)));
         std::cout << "Seed: " << seed_string.get() << std::endl;
     }

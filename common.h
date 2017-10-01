@@ -22,6 +22,7 @@ struct BinaryData {
 
 /** Frees BinaryData, can take null */
 void free_binarydata(BinaryData*);
+void free_string(const char* str);
 
 #ifdef __cplusplus
 } // extern "C"

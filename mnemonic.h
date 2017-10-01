@@ -47,7 +47,6 @@ Error* seed_to_string(const BinaryData* seed, const char** str);
 
 /** Frees mnemonic, can take null */
 void free_mnemonic(const char* mnemonic);
-void free_seed_string(const char* str);
 
 
 #ifdef __cplusplus
