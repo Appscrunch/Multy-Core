@@ -1,5 +1,8 @@
 #include "keys.h"
 
+#include "common.h"
+#include "error.h"
+
 #include "wally_core.h"
 #include "wally_bip32.h"
 

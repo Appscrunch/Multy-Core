@@ -1,5 +1,8 @@
 #include "mnemonic.h"
 
+#include "error.h"
+#include "common.h"
+
 #include "wally_core.h"
 #include "wally_bip39.h"
 

@@ -1,5 +1,8 @@
 #include "mnemonic.h"
 
+#include "common.h"
+#include "error.h"
+
 #include <string.h>
 #include <iostream>
 #include <memory>

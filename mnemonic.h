@@ -2,7 +2,6 @@
 #define WALLET_MNEMONIC_H
 
 #include "common.h"
-#include "error.h"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -13,6 +12,9 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+struct Error;
+struct BinayData;
 
 /** Generator interface.
  * Each function returns a pointer to a GeneratorError, which is null on no error.
