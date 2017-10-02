@@ -9,8 +9,9 @@ add_executable(${PROJECT_NAME}
     main.cpp
     common.cpp
     error.cpp
-    mnemonic.cpp
     keys.cpp
+    keytree.cpp
+    mnemonic.cpp
 )
 target_include_directories(wallet PRIVATE ./third-party/libwally-core/include/)
 target_link_libraries(wallet wally)
