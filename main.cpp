@@ -1,8 +1,8 @@
-#include "mnemonic.h"
+#include "wallet_core/mnemonic.h"
 
-#include "common.h"
-#include "error.h"
-#include "internal/utility.h"
+#include "wallet_core/common.h"
+#include "wallet_core/error.h"
+#include "wallet_core/internal/utility.h"
 
 #include <string.h>
 #include <iostream>

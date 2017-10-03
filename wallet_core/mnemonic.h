@@ -24,10 +24,7 @@ struct BinayData;
  * free_X(X*) functions, which do de-allocate given objects.
  * Please do not use those functions to free any object not created
  * by the Generator.
- */
-
-Error* init();
-Error* deinit();
+  */
 
 /** Generate a mnemonic for given amount of entropy using default dictionary (english).
  *

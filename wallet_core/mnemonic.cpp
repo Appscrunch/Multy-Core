@@ -10,22 +10,12 @@
 #include <memory>
 #include <stdlib.h>
 
-Error* init()
-{
-    return nullptr;
-}
-
-Error* deinit()
-{
-    return nullptr;
-}
-
 Error* make_mnemonic(EntropySource entropySource, const char ** mnemonic)
 {
     static const size_t entropy_size = BIP39_ENTROPY_LEN_256;
     unsigned char entropy[entropy_size] = {'\0'};
 
-    if (!entropySource || !*mnemonic)
+    if (!entropySource || !mnemonic)
     {
         return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
     }
