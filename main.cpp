@@ -45,7 +45,7 @@ int main()
 
         std::cout << "Enter password: ";
         std::string password;
-        std::cin >> password;
+        std::getline(std::cin, password);
 
         auto seed = null_unique_ptr<BinaryData>(free_binarydata);
         throw_if_error(make_seed(mnemonic.get(), password.c_str(),
