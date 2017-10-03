@@ -45,18 +45,18 @@ public:
 
 /// See UniquePointerUpdater.
 template <typename SP>
-UniquePointerUpdater<SP> reset_sp(SP& sp)
+inline UniquePointerUpdater<SP> reset_sp(SP& sp)
 {
     return UniquePointerUpdater<SP>(sp);
 }
 
 template <typename T, typename D>
-std::unique_ptr<T, D> null_unique_ptr(D deleter)
+inline std::unique_ptr<T, D> null_unique_ptr(D deleter)
 {
     return std::unique_ptr<T, D>(nullptr, deleter);
 }
 
-void throw_if_error(Error* err)
+inline void throw_if_error(Error* err)
 {
     if (err)
     {

@@ -28,18 +28,16 @@ struct BinayData;
 
 /** Generate a mnemonic for given amount of entropy using default dictionary (english).
  *
- * @param entropySource - bytes of entropy.
+ * @param entropy_source - bytes of entropy.
  * @param [out]mnemonic - resulting mnemonic, a null-terminated, space-separated
  *	list of words from dictionary.
- * @return - non-null on error.
  */
-Error* make_mnemonic(EntropySource entropySource, const char ** mnemonic);
+Error* make_mnemonic(EntropySource entropy_source, const char ** mnemonic);
 
 /** Generates a pseudo-random seed from given mnemonic and password.
  * @param mnemonic - space-separated list of mnemonic words.
  * @param password - password, optional, can be null if not set.
  * @param [out]seed - resulting pseudo-random seed.
- * @return - non-null on error
  */
 Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed);
 Error* seed_to_string(const BinaryData* seed, const char** str);

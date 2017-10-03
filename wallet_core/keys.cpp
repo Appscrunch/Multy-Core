@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "error.h"
+#include "internal/utility.h"
 
 #include "wally_core.h"
 #include "wally_bip32.h"
@@ -13,6 +14,11 @@ static_assert(CHILD_KEY_TYPE_PRIVATE == BIP32_FLAG_KEY_PRIVATE,
 static_assert(CHILD_KEY_TYPE_PUBLIC == BIP32_FLAG_KEY_PUBLIC,
         "invalid CHILD_KEY_TYPE_PUBLIC value");
 
+namespace
+{
+using namespace wallet_core::internal;
+} // namespace
+
 struct Key
 {
     ext_key key;
@@ -20,12 +26,10 @@ struct Key
 
 Error* make_master_key(const BinaryData* seed, Key** master_key)
 {
-    if (!seed || !*master_key)
-    {
-        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
-    }
+    ARG_CHECK(seed);
+    ARG_CHECK(master_key);
 
-    std::unique_ptr<Key> key(new Key);
+    auto key = null_unique_ptr<Key>(free_key);
     const int result = bip32_key_from_seed(seed->data, seed->len,
             BIP32_VER_MAIN_PRIVATE, 0, &key->key);
     if (result == WALLY_ERROR)
@@ -43,12 +47,10 @@ Error* make_master_key(const BinaryData* seed, Key** master_key)
 Error* make_child_key(const Key* parent_key, ChildKeyType type,
         uint32_t chain_code, Key** child_key)
 {
-    if (!parent_key || !*child_key)
-    {
-        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
-    }
+    ARG_CHECK(parent_key);
+    ARG_CHECK(child_key);
 
-    std::unique_ptr<Key> key(new Key);
+    auto key = null_unique_ptr<Key>(free_key);
     const int result = bip32_key_from_parent(&parent_key->key, chain_code, type,
             &key->key);
     if (result != WALLY_OK)
@@ -62,10 +64,9 @@ Error* make_child_key(const Key* parent_key, ChildKeyType type,
 
 Error* key_to_string(const Key* key, const char **str)
 {
-    if (!key || !*str)
-    {
-        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
-    }
+    ARG_CHECK(key);
+    ARG_CHECK(str);
+
     static const size_t size = BIP32_SERIALIZED_LEN;
     unsigned char serialized_key[size];
 

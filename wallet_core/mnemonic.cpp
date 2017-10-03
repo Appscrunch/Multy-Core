@@ -2,6 +2,7 @@
 
 #include "error.h"
 #include "common.h"
+#include "internal/utility.h"
 
 #include "wally_core.h"
 #include "wally_bip39.h"
@@ -10,17 +11,15 @@
 #include <memory>
 #include <stdlib.h>
 
-Error* make_mnemonic(EntropySource entropySource, const char ** mnemonic)
+Error* make_mnemonic(EntropySource entropy_source, const char ** mnemonic)
 {
     static const size_t entropy_size = BIP39_ENTROPY_LEN_256;
     unsigned char entropy[entropy_size] = {'\0'};
 
-    if (!entropySource || !mnemonic)
-    {
-        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
-    }
+    ARG_CHECK(entropy_source);
+    ARG_CHECK(mnemonic);
 
-    if (entropySource(entropy_size, &entropy) != entropy_size)
+    if (entropy_source(entropy_size, &entropy) != entropy_size)
     {
         return make_error(ERROR_BAD_ENTROPY,
                 "Unable to get required amount of entropy");
@@ -48,10 +47,8 @@ Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
     static const size_t max_seed_size = BIP39_SEED_LEN_512;
     size_t written = 0;
 
-    if (!mnemonic || !*seed)
-    {
-        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
-    }
+    ARG_CHECK(mnemonic);
+    ARG_CHECK(seed);
 
     std::unique_ptr<unsigned char[]> data(new unsigned char[max_seed_size]);
     int result = bip39_mnemonic_to_seed(mnemonic, password, data.get(),
@@ -71,11 +68,10 @@ Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
 
 Error* seed_to_string(const BinaryData* seed, const char** str)
 {
+    ARG_CHECK(seed);
+    ARG_CHECK(str);
+
     char* out = nullptr;
-    if (!seed || !str)
-    {
-        return make_error(ERROR_INVALID_ARGUMENT, "Invalid argument");
-    }
 
     int result = wally_base58_from_bytes(seed->data, seed->len, 0, &out);
     if (result != WALLY_OK)
