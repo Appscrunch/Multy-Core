@@ -1,4 +1,6 @@
 
+# secp256k1 cmake-stuff was inspired by
+# https://github.com/chfast/secp256k1/blob/cb5dc20ecc116d27452f8ecb1ae50205834da172/CMakeLists.txt
 add_library(secp256k1 SHARED
     libwally-core/src/secp256k1/contrib/lax_der_parsing.c
     libwally-core/src/secp256k1/contrib/lax_der_privatekey_parsing.c
