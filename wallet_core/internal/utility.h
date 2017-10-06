@@ -1,11 +1,21 @@
 #ifndef WALLET_UTILITY_H
 #define WALLET_UTILITY_H
 
+/** Set of utility functions/classes/etc.
+ * Not part of the interface, and should not be used by clients.
+ */
+
 #include "error.h"
 
 #include <memory>
 
 struct Error;
+
+#define ARG_CHECK(arg) do {\
+    if (!(arg)) {\
+        return make_error(ERROR_INVALID_ARGUMENT, "Argument check failed: " #arg); \
+    }\
+} while (false)
 
 namespace wallet_core
 {
@@ -64,14 +74,10 @@ inline void throw_if_error(Error* err)
     }
 }
 
+/// Converts exception to a Error*, to be used inside a catch(...) block.
+Error* exception_to_error();
+
 } // namespace internal
-
 } // namespace wallet_core
-
-#define ARG_CHECK(arg) do {\
-    if (!(arg)) {\
-        return make_error(ERROR_INVALID_ARGUMENT, "Argument check failed: " #arg); \
-    }\
-} while (false)
 
 #endif // UTILITY_H

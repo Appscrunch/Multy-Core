@@ -64,13 +64,9 @@ Error* make_account(const Key* master_key, Currency currency, uint32_t index,
 
         return nullptr;
     }
-    catch (Error* e)
-    {
-        return e;
-    }
     catch (...)
     {
-        return make_error(ERROR_GENERAL_ERROR, "Unknown error");
+        return exception_to_error();
     }
     return nullptr;
 }
@@ -96,13 +92,9 @@ Error* get_account_key(Account* account, AddressType type, uint32_t index, Key**
         *key = output_key.release();
         return nullptr;
     }
-    catch (Error* e)
-    {
-        return e;
-    }
     catch (...)
     {
-        return make_error(ERROR_GENERAL_ERROR, "Unknown error");
+        return exception_to_error();
     }
     return nullptr;
 }

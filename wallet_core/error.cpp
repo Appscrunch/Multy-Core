@@ -1,5 +1,7 @@
 #include "error.h"
 
+#include "common.h"
+
 #include "wally_core.h"
 
 #include <stdlib.h>
@@ -29,6 +31,7 @@ Error* make_error(ErrorCode code, const char* message)
     Error* result = new Error;
     result->message = message;
     result->code = code;
+    result->owns_message = false;
     return result;
 }
 
@@ -42,6 +45,10 @@ void free_error(Error* error)
     if (!error)
     {
         return;
+    }
+    if (error->owns_message)
+    {
+        free_string(error->message);
     }
     // no need to delete error message, since it is always a static string.
     delete error;

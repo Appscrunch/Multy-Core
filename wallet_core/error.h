@@ -21,6 +21,7 @@ struct Error
 {
     ErrorCode code;
     const char* message;
+    bool owns_message;
 };
 
 Error* make_error(ErrorCode code, const char* message);

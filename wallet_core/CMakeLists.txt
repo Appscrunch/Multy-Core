@@ -5,6 +5,7 @@ add_library(wallet_core
     error.cpp
     keys.cpp
     mnemonic.cpp
+    internal/utility.cpp
 )
 
 target_include_directories(wallet_core PRIVATE ../third-party/libwally-core/include/ .)
