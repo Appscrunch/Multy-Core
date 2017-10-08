@@ -5,6 +5,8 @@ add_library(wallet_core
     error.cpp
     keys.cpp
     mnemonic.cpp
+    internal/account_base.cpp
+    internal/bitcoin_account.cpp
     internal/utility.cpp
 )
 
