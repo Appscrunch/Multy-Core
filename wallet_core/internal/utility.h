@@ -35,6 +35,7 @@ class UniquePointerUpdater
     SP& sp;
     mutable Pointer p;
 public:
+    // TODO: change from reference to pointer
     explicit UniquePointerUpdater(SP& sp)
         : sp(sp),
           p(sp.get())

@@ -11,6 +11,7 @@ struct Key;
 struct Error;
 struct BinaryData;
 
+// TODO: rename into KeyType
 enum ChildKeyType
 {
     CHILD_KEY_TYPE_PRIVATE,

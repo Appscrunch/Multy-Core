@@ -8,6 +8,8 @@ struct CoinType {
   const char* description;
 };
 
+// https://github.com/satoshilabs/slips/blob/master/slip-0044.md
+
 CoinType CointTypes[] = {
     {0x80000000, "Bitcoin"},
     {0x80000001, "Testnet (all coins)"},
