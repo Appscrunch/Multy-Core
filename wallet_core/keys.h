@@ -11,17 +11,16 @@ struct Key;
 struct Error;
 struct BinaryData;
 
-// TODO: rename into KeyType
-enum ChildKeyType
+enum KeyType
 {
-    CHILD_KEY_TYPE_PRIVATE,
-    CHILD_KEY_TYPE_PUBLIC,
+    KEY_TYPE_PRIVATE,
+    KEY_TYPE_PUBLIC,
 };
 
 Error* make_master_key(const BinaryData* seed, Key** key);
-Error* make_child_key(const Key* parent_key, ChildKeyType type,
+Error* make_child_key(const Key* parent_key, KeyType type,
         uint32_t chain_code, Key** key);
-Error* key_to_string(const Key*, const char **str);
+Error* key_to_base58(const Key*, KeyType type, const char **str);
 
 void free_key(Key* root);
 

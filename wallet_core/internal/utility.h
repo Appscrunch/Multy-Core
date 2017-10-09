@@ -22,6 +22,37 @@ namespace wallet_core
 
 namespace internal
 {
+inline void throw_if_error(Error* err)
+{
+    if (err)
+    {
+        throw err;
+    }
+}
+
+inline void throw_if_wally_error(int err_code, const char* message)
+{
+    if (err_code != 0)
+    {
+        throw_if_error(internal_make_error(err_code, message));
+    }
+}
+
+template <typename T, size_t N>
+constexpr size_t array_size(T (&)[N])
+{
+    return N;
+}
+
+/// Converts exception to a Error*, to be used inside a catch(...) block.
+Error* exception_to_error();
+
+/** Convenience function to copy a string.
+ * @param str - string to copy, must not be null.
+ * @return - copy of a string, must be freed with free_string(), can be null on error.
+ */
+char* copy_string(const char* str);
+
 /** Convenience to simplify passing C++ smart_pointers (like std::unique_ptr<T>)
  * to C-like functions than take T** and store address of new object there.
  * Should be used in conjunction with reset_sp() function.
@@ -66,17 +97,6 @@ inline std::unique_ptr<T, D> null_unique_ptr(D deleter)
 {
     return std::unique_ptr<T, D>(nullptr, deleter);
 }
-
-inline void throw_if_error(Error* err)
-{
-    if (err)
-    {
-        throw err;
-    }
-}
-
-/// Converts exception to a Error*, to be used inside a catch(...) block.
-Error* exception_to_error();
 
 } // namespace internal
 } // namespace wallet_core

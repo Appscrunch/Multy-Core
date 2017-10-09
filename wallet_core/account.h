@@ -15,7 +15,6 @@ struct Key;
 enum Currency
 {
     CURRENCY_BITCOIN,
-    CURRENCY_BITCOIN_CASH,
     CURRENCY_ETHEREUM,
 };
 

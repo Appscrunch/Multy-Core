@@ -12,6 +12,32 @@ namespace wallet_core
 namespace internal
 {
 
+char* copy_string(const char* str)
+{
+    if (!str)
+    {
+        return nullptr;
+    }
+
+    const size_t len = strlen(str);
+
+    wally_operations wally_ops;
+    int result = wally_get_operations(&wally_ops);
+    if (result != WALLY_OK || !wally_ops.malloc_fn)
+    {
+        return nullptr;
+    }
+
+    char* new_message = static_cast<char*>(wally_ops.malloc_fn(len + 1));
+    if (!new_message)
+    {
+        return nullptr;
+    }
+
+    memcpy(new_message, str, len);
+    return new_message;
+}
+
 Error* exception_to_error()
 {
     try
@@ -28,25 +54,14 @@ Error* exception_to_error()
         // Buffer memory has to be allocated by libwally, since we want
         // to use free_string() consistently on all strings,
         // even if those were allocated internaly.
-        const char* message = exception.what();
-        const size_t len = strlen(message);
-
-        wally_operations wally_ops;
-        int result = wally_get_operations(&wally_ops);
-        if (result != WALLY_OK || !wally_ops.malloc_fn)
+        const char* message = copy_string(exception.what());
+        if (!message)
         {
-            return internal_make_error(result, "Unable to handle exception.");
+            // We have to guess here, most likely out of memory.
+            return make_error(ERROR_OUT_OF_MEMORY, "Out of memory");
         }
 
-        char* new_message = static_cast<char*>(wally_ops.malloc_fn(len + 1));
-        if (!new_message)
-        {
-            return make_error(ERROR_OUT_OF_MEMORY,
-                    "Not enough memory to process exception properly.");
-        }
-        memcpy(new_message, message, len);
-
-        Error* error = make_error(ERROR_GENERAL_ERROR, new_message);
+        Error* error = make_error(ERROR_GENERAL_ERROR, message);
         error->owns_message = true;
         return error;
     }

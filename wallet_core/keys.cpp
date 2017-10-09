@@ -2,6 +2,8 @@
 
 #include "common.h"
 #include "error.h"
+
+#include "internal/key.h"
 #include "internal/utility.h"
 
 #include "wally_core.h"
@@ -9,20 +11,15 @@
 
 #include <memory>
 
-static_assert(CHILD_KEY_TYPE_PRIVATE == BIP32_FLAG_KEY_PRIVATE,
-        "invalid CHILD_KEY_TYPE_PRIVATE value");
-static_assert(CHILD_KEY_TYPE_PUBLIC == BIP32_FLAG_KEY_PUBLIC,
-        "invalid CHILD_KEY_TYPE_PUBLIC value");
+static_assert(KEY_TYPE_PRIVATE == BIP32_FLAG_KEY_PRIVATE,
+        "invalid KEY_TYPE_PRIVATE value");
+static_assert(KEY_TYPE_PUBLIC == BIP32_FLAG_KEY_PUBLIC,
+        "invalid KEY_TYPE_PUBLIC value");
 
 namespace
 {
 using namespace wallet_core::internal;
 } // namespace
-
-struct Key
-{
-    ext_key key;
-};
 
 Error* make_master_key(const BinaryData* seed, Key** master_key)
 {
@@ -44,7 +41,7 @@ Error* make_master_key(const BinaryData* seed, Key** master_key)
     return nullptr;
 }
 
-Error* make_child_key(const Key* parent_key, ChildKeyType type,
+Error* make_child_key(const Key* parent_key, KeyType type,
         uint32_t chain_code, Key** child_key)
 {
     ARG_CHECK(parent_key);
@@ -62,7 +59,7 @@ Error* make_child_key(const Key* parent_key, ChildKeyType type,
     return nullptr;
 }
 
-Error* key_to_string(const Key* key, const char **str)
+Error* key_to_base58(const Key* key, KeyType type, const char **str)
 {
     ARG_CHECK(key);
     ARG_CHECK(str);
@@ -70,8 +67,7 @@ Error* key_to_string(const Key* key, const char **str)
     static const size_t size = BIP32_SERIALIZED_LEN;
     unsigned char serialized_key[size];
 
-    /// !CAUTION! fragile, based on libwally internal funtion key_is_private().
-    const uint32_t flag = (key->key.priv_key[0] == BIP32_FLAG_KEY_PRIVATE) ?
+    const uint32_t flag = (type == KEY_TYPE_PRIVATE) ?
             BIP32_FLAG_KEY_PRIVATE : BIP32_FLAG_KEY_PUBLIC;
     int result = bip32_key_serialize(&key->key, flag, serialized_key, size);
     if (result != WALLY_OK)
