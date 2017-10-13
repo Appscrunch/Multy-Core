@@ -96,6 +96,8 @@ Error* get_account_address(
     {
         return exception_to_error();
     }
+
+    return nullptr;
 }
 
 Error* get_account_address_path(
