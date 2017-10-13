@@ -1,3 +1,14 @@
+if (DEFINED LIBWALLY_BIN_PATH)
+    # wally is prebuild
+    add_library(wally SHARED IMPORTED)
+    if (DEFINED ANDROID_ABI)
+        set_target_properties(wally PROPERTIES IMPORTED_LOCATION
+            "${LIBWALLY_BIN_PATH}/${ANDROID_ABI}/libwallycore.so")
+    else()
+        set_target_properties(wally PROPERTIES IMPORTED_LOCATION
+            "${LIBWALLY_BIN_PATH}/libwallycore.so")
+    endif()
+else(DEFINED LIBWALLY_BIN_PATH)
 
 # secp256k1 cmake-stuff was inspired by
 # https://github.com/chfast/secp256k1/blob/cb5dc20ecc116d27452f8ecb1ae50205834da172/CMakeLists.txt
@@ -101,3 +112,8 @@ target_include_directories(wally PRIVATE
     libwally-core/src/secp256k1/include
 )
 target_link_libraries(wally secp256k1)
+endif(DEFINED LIBWALLY_BIN_PATH)
+
+if(DEFINED WITH_TESTS)
+    add_subdirectory(googletest)
+endif(DEFINED WITH_TESTS)

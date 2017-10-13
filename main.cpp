@@ -4,6 +4,8 @@
 #include "wallet_core/error.h"
 #include "wallet_core/internal/utility.h"
 
+#include "wallet_test/run_tests.h"
+
 #include <string.h>
 #include <iostream>
 #include <memory>
@@ -35,8 +37,11 @@ using namespace wallet_core::internal;
 
 } // namespace
 
-int main()
+int main(int argc, char **argv)
 {
+#ifdef WITH_TESTS
+      return run_tests(argc, argv);
+#else
     try
     {
         auto mnemonic = null_unique_ptr<const char>(free_mnemonic);
@@ -62,4 +67,5 @@ int main()
         return -1;
     }
     return 0;
+#endif
 }
