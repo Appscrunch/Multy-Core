@@ -34,6 +34,13 @@ bytes from_hex(const char* hex_str)
     return result;
 }
 
+std::string to_hex(const bytes& bytes)
+{
+    auto hex_str = null_unique_ptr<char>(free_string);
+    E(wally_hex_from_bytes(bytes.data(), bytes.size(), reset_sp(hex_str)));
+    return std::string(hex_str.get());
+}
+
 BinaryData to_binary_data(const bytes& data)
 {
     return BinaryData{data.data(), data.size()};
@@ -53,6 +60,15 @@ struct MnemonicTestCase
         expected_seed(from_hex(expected_seed))
     {}
 };
+
+void PrintTo(const MnemonicTestCase& e, std::ostream* out)
+{
+    *out << "MnemonicTestCase{\n"
+         << "\tenropy: " << to_hex(e.entropy) << ",\n"
+         << "\tmnemonic: " << e.expected_mnemonic << ",\n"
+         << "\tseed: " << to_hex(e.expected_seed) << "\n"
+         << "}";
+}
 
 class ValidMnemonicTestP : public ::testing::TestWithParam<MnemonicTestCase>
 {

@@ -3,10 +3,15 @@
 #include "error.h"
 #include "common.h"
 
+namespace std
+{
+
 void PrintTo(const std::nullptr_t&, std::ostream* out)
 {
     *out << "<nullptr>";
 }
+
+} // namespace std
 
 void PrintTo(const Error& e, std::ostream* out)
 {

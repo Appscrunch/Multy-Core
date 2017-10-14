@@ -7,12 +7,16 @@
 struct Error;
 struct BinaryData;
 
+namespace std
+{
 void PrintTo(const std::nullptr_t&, std::ostream*);
+} // namespace std;
+
 void PrintTo(const Error&, std::ostream*);
 void PrintTo(const BinaryData&, std::ostream*);
 
 template <typename T, typename D>
-void PrintTo(const std::unique_ptr<T, D>& up, std::ostream* out)
+inline void PrintTo(const std::unique_ptr<T, D>& up, std::ostream* out)
 {
     if (up)
     {
