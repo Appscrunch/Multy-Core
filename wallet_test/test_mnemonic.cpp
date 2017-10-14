@@ -1,6 +1,8 @@
 #include "mnemonic.h"
+
 #include "internal/utility.h"
 #include "wally_core.h"
+#include "value_printers.h"
 
 #include "gtest/gtest.h"
 
