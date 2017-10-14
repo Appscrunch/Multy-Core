@@ -11,6 +11,11 @@
 #include <memory>
 #include <stdlib.h>
 
+namespace
+{
+using namespace wallet_core::internal;
+} // namespace
+
 Error* make_mnemonic(EntropySource entropy_source, const char ** mnemonic)
 {
     static const size_t entropy_size = BIP39_ENTROPY_LEN_256;
@@ -50,19 +55,27 @@ Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
     ARG_CHECK(mnemonic);
     ARG_CHECK(seed);
 
-    std::unique_ptr<unsigned char[]> data(new unsigned char[max_seed_size]);
-    int result = bip39_mnemonic_to_seed(mnemonic, password, data.get(),
-            max_seed_size, &written);
-    if (result != WALLY_OK)
+    try
     {
-        return internal_make_error(result, "Faield to generate seed");
+        throw_if_wally_error(
+                bip39_mnemonic_validate(nullptr, mnemonic),
+                "Invalid mnemonic value");
+
+        std::unique_ptr<unsigned char[]> data(new unsigned char[max_seed_size]);
+        throw_if_wally_error(
+                bip39_mnemonic_to_seed(mnemonic, password, data.get(),
+                        max_seed_size, &written),
+                "Faield to generate seed from mnemonic");
+
+        BinaryData* out = new BinaryData;
+        out->data = data.release();
+        out->len = written;
+        *seed = out;
     }
-
-    BinaryData* out = new BinaryData;
-    out->data = data.release();
-    out->len = written;
-    *seed = out;
-
+    catch(...)
+    {
+        return exception_to_error();
+    }
     return nullptr;
 }
 
