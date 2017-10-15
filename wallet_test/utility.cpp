@@ -3,6 +3,7 @@
 #include "wally_core.h"
 
 #include <string.h>
+#include <memory.h>
 
 namespace
 {
@@ -49,3 +50,9 @@ BinaryData to_binary_data(const bytes& data)
 }
 
 } // namespace test_utility
+
+bool operator==(const BinaryData& lhs, const BinaryData& rhs)
+{
+    return lhs.len == rhs.len
+            && memcmp(lhs.data, rhs.data, lhs.len) == 0;
+}
