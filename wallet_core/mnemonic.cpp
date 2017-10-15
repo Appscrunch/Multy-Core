@@ -14,19 +14,49 @@
 namespace
 {
 using namespace wallet_core::internal;
+
+size_t round_to_supported_entropy_size(size_t entropy_size)
+{
+    static const size_t supported_entropy_sizes[] = {
+        BIP39_ENTROPY_LEN_128,
+        BIP39_ENTROPY_LEN_160,
+        BIP39_ENTROPY_LEN_192,
+        BIP39_ENTROPY_LEN_224,
+        BIP39_ENTROPY_LEN_256,
+        BIP39_ENTROPY_LEN_288,
+        BIP39_ENTROPY_LEN_320,
+    };
+
+    size_t result = 0;
+    for (size_t i = 0; i < array_size(supported_entropy_sizes); ++i)
+    {
+        if (entropy_size >= supported_entropy_sizes[i])
+        {
+            result = supported_entropy_sizes[i];
+        }
+        else
+        {
+            break;
+        }
+    }
+    return result;
+}
 } // namespace
 
 Error* make_mnemonic(EntropySource entropy_source, const char ** mnemonic)
 {
-    static const size_t entropy_size = BIP39_ENTROPY_LEN_320;
-    unsigned char entropy[entropy_size] = {'\0'};
+    static const size_t max_entropy_size = BIP39_ENTROPY_LEN_320;
+    unsigned char entropy[max_entropy_size] = {'\0'};
 
-    ARG_CHECK(entropy_source);
+    ARG_CHECK(entropy_source.fill_entropy);
     ARG_CHECK(mnemonic);
 
     try
     {
-        if (entropy_source(entropy_size, &entropy) == 0)
+        const size_t entropy_size = round_to_supported_entropy_size(
+                entropy_source.fill_entropy(entropy_source.data,
+                        max_entropy_size, &entropy[0]));
+        if (entropy_size == 0)
         {
             return make_error(ERROR_BAD_ENTROPY,
                     "Unable to get required amount of entropy");

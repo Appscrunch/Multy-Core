@@ -16,7 +16,7 @@ using namespace wallet_core::internal;
 using namespace test_utility;
 typedef std::vector<unsigned char> bytes;
 
-size_t dummy_entropy_source(size_t size, void* dest)
+size_t dummy_fill_entropy(void*, size_t size, void* dest)
 {
     static const size_t entropy_max_size = 1024;
     unsigned char silly_entropy[entropy_max_size];
@@ -29,6 +29,8 @@ size_t dummy_entropy_source(size_t size, void* dest)
     memcpy(dest, silly_entropy, size);
     return size;
 }
+
+static const EntropySource dummy_entropy_source{nullptr, dummy_fill_entropy};
 
 struct MnemonicTestCase
 {
@@ -225,7 +227,7 @@ INSTANTIATE_TEST_CASE_P(empty, ValidMnemonicTestP,
 TEST_P(ValidMnemonicTestP, Test)
 {
     const auto& param = GetParam();
-    const static bytes& entropy = param.entropy;
+    const bytes* entropy = nullptr;
 
     auto mnemonic_str = null_unique_ptr<const char>(free_string);
     auto error = null_unique_ptr<Error>(free_error);
@@ -233,14 +235,18 @@ TEST_P(ValidMnemonicTestP, Test)
     ASSERT_EQ(nullptr, mnemonic_str);
     ASSERT_EQ(nullptr, error);
 
-    auto entropy_source = [](::size_t size, void* dest) -> ::size_t
+    auto fill_entropy = [](void* data, ::size_t size, void* dest) -> ::size_t
     {
-        const size_t result_size = std::min(size, entropy.size());
-        memcpy(dest, entropy.data(), result_size);
+        const bytes* entropy = (const bytes*)(data);
+        const size_t result_size = std::min(size, entropy->size());
+        memcpy(dest, entropy->data(), result_size);
         return result_size;
     };
+    auto entropy_source = EntropySource{(void*)&param.entropy, fill_entropy};
     error.reset(make_mnemonic(entropy_source, reset_sp(mnemonic_str)));
     EXPECT_EQ(nullptr, error);
+    EXPECT_NE(nullptr, mnemonic_str);
+
     EXPECT_STREQ(param.expected_mnemonic.c_str(), mnemonic_str.get());
 
     auto seed = null_unique_ptr<BinaryData>(free_binarydata);
@@ -273,7 +279,7 @@ GTEST_TEST(MnemonicInvalidArgs, make_mnemonic)
     auto mnemonic_str = null_unique_ptr<const char>(free_string);
     auto error = null_unique_ptr<Error>(free_error);
 
-    error.reset(make_mnemonic(nullptr, reset_sp(mnemonic_str)));
+    error.reset(make_mnemonic(EntropySource{nullptr, nullptr}, reset_sp(mnemonic_str)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, mnemonic_str);
 

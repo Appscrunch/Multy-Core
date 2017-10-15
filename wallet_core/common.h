@@ -12,7 +12,11 @@ extern "C" {
  * Caller ensures that `dest` has enough space.
  * Implementation should return 0 on error, or size of generated entropy.
  */
-typedef size_t (*EntropySource)(size_t size, void* dest);
+struct EntropySource
+{
+    void* data; /// Opaque caller-supplied pointer, passed as first argument to fill_entropy().
+    size_t (*fill_entropy)(void* data, size_t size, void* dest);
+};
 
 /** Binary data, just a pointer and a size in bytes. */
 struct BinaryData {
