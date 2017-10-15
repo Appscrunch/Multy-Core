@@ -1,7 +1,14 @@
 #include "value_printers.h"
 
+#include "utility.h"
+
 #include "error.h"
 #include "common.h"
+
+namespace
+{
+using namespace test_utility;
+} // namespace
 
 namespace std
 {
@@ -20,5 +27,5 @@ void PrintTo(const Error& e, std::ostream* out)
 
 void PrintTo(const BinaryData& data, std::ostream* out)
 {
-    *out << "BinaryData{ " << (data.data ? "<binary data>" : "<null>") << ", " << data.len << " }";
+    *out << "BinaryData{ " << (data.data ? to_hex(data) :  std::string("<null>")) << ", " << data.len << " }";
 }

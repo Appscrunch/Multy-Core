@@ -24,6 +24,7 @@ if(DEFINED WITH_TESTS)
         ./wallet_test/test_mnemonic.cpp
         ./wallet_test/test_utility.cpp
         ./wallet_test/value_printers.cpp
+        ./wallet_test/utility.cpp
     )
 
     target_include_directories(

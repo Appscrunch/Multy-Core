@@ -1,8 +1,8 @@
 #include "mnemonic.h"
 
-#include "internal/utility.h"
-#include "wally_core.h"
 #include "value_printers.h"
+
+#include "utility.h"
 
 #include "gtest/gtest.h"
 
@@ -13,37 +13,21 @@
 namespace
 {
 using namespace wallet_core::internal;
+using namespace test_utility;
 typedef std::vector<unsigned char> bytes;
 
-#define E(statement) throw_if_wally_error((statement), #statement)
-
-size_t dummyEntropySource(size_t /*size*/, void* /*dest*/)
+size_t dummy_entropy_source(size_t size, void* dest)
 {
-    return 0;
-}
+    static const size_t entropy_max_size = 1024;
+    unsigned char silly_entropy[entropy_max_size];
 
-bytes from_hex(const char* hex_str)
-{
-    const size_t expected_size = strlen(hex_str)/2;
-    bytes result(expected_size);
-    size_t bytes_written = 0;
+    if (size > entropy_max_size)
+    {
+        return 0;
+    }
 
-    E(wally_hex_to_bytes(hex_str, result.data(), result.size(), &bytes_written));
-    result.resize(bytes_written);
-
-    return result;
-}
-
-std::string to_hex(const bytes& bytes)
-{
-    auto hex_str = null_unique_ptr<char>(free_string);
-    E(wally_hex_from_bytes(bytes.data(), bytes.size(), reset_sp(hex_str)));
-    return std::string(hex_str.get());
-}
-
-BinaryData to_binary_data(const bytes& data)
-{
-    return BinaryData{data.data(), data.size()};
+    memcpy(dest, silly_entropy, size);
+    return size;
 }
 
 struct MnemonicTestCase
@@ -251,21 +235,37 @@ TEST_P(ValidMnemonicTestP, Test)
 
     auto entropy_source = [](::size_t size, void* dest) -> ::size_t
     {
-        if (size > entropy.size())
-        {
-            return static_cast<size_t>(0);
-        }
-        memcpy(dest, entropy.data(), size);
-        return size;
+        const size_t result_size = std::min(size, entropy.size());
+        memcpy(dest, entropy.data(), result_size);
+        return result_size;
     };
     error.reset(make_mnemonic(entropy_source, reset_sp(mnemonic_str)));
     EXPECT_EQ(nullptr, error);
     EXPECT_STREQ(param.expected_mnemonic.c_str(), mnemonic_str.get());
 
     auto seed = null_unique_ptr<BinaryData>(free_binarydata);
-    error.reset(make_seed(mnemonic_str.get(), "", reset_sp(seed)));
+    error.reset(make_seed(param.expected_mnemonic.c_str(), "TREZOR", reset_sp(seed)));
     ASSERT_NE(nullptr, seed);
     EXPECT_EQ(to_binary_data(param.expected_seed), *seed);
+}
+
+GTEST_TEST(MnemonicTest, empty_null_password)
+{
+    auto mnemonic_str = null_unique_ptr<const char>(free_string);
+    auto error = null_unique_ptr<Error>(free_error);
+
+    error.reset(make_mnemonic(dummy_entropy_source, reset_sp(mnemonic_str)));
+    ASSERT_NE(nullptr, mnemonic_str);
+
+    auto empty_pass_seed = null_unique_ptr<BinaryData>(free_binarydata);
+    error.reset(make_seed(mnemonic_str.get(), "", reset_sp(empty_pass_seed)));
+    ASSERT_NE(nullptr, empty_pass_seed);
+
+    auto null_pass_seed = null_unique_ptr<BinaryData>(free_binarydata);
+    error.reset(make_seed(mnemonic_str.get(), nullptr, reset_sp(null_pass_seed)));
+    ASSERT_NE(nullptr, null_pass_seed);
+
+    ASSERT_EQ(*null_pass_seed, *empty_pass_seed);
 }
 
 GTEST_TEST(MnemonicInvalidArgs, make_mnemonic)
@@ -277,7 +277,7 @@ GTEST_TEST(MnemonicInvalidArgs, make_mnemonic)
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, mnemonic_str);
 
-    error.reset(make_mnemonic(dummyEntropySource, nullptr));
+    error.reset(make_mnemonic(dummy_entropy_source, nullptr));
     EXPECT_NE(nullptr, error);
 }
 
@@ -328,3 +328,4 @@ GTEST_TEST(MnemonicInvalidArgs, seed_to_string)
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, seed_str);
 }
+
