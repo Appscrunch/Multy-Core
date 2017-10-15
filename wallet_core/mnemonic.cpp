@@ -18,31 +18,33 @@ using namespace wallet_core::internal;
 
 Error* make_mnemonic(EntropySource entropy_source, const char ** mnemonic)
 {
-    static const size_t entropy_size = BIP39_ENTROPY_LEN_256;
+    static const size_t entropy_size = BIP39_ENTROPY_LEN_320;
     unsigned char entropy[entropy_size] = {'\0'};
 
     ARG_CHECK(entropy_source);
     ARG_CHECK(mnemonic);
 
-    if (entropy_source(entropy_size, &entropy) != entropy_size)
+    try
     {
-        return make_error(ERROR_BAD_ENTROPY,
-                "Unable to get required amount of entropy");
-    }
+        if (entropy_source(entropy_size, &entropy) == 0)
+        {
+            return make_error(ERROR_BAD_ENTROPY,
+                    "Unable to get required amount of entropy");
+        }
 
-    const words* dictionary = nullptr;
-    int result = bip39_get_wordlist(nullptr, &dictionary);
-    if (result != WALLY_OK)
-    {
-        return internal_make_error(result, "Failed to obtain wordlist");
+        const words* dictionary = nullptr;
+        throw_if_wally_error(bip39_get_wordlist(nullptr, &dictionary),
+                "Failed to obtain wordlist");
+        char* out = nullptr;
+        throw_if_wally_error(
+                bip39_mnemonic_from_bytes(dictionary, entropy, entropy_size, &out),
+                "Failed to generated mnemonic");
+        *mnemonic = out;
     }
-    char* out = nullptr;
-    result = bip39_mnemonic_from_bytes(dictionary, entropy, entropy_size, &out);
-    if (result != WALLY_OK)
+    catch(...)
     {
-        return internal_make_error(result, "Failed to generated mnemonic");
+        return exception_to_error();
     }
-    *mnemonic = out;
 
     return nullptr;
 }
