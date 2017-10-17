@@ -1,5 +1,6 @@
 #include "utility.h"
 
+#include "internal/key.h"
 #include "wally_core.h"
 
 #include <string.h>
@@ -55,4 +56,9 @@ bool operator==(const BinaryData& lhs, const BinaryData& rhs)
 {
     return lhs.len == rhs.len
             && memcmp(lhs.data, rhs.data, lhs.len) == 0;
+}
+
+bool operator==(const Key& lhs, const Key& rhs)
+{
+    return memcmp(&lhs, &rhs, sizeof(lhs)) == 0;
 }

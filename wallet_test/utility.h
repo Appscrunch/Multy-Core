@@ -9,6 +9,8 @@
 
 #define E(statement) wallet_core::internal::throw_if_wally_error((statement), #statement)
 
+struct Key;
+
 namespace test_utility
 {
 typedef std::vector<unsigned char> bytes;
@@ -20,6 +22,7 @@ BinaryData to_binary_data(const bytes& data);
 } // test_utility
 
 bool operator==(const BinaryData& lhs, const BinaryData& rhs);
+bool operator==(const Key& lhs, const Key& rhs);
 inline bool operator!=(const BinaryData& lhs, const BinaryData& rhs)
 {
     return !(lhs == rhs);
