@@ -3,6 +3,7 @@
 #include "utility.h"
 #include "bip39_test_cases.h"
 
+#include "internal/account_base.h"
 #include "internal/key.h"
 #include "internal/utility.h"
 
@@ -14,6 +15,18 @@
 namespace
 {
 using namespace test_utility;
+using namespace wallet_core::internal;
+
+std::ostream& operator<<(std::ostream& ostr, HDPath const& path)
+{
+    ostr << "m";
+    for (const auto i : path)
+    {
+        ostr << "/" << i;
+    }
+    return ostr;
+}
+
 } // namespace
 
 namespace std
@@ -50,5 +63,13 @@ void PrintTo(const BIP39TestCase& e, std::ostream* out)
          << "\tmnemonic: \"" << e.mnemonic << "\",\n"
          << "\tseed: " << e.seed << ",\n"
          << "\troot key: " << e.root_key << "\n"
+         << "}";
+}
+
+void PrintTo(const Account& a, std::ostream* out)
+{
+    *out << "Account{\n"
+         << "\tcurrency: " << a.get_currency() << ",\n"
+         << "\tpath: " << a.get_path() << "\n"
          << "}";
 }

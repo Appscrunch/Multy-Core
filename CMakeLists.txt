@@ -21,8 +21,9 @@ if(DEFINED WITH_TESTS)
         wallet
         PRIVATE
         ./wallet_test/run_tests.cpp
-        ./wallet_test/test_mnemonic.cpp
+        ./wallet_test/test_account.cpp
         ./wallet_test/test_keys.cpp
+        ./wallet_test/test_mnemonic.cpp
         ./wallet_test/test_utility.cpp
         ./wallet_test/value_printers.cpp
         ./wallet_test/utility.cpp

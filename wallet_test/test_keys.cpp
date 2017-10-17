@@ -15,7 +15,6 @@ namespace
 {
 using namespace wallet_core::internal;
 using namespace test_utility;
-typedef std::vector<unsigned char> bytes;
 
 Key make_dummy_key()
 {
@@ -32,7 +31,7 @@ class ValidKeysTestP : public ::testing::TestWithParam<BIP39TestCase>
 INSTANTIATE_TEST_CASE_P(empty, ValidKeysTestP,
         ::testing::ValuesIn(BIP39_DEFAULT_TEST_CASES));
 
-TEST_P(ValidKeysTestP, Test)
+TEST_P(ValidKeysTestP, DISABLED_Test)
 {
     const BIP39TestCase& param = GetParam();
     const bytes seed_data = from_hex(param.seed);
