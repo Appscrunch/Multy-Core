@@ -66,7 +66,6 @@ protected:
     virtual AccountAddressPtr make_address(const Key& parent_key, uint32_t index) = 0;
 
 private:
-
     KeyPtr m_account_key;
     const Currency m_currency;
     HDPath m_bip44_path;

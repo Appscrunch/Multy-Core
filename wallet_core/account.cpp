@@ -47,11 +47,14 @@ Error* make_account(const Key* master_key, Currency currency, uint32_t index,
 
 Error* get_account_address_key(
         Account* account,
-        AddressType type,
+        AddressType address_type,
         uint32_t index,
         Key** key)
 {
     ARG_CHECK(account != nullptr);
+    ARG_CHECK(address_type == ADDRESS_EXTERNAL
+            || address_type == ADDRESS_INTERNAL);
+    ARG_CHECK(index < HARDENED_INDEX_BASE);
     ARG_CHECK(key != nullptr);
 
     try
@@ -77,20 +80,22 @@ Error* get_account_address_key(
     return nullptr;
 }
 
-Error* get_account_address(
+Error* get_account_address_string(
         Account* account,
-        AddressType type,
+        AddressType address_type,
         uint32_t index,
-        char** address)
+        const char** address)
 {
     ARG_CHECK(account);
+    ARG_CHECK(address_type == ADDRESS_EXTERNAL
+            || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
     ARG_CHECK(address);
 
     try
     {
         *address = copy_string(
-                account->get_address(type, index).get_address_string().c_str());
+                account->get_address(address_type, index).get_address_string().c_str());
     }
     catch(...)
     {
@@ -102,18 +107,20 @@ Error* get_account_address(
 
 Error* get_account_address_path(
         Account* account,
-        AddressType type,
+        AddressType address_type,
         uint32_t index,
-        char** address_path)
+        const char** address_path)
 {
     ARG_CHECK(account);
+    ARG_CHECK(address_type == ADDRESS_EXTERNAL
+            || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
     ARG_CHECK(address_path);
 
     try
     {
         *address_path = copy_string(
-                account->get_address(type, index).get_path().c_str());
+                account->get_address(address_type, index).get_path().c_str());
     }
     catch(...)
     {

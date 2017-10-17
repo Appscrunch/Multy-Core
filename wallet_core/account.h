@@ -34,9 +34,9 @@ enum AddressType
 Error* make_account(const Key* master_key, Currency currency, uint32_t index,
                     Account** account);
 
-Error* get_account_address_key(Account* account, AddressType type, uint32_t index, Key** key);
-Error* get_account_address(Account* account, AddressType type, uint32_t index, char** address);
-Error* get_account_address_path(Account* account, AddressType type, uint32_t index, char** address_path);
+Error* get_account_address_key(Account* account, AddressType address_type, uint32_t index, Key** key);
+Error* get_account_address_string(Account* account, AddressType address_type, uint32_t index, const char** address);
+Error* get_account_address_path(Account* account, AddressType address_type, uint32_t index, const char** address_path);
 Error* get_account_currency(Account* account, Currency* currency);
 
 void free_account(Account*);
