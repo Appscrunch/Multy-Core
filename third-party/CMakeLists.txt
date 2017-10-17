@@ -1,15 +1,36 @@
-if (DEFINED LIBWALLY_BIN_PATH)
+if (LIBWALLY_BIN_PATH)
     # wally is prebuild
-    add_library(wally SHARED IMPORTED)
-    if (DEFINED ANDROID_ABI)
+    add_library(wally SHARED IMPORTED GLOBAL)
+    message("ANDROID_ABI : ${ANDROID_ABI}")
+    if (ANDROID_ABI)
         set_target_properties(wally PROPERTIES IMPORTED_LOCATION
-            "${LIBWALLY_BIN_PATH}/${ANDROID_ABI}/libwallycore.so")
+            ${LIBWALLY_BIN_PATH}/${ANDROID_ABI}/libwallycore.so)
     else()
         set_target_properties(wally PROPERTIES IMPORTED_LOCATION
-            "${LIBWALLY_BIN_PATH}/libwallycore.so")
+            ${LIBWALLY_BIN_PATH}/libwallycore.so)
     endif()
-else(DEFINED LIBWALLY_BIN_PATH)
+    message("Using prebuild libwally-core from ${LIBWALLY_BIN_PATH}")
+else(LIBWALLY_BIN_PATH)
 
+if(LIBSECP256K1_BIN)
+    add_library(secp256k1 SHARED IMPORTED GLOBAL)
+    set_target_properties(secp256k1
+        PROPERTIES IMPORTED_LOCATION
+        ${LIBSECP256K1_BIN})
+    message("Using prebuild secp256k1 ${LIBWALLY_BIN}")
+
+elseif (LIBSECP256K1_BIN_PATH)
+    add_library(secp256k1 SHARED IMPORTED GLOBAL)
+    if (ANDROID_ABI)
+        set_target_properties(secp256k1 PROPERTIES IMPORTED_LOCATION
+            ${LIBSECP256K1_BIN_PATH}/${ANDROID_ABI}/secp256k1.so)
+    else()
+        set_target_properties(secp256k1 PROPERTIES IMPORTED_LOCATION
+            ${LIBSECP256K1_BIN_PATH}/secp256k1.so)
+    endif()
+    message("Using prebuild secp256k1 from ${LIBSECP256K1_BIN_PATH}")
+
+else(LIBSECP256K1_BIN)
 # secp256k1 cmake-stuff was inspired by
 # https://github.com/chfast/secp256k1/blob/cb5dc20ecc116d27452f8ecb1ae50205834da172/CMakeLists.txt
 add_library(secp256k1 SHARED
@@ -42,6 +63,7 @@ target_compile_definitions(secp256k1
     PUBLIC -DUSE_NUM_NONE=1 -DUSE_FIELD_5X52=1 -DUSE_FIELD_INV_BUILTIN=1 -DUSE_SCALAR_4X64=1 -DUSE_SCALAR_INV_BUILTIN=1 -DHAVE___INT128=1 -DVERIFY=1
     PRIVATE -DENABLE_MODULE_ECDH -DENABLE_MODULE_RECOVERY -DENABLE_MODULE_GENERATOR -DENABLE_MODULE_RANGEPROOF -DENABLE_MODULE_SURJECTIONPROOF
 )
+endif(LIBSECP256K1_BIN)
 
 set(wally_sources
     libwally-core/src/aes.c
@@ -102,7 +124,6 @@ set(wally_sources
 )
 
 add_library(wally SHARED ${wally_sources})
-set_target_properties(wally PROPERTIES IMPORTED_LOCATION "${WALLY_LIB_PATH}")
 target_include_directories(wally PRIVATE
     .
     libwally-core
@@ -112,7 +133,8 @@ target_include_directories(wally PRIVATE
     libwally-core/src/secp256k1/include
 )
 target_link_libraries(wally secp256k1)
-endif(DEFINED LIBWALLY_BIN_PATH)
+
+endif(LIBWALLY_BIN_PATH)
 
 if(DEFINED WITH_TESTS)
     add_subdirectory(googletest)
