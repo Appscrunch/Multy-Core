@@ -23,15 +23,15 @@ Key make_dummy_key()
     return result;
 }
 
-class ValidKeysTestP : public ::testing::TestWithParam<BIP39TestCase>
+class KeysTestValidCasesP : public ::testing::TestWithParam<BIP39TestCase>
 {};
 
 } // namespace
 
-INSTANTIATE_TEST_CASE_P(empty, ValidKeysTestP,
+INSTANTIATE_TEST_CASE_P(BIP39, KeysTestValidCasesP,
         ::testing::ValuesIn(BIP39_DEFAULT_TEST_CASES));
 
-TEST_P(ValidKeysTestP, DISABLED_Test)
+TEST_P(KeysTestValidCasesP, Test)
 {
     const BIP39TestCase& param = GetParam();
     const bytes seed_data = from_hex(param.seed);
@@ -50,7 +50,7 @@ TEST_P(ValidKeysTestP, DISABLED_Test)
     EXPECT_STREQ(param.root_key, key_string.get());
 }
 
-GTEST_TEST(KeysInvalidArgs, make_master_key)
+GTEST_TEST(KeysTestInvalidArgs, make_master_key)
 {
     const unsigned char data_vals[] = {1U, 2U, 3U, 4U};
     const BinaryData data {data_vals, 3};
@@ -71,7 +71,7 @@ GTEST_TEST(KeysInvalidArgs, make_master_key)
     EXPECT_EQ(nullptr, key);
 }
 
-GTEST_TEST(KeysInvalidArgs, make_child_key)
+GTEST_TEST(KeysTestInvalidArgs, make_child_key)
 {
     const KeyType INVALID_KEY_TYPE = static_cast<KeyType>(-1);
     const Key parent_key = make_dummy_key();

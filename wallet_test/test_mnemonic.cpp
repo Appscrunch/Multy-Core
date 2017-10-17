@@ -54,15 +54,15 @@ struct MnemonicTestCase
     {}
 };
 
-class ValidMnemonicTestP : public ::testing::TestWithParam<BIP39TestCase>
+class MnemonicTestValidCasesP : public ::testing::TestWithParam<BIP39TestCase>
 {};
 
 } // namespace
 
-INSTANTIATE_TEST_CASE_P(empty, ValidMnemonicTestP,
+INSTANTIATE_TEST_CASE_P(BIP39, MnemonicTestValidCasesP,
         ::testing::ValuesIn(BIP39_DEFAULT_TEST_CASES));
 
-TEST_P(ValidMnemonicTestP, Test)
+TEST_P(MnemonicTestValidCasesP, Test)
 {
     const BIP39TestCase& param = GetParam();
     const bytes entropy(from_hex(param.entropy));
@@ -114,7 +114,7 @@ GTEST_TEST(MnemonicTest, empty_null_password)
     ASSERT_EQ(*null_pass_seed, *empty_pass_seed);
 }
 
-GTEST_TEST(MnemonicInvalidArgs, make_mnemonic)
+GTEST_TEST(MnemonicTestInvalidArgs, make_mnemonic)
 {
     auto mnemonic_str = null_unique_ptr<const char>(free_string);
     auto error = null_unique_ptr<Error>(free_error);
@@ -127,7 +127,7 @@ GTEST_TEST(MnemonicInvalidArgs, make_mnemonic)
     EXPECT_NE(nullptr, error);
 }
 
-GTEST_TEST(MnemonicInvalidArgs, make_seed)
+GTEST_TEST(MnemonicTestInvalidArgs, make_seed)
 {
     auto binary_data = null_unique_ptr<BinaryData>(free_binarydata);
     auto error = null_unique_ptr<Error>(free_error);
@@ -149,7 +149,7 @@ GTEST_TEST(MnemonicInvalidArgs, make_seed)
     EXPECT_EQ(nullptr, binary_data);
 }
 
-GTEST_TEST(MnemonicInvalidArgs, seed_to_string)
+GTEST_TEST(MnemonicTestInvalidArgs, seed_to_string)
 {
     unsigned char data_vals[] = {1U, 2U, 3U, 4U};
     const BinaryData data {data_vals, 3};
