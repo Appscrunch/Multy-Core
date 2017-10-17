@@ -26,62 +26,76 @@ Error* make_master_key(const BinaryData* seed, Key** master_key)
     ARG_CHECK(seed);
     ARG_CHECK(master_key);
 
-    auto key = null_unique_ptr<Key>(free_key);
-    const int result = bip32_key_from_seed(seed->data, seed->len,
-            BIP32_VER_MAIN_PRIVATE, 0, &key->key);
-    if (result == WALLY_ERROR)
+    try
     {
-        return make_error(ERROR_BAD_ENTROPY,
-                "Can't generate master key with given entropy");
-    } else if (result != WALLY_OK)
-    {
-        return internal_make_error(result, "Failed to generate master key");
+        auto key = null_unique_ptr<Key>(free_key);
+        key.reset(new Key);
+        const int result = bip32_key_from_seed(seed->data, seed->len,
+                BIP32_VER_MAIN_PRIVATE, 0, &key->key);
+        if (result == WALLY_ERROR)
+        {
+            return make_error(ERROR_BAD_ENTROPY,
+                    "Can't generate master key with given entropy");
+        }
+        throw_if_wally_error(result, "Failed to generate master key");
+        *master_key = key.release();
     }
-    *master_key = key.release();
+    catch (...)
+    {
+        return exception_to_error();
+    }
     return nullptr;
 }
 
 Error* make_child_key(const Key* parent_key, KeyType type,
         uint32_t chain_code, Key** child_key)
 {
-    ARG_CHECK(parent_key);
-    ARG_CHECK(child_key);
-
-    auto key = null_unique_ptr<Key>(free_key);
-    const int result = bip32_key_from_parent(&parent_key->key, chain_code, type,
-            &key->key);
-    if (result != WALLY_OK)
+    try
     {
-        return internal_make_error(result, "Failed to make child key");
-    }
+        ARG_CHECK(parent_key);
+        ARG_CHECK(child_key);
 
-    *child_key = key.release();
+        auto key = null_unique_ptr<Key>(free_key);
+        key.reset(new Key);
+        throw_if_wally_error(
+                bip32_key_from_parent(&parent_key->key, chain_code, type,
+                        &key->key),
+                "Failed to make child key");
+
+        *child_key = key.release();
+    }
+    catch (...)
+    {
+        return exception_to_error();
+    }
     return nullptr;
 }
 
 Error* key_to_base58(const Key* key, KeyType type, const char **str)
 {
-    ARG_CHECK(key);
-    ARG_CHECK(str);
-
     static const size_t size = BIP32_SERIALIZED_LEN;
     unsigned char serialized_key[size];
 
-    const uint32_t flag = (type == KEY_TYPE_PRIVATE) ?
-            BIP32_FLAG_KEY_PRIVATE : BIP32_FLAG_KEY_PUBLIC;
-    int result = bip32_key_serialize(&key->key, flag, serialized_key, size);
-    if (result != WALLY_OK)
-    {
-        return internal_make_error(result,
-                "Failed to convert key to serialize key");
-    }
-    result = wally_base58_from_bytes(serialized_key, size, 0,
-            const_cast<char**>(str));
-    if (result != WALLY_OK)
-    {
-        return internal_make_error(result, "Failed to covert key to string");
-    }
+    ARG_CHECK(key);
+    ARG_CHECK(str);
 
+    try
+    {
+        const uint32_t flag = (type == KEY_TYPE_PRIVATE) ?
+                BIP32_FLAG_KEY_PRIVATE : BIP32_FLAG_KEY_PUBLIC;
+        throw_if_wally_error(
+                bip32_key_serialize(&key->key, flag, serialized_key, size),
+                "Failed to serialize key");
+
+        throw_if_wally_error(
+                wally_base58_from_bytes(serialized_key, size, 0,
+                        const_cast<char**>(str)),
+                "Failed to covert key to string");
+    }
+    catch (...)
+    {
+        return exception_to_error();
+    }
     return nullptr;
 }
 
