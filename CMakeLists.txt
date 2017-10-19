@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.1)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(LIBWALLY_BIN "" CACHE FILEPATH "Path to prebuild libwally-core")
+set(LIBWALLY_BIN_PATH "" CACHE PATH "Path to directory with prebuild libwally-core")
+
 project(wallet)
 
 add_executable(

@@ -1,16 +1,27 @@
-if (LIBWALLY_BIN_PATH)
-    # wally is prebuild
-    add_library(wally SHARED IMPORTED GLOBAL)
+if(LIBWALLY_BIN)
+    if (IOS_PLATFORM)
+        add_library(libwally-core STATIC IMPORTED GLOBAL)
+    else(IOS_PLATFORM)
+        add_library(libwally-core SHARED IMPORTED GLOBAL)
+    endif(IOS_PLATFORM)
+
+    set_target_properties(libwally-core PROPERTIES IMPORTED_LOCATION
+        ${LIBWALLY_BIN}
+    )
+    message("Using prebuild libwally-core : ${LIBWALLY_BIN}")
+elseif()
+    add_library(libwally-core SHARED IMPORTED GLOBAL)
     message("ANDROID_ABI : ${ANDROID_ABI}")
+    # TODO: use FIND_LIBRARY
     if (ANDROID_ABI)
-        set_target_properties(wally PROPERTIES IMPORTED_LOCATION
+        set_target_properties(libwally-core PROPERTIES IMPORTED_LOCATION
             ${LIBWALLY_BIN_PATH}/${ANDROID_ABI}/libwallycore.so)
     else()
-        set_target_properties(wally PROPERTIES IMPORTED_LOCATION
+        set_target_properties(libwally-core PROPERTIES IMPORTED_LOCATION
             ${LIBWALLY_BIN_PATH}/libwallycore.so)
     endif()
-    message("Using prebuild libwally-core from ${LIBWALLY_BIN_PATH}")
-else(LIBWALLY_BIN_PATH)
+    message("Found prebuild libwally-core at : ${LIBWALLY_BIN_PATH}")
+else()
 
 if(LIBSECP256K1_BIN)
     add_library(secp256k1 SHARED IMPORTED GLOBAL)
@@ -30,7 +41,9 @@ elseif (LIBSECP256K1_BIN_PATH)
     endif()
     message("Using prebuild secp256k1 from ${LIBSECP256K1_BIN_PATH}")
 
-else(LIBSECP256K1_BIN)
+else()
+
+message("Building libsecp256k1 and libwally-core from source")
 # secp256k1 cmake-stuff was inspired by
 # https://github.com/chfast/secp256k1/blob/cb5dc20ecc116d27452f8ecb1ae50205834da172/CMakeLists.txt
 add_library(secp256k1 SHARED
@@ -63,7 +76,7 @@ target_compile_definitions(secp256k1
     PUBLIC -DUSE_NUM_NONE=1 -DUSE_FIELD_5X52=1 -DUSE_FIELD_INV_BUILTIN=1 -DUSE_SCALAR_4X64=1 -DUSE_SCALAR_INV_BUILTIN=1 -DHAVE___INT128=1 -DVERIFY=1
     PRIVATE -DENABLE_MODULE_ECDH -DENABLE_MODULE_RECOVERY -DENABLE_MODULE_GENERATOR -DENABLE_MODULE_RANGEPROOF -DENABLE_MODULE_SURJECTIONPROOF
 )
-endif(LIBSECP256K1_BIN)
+endif()
 
 set(wally_sources
     libwally-core/src/aes.c
@@ -123,8 +136,8 @@ set(wally_sources
 #    libwally-core/src/wrap_js/src/combined_ccan.c
 )
 
-add_library(wally SHARED ${wally_sources})
-target_include_directories(wally PRIVATE
+add_library(libwally-core SHARED ${wally_sources})
+target_include_directories(libwally-core PRIVATE
     .
     libwally-core
     libwally-core/src
@@ -132,9 +145,9 @@ target_include_directories(wally PRIVATE
     libwally-core/src/secp256k1
     libwally-core/src/secp256k1/include
 )
-target_link_libraries(wally secp256k1)
+target_link_libraries(libwally-core secp256k1)
 
-endif(LIBWALLY_BIN_PATH)
+endif()
 
 if(DEFINED WITH_TESTS)
     add_subdirectory(googletest)
