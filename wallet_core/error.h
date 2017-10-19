@@ -1,6 +1,8 @@
 #ifndef WALLET_ERROR_H
 #define WALLET_ERROR_H
 
+#include "wallet_core/api.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -24,10 +26,10 @@ struct Error
     bool owns_message;
 };
 
-Error* make_error(ErrorCode code, const char* message);
-void free_error(Error* error);
+WALLET_CORE_API Error* make_error(ErrorCode code, const char* message);
+WALLET_CORE_API void free_error(Error* error);
 
-Error* internal_make_error(int code, const char* message);
+WALLET_CORE_API Error* internal_make_error(int code, const char* message);
 
 #ifdef __cplusplus
 } // extern "C"

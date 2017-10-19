@@ -1,6 +1,8 @@
 #ifndef WALLET_COMMON_H
 #define WALLET_COMMON_H
 
+#include "wallet_core/api.h"
+
 #include <stddef.h>
 
 #ifdef __cplusplus
@@ -25,8 +27,8 @@ struct BinaryData {
 };
 
 /** Frees BinaryData, can take null */
-void free_binarydata(BinaryData*);
-void free_string(const char* str);
+WALLET_CORE_API void free_binarydata(BinaryData*);
+WALLET_CORE_API void free_string(const char* str);
 
 #ifdef __cplusplus
 } // extern "C"

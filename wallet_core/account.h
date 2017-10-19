@@ -1,6 +1,8 @@
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 
+#include "wallet_core/api.h"
+
 #include <stddef.h>
 #include <stdint.h>
 
@@ -31,15 +33,15 @@ enum AddressType
  * @param index - acccount index
  * @param account - (out) new account
  */
-Error* make_account(const Key* master_key, Currency currency, uint32_t index,
+WALLET_CORE_API Error* make_account(const Key* master_key, Currency currency, uint32_t index,
                     Account** account);
 
-Error* get_account_address_key(Account* account, AddressType address_type, uint32_t index, Key** key);
-Error* get_account_address_string(Account* account, AddressType address_type, uint32_t index, const char** address);
-Error* get_account_address_path(Account* account, AddressType address_type, uint32_t index, const char** address_path);
-Error* get_account_currency(Account* account, Currency* currency);
+WALLET_CORE_API Error* get_account_address_key(Account* account, AddressType address_type, uint32_t index, Key** key);
+WALLET_CORE_API Error* get_account_address_string(Account* account, AddressType address_type, uint32_t index, const char** address);
+WALLET_CORE_API Error* get_account_address_path(Account* account, AddressType address_type, uint32_t index, const char** address_path);
+WALLET_CORE_API Error* get_account_currency(Account* account, Currency* currency);
 
-void free_account(Account*);
+WALLET_CORE_API void free_account(Account*);
 
 #ifdef __cplusplus
 } // extern "C"
