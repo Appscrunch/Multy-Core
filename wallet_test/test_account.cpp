@@ -1,11 +1,11 @@
-#include "account.h"
-#include "internal/key.h"
-#include "internal/account_base.h"
+#include "wallet_core/account.h"
 
-#include "value_printers.h"
+#include "wallet_core/internal/key.h"
+#include "wallet_core/internal/account_base.h"
 
-#include "bip39_test_cases.h"
-#include "utility.h"
+#include "wallet_test/value_printers.h"
+#include "wallet_test/bip39_test_cases.h"
+#include "wallet_test/utility.h"
 
 #include "gtest/gtest.h"
 

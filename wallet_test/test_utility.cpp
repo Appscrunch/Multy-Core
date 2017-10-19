@@ -1,7 +1,7 @@
 #ifndef TEST_UTILITY_CPP
 #define TEST_UTILITY_CPP
 
-#include "internal/utility.h"
+#include "wallet_core/internal/utility.h"
 
 #include "gtest/gtest.h"
 

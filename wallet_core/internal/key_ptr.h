@@ -1,7 +1,7 @@
 #ifndef WALLET_KEY_PTR_H
 #define WALLET_KEY_PTR_H
 
-#include "keys.h"
+#include "wallet_core/keys.h"
 
 #include <memory>
 

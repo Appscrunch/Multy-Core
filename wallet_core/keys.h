@@ -1,5 +1,5 @@
-#ifndef WALLET_KEYS_H
-#define WALLET_KEYS_H
+#ifndef WALLET_CORE_KEYS_H
+#define WALLET_CORE_KEYS_H
 
 #include "wallet_core/api.h"
 
@@ -30,4 +30,4 @@ WALLET_CORE_API void free_key(Key* root);
 } // extern "C"
 #endif
 
-#endif // WALLET_KEYS_H
+#endif // WALLET_CORE_KEYS_H

@@ -1,10 +1,10 @@
-#ifndef WALLET_ACCOUNT_BASE_H
-#define WALLET_ACCOUNT_BASE_H
+#ifndef WALLET_CORE_ACCOUNT_BASE_H
+#define WALLET_CORE_ACCOUNT_BASE_H
 
-#include "account.h"
-#include "keys.h"
+#include "wallet_core/account.h"
+#include "wallet_core/keys.h"
 
-#include "internal/key_ptr.h"
+#include "wallet_core/internal/key_ptr.h"
 
 #include <array>
 #include <memory>
@@ -74,4 +74,4 @@ private:
     std::unordered_map<uint64_t, AccountAddressPtr> m_addresses;
 };
 
-#endif // WALLET_ACCOUNT_BASE_H
+#endif // WALLET_CORE_ACCOUNT_BASE_H

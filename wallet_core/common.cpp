@@ -1,4 +1,4 @@
-#include "common.h"
+#include "wallet_core/common.h"
 
 #include "wally_core.h"
 

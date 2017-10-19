@@ -13,7 +13,10 @@ add_library(wallet_core
     internal/utility.cpp
 )
 
-target_include_directories(wallet_core PRIVATE ../third-party/libwally-core/include/ .)
 target_compile_definitions(wallet_core PRIVATE BUILDING_WALLET_CORE=1)
+target_include_directories(wallet_core PRIVATE
+    ..
+    ../third-party/libwally-core/include/
+)
 target_link_libraries(wallet_core libwally-core)
 

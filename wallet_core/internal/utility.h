@@ -1,11 +1,11 @@
-#ifndef WALLET_UTILITY_H
-#define WALLET_UTILITY_H
+#ifndef WALLET_CORE_UTILITY_H
+#define WALLET_CORE_UTILITY_H
 
 /** Set of utility functions/classes/etc.
  * Not part of the interface, and should not be used by clients.
  */
 
-#include "error.h"
+#include "wallet_core/error.h"
 
 #include <memory>
 
@@ -101,4 +101,4 @@ inline std::unique_ptr<T, D> null_unique_ptr(D deleter)
 } // namespace internal
 } // namespace wallet_core
 
-#endif // UTILITY_H
+#endif // WALLET_CORE_UTILITY_H

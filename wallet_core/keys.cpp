@@ -1,10 +1,10 @@
-#include "keys.h"
+#include "wallet_core/keys.h"
 
-#include "common.h"
-#include "error.h"
+#include "wallet_core/common.h"
+#include "wallet_core/error.h"
 
-#include "internal/key.h"
-#include "internal/utility.h"
+#include "wallet_core/internal/key.h"
+#include "wallet_core/internal/utility.h"
 
 #include "wally_core.h"
 #include "wally_bip32.h"

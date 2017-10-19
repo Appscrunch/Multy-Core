@@ -1,7 +1,7 @@
-#include "bitcoin_account.h"
+#include "wallet_core/internal/bitcoin_account.h"
 
-#include "internal/key.h"
-#include "internal/utility.h"
+#include "wallet_core/internal/key.h"
+#include "wallet_core/internal/utility.h"
 
 #include "wally_crypto.h"
 

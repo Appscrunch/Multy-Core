@@ -1,10 +1,9 @@
-#include "keys.h"
-#include "internal/key.h"
+#include "wallet_core/keys.h"
+#include "wallet_core/internal/key.h"
 
-#include "value_printers.h"
-
-#include "bip39_test_cases.h"
-#include "utility.h"
+#include "wallet_test/value_printers.h"
+#include "wallet_test/bip39_test_cases.h"
+#include "wallet_test/utility.h"
 
 #include "gtest/gtest.h"
 

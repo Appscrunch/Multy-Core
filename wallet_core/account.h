@@ -1,5 +1,5 @@
-#ifndef ACCOUNT_H
-#define ACCOUNT_H
+#ifndef WALLET_CORE_ACCOUNT_H
+#define WALLET_CORE_ACCOUNT_H
 
 #include "wallet_core/api.h"
 
@@ -47,4 +47,4 @@ WALLET_CORE_API void free_account(Account*);
 } // extern "C"
 #endif
 
-#endif // ACCOUNT_H
+#endif // WALLET_CORE_ACCOUNT_H

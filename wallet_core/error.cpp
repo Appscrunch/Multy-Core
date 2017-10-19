@@ -1,6 +1,6 @@
-#include "error.h"
+#include "wallet_core/error.h"
 
-#include "common.h"
+#include "wallet_core/common.h"
 
 #include "wally_core.h"
 

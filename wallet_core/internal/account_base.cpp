@@ -1,6 +1,6 @@
-#include "account_base.h"
+#include "wallet_core/internal/account_base.h"
 
-#include "internal/utility.h"
+#include "wallet_core/internal/utility.h"
 
 namespace
 {

@@ -1,8 +1,8 @@
-#ifndef WALLET_MNEMONIC_H
-#define WALLET_MNEMONIC_H
+#ifndef WALLET_CORE_MNEMONIC_H
+#define WALLET_CORE_MNEMONIC_H
 
 #include "wallet_core/api.h"
-#include "common.h"
+#include "wallet_core/common.h"
 
 #include <stdint.h>
 #include <stddef.h>
@@ -50,4 +50,4 @@ WALLET_CORE_API void free_mnemonic(const char* mnemonic);
 } // extern "C"
 #endif
 
-#endif // WALLET_SEED_GENERATOR_H
+#endif // WALLET_CORE_MNEMONIC_H

@@ -1,9 +1,8 @@
-#include "mnemonic.h"
+#include "wallet_core/mnemonic.h"
 
-#include "value_printers.h"
-
-#include "bip39_test_cases.h"
-#include "utility.h"
+#include "wallet_test/value_printers.h"
+#include "wallet_test/bip39_test_cases.h"
+#include "wallet_test/utility.h"
 
 #include "gtest/gtest.h"
 

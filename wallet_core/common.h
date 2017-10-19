@@ -1,5 +1,5 @@
-#ifndef WALLET_COMMON_H
-#define WALLET_COMMON_H
+#ifndef WALLET_CORE_COMMON_H
+#define WALLET_CORE_COMMON_H
 
 #include "wallet_core/api.h"
 
@@ -34,4 +34,4 @@ WALLET_CORE_API void free_string(const char* str);
 } // extern "C"
 #endif
 
-#endif // WALLET_COMMON_H
+#endif // WALLET_CORE_COMMON_H

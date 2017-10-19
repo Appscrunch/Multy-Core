@@ -1,5 +1,5 @@
-#ifndef WALLET_ERROR_H
-#define WALLET_ERROR_H
+#ifndef WALLET_CORE_ERROR_H
+#define WALLET_CORE_ERROR_H
 
 #include "wallet_core/api.h"
 
@@ -35,4 +35,4 @@ WALLET_CORE_API Error* internal_make_error(int code, const char* message);
 } // extern "C"
 #endif
 
-#endif // WAALLET_ERROR_H
+#endif // WALLET_CORE_ERROR_H

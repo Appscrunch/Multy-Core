@@ -1,8 +1,6 @@
-#include "run_tests.h"
+#include "wallet_test/run_tests.h"
 
 #include "gtest/gtest.h"
-
-using namespace std;
 
 int run_tests(int argc, char **argv)
 {

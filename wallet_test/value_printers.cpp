@@ -1,14 +1,14 @@
 #include "value_printers.h"
 
-#include "utility.h"
-#include "bip39_test_cases.h"
+#include "wallet_test/utility.h"
+#include "wallet_test/bip39_test_cases.h"
 
-#include "internal/account_base.h"
-#include "internal/key.h"
-#include "internal/utility.h"
+#include "wallet_core/error.h"
+#include "wallet_core/common.h"
 
-#include "error.h"
-#include "common.h"
+#include "wallet_core/internal/account_base.h"
+#include "wallet_core/internal/key.h"
+#include "wallet_core/internal/utility.h"
 
 #include "wally_elements.h"
 
