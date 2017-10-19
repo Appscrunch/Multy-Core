@@ -150,5 +150,6 @@ target_link_libraries(libwally-core secp256k1)
 endif()
 
 if(DEFINED WITH_TESTS)
+    set(BUILD_SHARED_LIBS YES)
     add_subdirectory(googletest)
 endif(DEFINED WITH_TESTS)

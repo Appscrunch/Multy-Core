@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(WITH_TESTS "Build tests shared library (DLL)" NO)
 set(LIBWALLY_BIN "" CACHE FILEPATH "Path to prebuild libwally-core")
 set(LIBWALLY_BIN_PATH "" CACHE PATH "Path to directory with prebuild libwally-core")
 
@@ -18,34 +19,9 @@ target_include_directories(wallet PRIVATE .)
 add_subdirectory(wallet_core)
 add_subdirectory(third-party)
 
-if(DEFINED WITH_TESTS)
+if(WITH_TESTS)
     target_compile_definitions(wallet PRIVATE WITH_TESTS)
-
-    target_sources(
-        wallet
-        PRIVATE
-        ./wallet_test/run_tests.cpp
-        ./wallet_test/test_account.cpp
-        ./wallet_test/test_keys.cpp
-        ./wallet_test/test_mnemonic.cpp
-        ./wallet_test/test_utility.cpp
-        ./wallet_test/value_printers.cpp
-        ./wallet_test/utility.cpp
-    )
-
-    target_include_directories(
-        wallet
-        PRIVATE
-        wallet_core
-        third-party/googletest/googletest/include
-        third-party/googletest/googlemock/include
-        third-party/libwally-core/include
-    )
-
-    target_link_libraries(
-        wallet
-        PRIVATE
-        gtest
-    )
-endif(DEFINED WITH_TESTS)
+    add_subdirectory(wallet_test)
+    target_link_libraries(wallet PRIVATE wallet_test)
+endif()
 
