@@ -10,6 +10,7 @@ add_library(wallet_core
     mnemonic.cpp
     internal/account_base.cpp
     internal/bitcoin_account.cpp
+    internal/ethereum_account.cpp
     internal/utility.cpp
 )
 
@@ -17,6 +18,9 @@ target_compile_definitions(wallet_core PRIVATE BUILDING_WALLET_CORE=1)
 target_include_directories(wallet_core PRIVATE
     ..
     ../third-party/libwally-core/include/
+    ../third-party/libwally-core/src/ccan
+    ../third-party
 )
-target_link_libraries(wallet_core libwally-core)
+
+target_link_libraries(wallet_core libwally-core keccak-tiny)
 

@@ -70,6 +70,6 @@ void PrintTo(const Account& a, std::ostream* out)
 {
     *out << "Account{\n"
          << "\tcurrency: " << a.get_currency() << ",\n"
-         << "\tpath: " << a.get_path() << "\n"
+         << "\tpath: " << a.get_path_string() << "\n"
          << "}";
 }

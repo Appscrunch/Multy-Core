@@ -45,7 +45,7 @@ public:
     {
         return address;
     }
-    std::string get_path() const override
+    std::string get_path_string() const override
     {
         return path;
     }

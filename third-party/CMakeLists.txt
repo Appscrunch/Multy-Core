@@ -149,6 +149,17 @@ target_link_libraries(libwally-core secp256k1)
 
 endif()
 
+add_library(keccak-tiny STATIC
+    ../third-party/keccak-tiny/keccak-tiny.c
+)
+
+set_target_properties(keccak-tiny PROPERTIES
+    C_STANDARD 11
+    POSITION_INDEPENDENT_CODE ON
+)
+
+
+
 if(DEFINED WITH_TESTS)
     set(BUILD_SHARED_LIBS YES)
     add_subdirectory(googletest)

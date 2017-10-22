@@ -51,16 +51,46 @@ namespace internal
 {
 
 AccountAddress::AccountAddress(KeyPtr extended_key)
-    : extended_key(std::move(extended_key))
+    : m_extended_key(std::move(extended_key))
 {}
 
 AccountAddress::AccountAddress(const HDPath& path, KeyPtr extended_key)
-    : path(path),
-      extended_key(std::move(extended_key))
+    : m_path(path),
+      m_extended_key(std::move(extended_key))
 {}
 
 AccountAddress::~AccountAddress()
 {}
+
+std::string AccountAddress::get_path_string() const
+{
+    std::string result;
+    result.reserve(m_path.size() * 10);
+    result.append("m");
+    for (const auto& p : get_path())
+    {
+        result.append("/");
+        result.append(std::to_string(p));
+    }
+    return result;
+}
+
+const HDPath& AccountAddress::get_path() const
+{
+    return m_path;
+}
+
+const Key& AccountAddress::get_key() const
+{
+    return *m_extended_key;
+}
+
+HDPath make_child_path(const HDPath& parent_path, uint32_t child_chain_code)
+{
+    HDPath result(parent_path);
+    result.push_back(child_chain_code);
+    return result;
+}
 
 } // namespace wallet_core
 } // namespace internal
@@ -134,7 +164,7 @@ const AccountAddress& Account::get_address(AddressType type, uint32_t index)
     return *result;
 }
 
-const HDPath& Account::get_path() const
+const HDPath& Account::get_path_string() const
 {
     return m_bip44_path;
 }

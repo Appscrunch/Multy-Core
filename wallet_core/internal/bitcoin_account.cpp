@@ -22,10 +22,11 @@ struct BitcoinAddress : public AccountAddress
 
         unsigned char pub_hash[SHA256_LEN] = {'\0'};
         unsigned char hash_hash[HASH160_LEN] = {'\0'};
-        // skip the first byte of the pub_key since it contains prefix.
+        const auto& key = get_key();
         throw_if_wally_error(
-                wally_sha256(&extended_key->key.pub_key[1],
-                        sizeof(extended_key->key.pub_key) - 1,
+                // skip the first byte of the pub_key since it contains prefix.
+                wally_sha256(&key.key.pub_key[1],
+                        sizeof(key.key.pub_key) - 1,
                         pub_hash, sizeof(pub_hash)),
                 "Hashing public key failed");
         throw_if_wally_error(
@@ -41,18 +42,6 @@ struct BitcoinAddress : public AccountAddress
         std::string result(base58_string_ptr.get());
         result.insert(0, 1, '1');
 
-        return result;
-    }
-    std::string get_path() const override
-    {
-        std::string result;
-        result.reserve(100);
-        result.append("m");
-        for (auto p : path)
-        {
-            result.append("/");
-            result.append(std::to_string(p));
-        }
         return result;
     }
 };
@@ -81,7 +70,7 @@ AccountAddressPtr BitcoinAccount::make_address(const Key& parent_key, uint32_t i
                                   reset_sp(address_key)));
 
     return std::unique_ptr<AccountAddress>(new BitcoinAddress(
-            get_path(),
+            make_child_path(get_path_string(), index),
             std::move(address_key)));
 }
 

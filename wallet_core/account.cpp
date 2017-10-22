@@ -6,6 +6,8 @@
 
 #include "wallet_core/internal/account_base.h"
 #include "wallet_core/internal/bitcoin_account.h"
+#include "wallet_core/internal/ethereum_account.h"
+#include "wallet_core/internal/key.h"
 #include "wallet_core/internal/key_ptr.h"
 #include "wallet_core/internal/utility.h"
 
@@ -20,21 +22,27 @@ Error* make_account(const Key* master_key, Currency currency, uint32_t index,
                     Account** new_account)
 {
     ARG_CHECK(master_key != nullptr);
-    ARG_CHECK(new_account != nullptr);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
+    ARG_CHECK(new_account != nullptr);
 
     try
     {
         switch (currency)
         {
             case CURRENCY_BITCOIN:
-                {
-                    *new_account = new BitcoinAccount(*master_key, index);
-                    return nullptr;
-                }
+            {
+                *new_account = new BitcoinAccount(*master_key, index);
+                return nullptr;
+            }
+            case CURRENCY_ETHEREUM:
+            {
+                *new_account = new EthereumAccount(*master_key, index);
+                return nullptr;
+            }
             default:
             {
-                return make_error(ERROR_GENERAL_ERROR, "Currency support not implemented yet");
+                return make_error(ERROR_GENERAL_ERROR,
+                        "Currency not supported yet");
             }
         }
     }
@@ -49,29 +57,19 @@ Error* get_account_address_key(
         Account* account,
         AddressType address_type,
         uint32_t index,
-        Key** key)
+        Key** out_key)
 {
     ARG_CHECK(account != nullptr);
     ARG_CHECK(address_type == ADDRESS_EXTERNAL
             || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
-    ARG_CHECK(key != nullptr);
+    ARG_CHECK(out_key != nullptr);
 
     try
     {
-//        KeyPtr intermediate_key, output_key;
-//        throw_if_error(make_child_key(account->account_key.get(),
-//                                      CHILD_KEY_TYPE_PRIVATE,
-//                                      type,
-//                                      reset_sp(intermediate_key)));
-
-//        throw_if_error(make_child_key(intermediate_key.get(),
-//                                      CHILD_KEY_TYPE_PRIVATE,
-//                                      index,
-//                                      reset_sp(output_key)));
-
-//        *key = output_key.release();
-//        return nullptr;
+        const auto& address = account->get_address(address_type, index);
+        KeyPtr key(new Key(address.get_key()));
+        *out_key = key.release();
     }
     catch (...)
     {
@@ -84,18 +82,18 @@ Error* get_account_address_string(
         Account* account,
         AddressType address_type,
         uint32_t index,
-        const char** address)
+        const char** out_address)
 {
     ARG_CHECK(account);
     ARG_CHECK(address_type == ADDRESS_EXTERNAL
             || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
-    ARG_CHECK(address);
+    ARG_CHECK(out_address);
 
     try
     {
-        *address = copy_string(
-                account->get_address(address_type, index).get_address_string().c_str());
+        const auto& address = account->get_address(address_type, index);
+        *out_address = copy_string(address.get_address_string().c_str());
     }
     catch(...)
     {
@@ -109,18 +107,18 @@ Error* get_account_address_path(
         Account* account,
         AddressType address_type,
         uint32_t index,
-        const char** address_path)
+        const char** out_address_path)
 {
     ARG_CHECK(account);
     ARG_CHECK(address_type == ADDRESS_EXTERNAL
             || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
-    ARG_CHECK(address_path);
+    ARG_CHECK(out_address_path);
 
     try
     {
-        *address_path = copy_string(
-                account->get_address(address_type, index).get_path().c_str());
+        const auto& address = account->get_address(address_type, index);
+        *out_address_path = copy_string(address.get_path_string().c_str());
     }
     catch(...)
     {
@@ -130,12 +128,19 @@ Error* get_account_address_path(
     return nullptr;
 }
 
-Error* get_account_currency(Account* account, Currency* currency)
+Error* get_account_currency(Account* account, Currency* out_currency)
 {
     ARG_CHECK(account);
-    ARG_CHECK(currency);
+    ARG_CHECK(out_currency);
 
-    *currency = account->get_currency();
+    try
+    {
+        *out_currency = account->get_currency();
+    }
+    catch(...)
+    {
+        return exception_to_error();
+    }
     return nullptr;
 }
 
