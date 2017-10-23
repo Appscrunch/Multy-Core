@@ -53,6 +53,8 @@ Error* exception_to_error();
  */
 char* copy_string(const char* str);
 
+char* copy_string(const std::string& str);
+
 /** Convenience to simplify passing C++ smart_pointers (like std::unique_ptr<T>)
  * to C-like functions than take T** and store address of new object there.
  * Should be used in conjunction with reset_sp() function.

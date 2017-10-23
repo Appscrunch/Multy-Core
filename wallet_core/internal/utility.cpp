@@ -11,6 +11,10 @@ namespace wallet_core
 
 namespace internal
 {
+char* copy_string(const std::string& str)
+{
+    return copy_string(str.c_str());
+}
 
 char* copy_string(const char* str)
 {
@@ -25,16 +29,17 @@ char* copy_string(const char* str)
     int result = wally_get_operations(&wally_ops);
     if (result != WALLY_OK || !wally_ops.malloc_fn)
     {
-        return nullptr;
+        throw std::runtime_error("Failed to copy string.");
     }
 
     char* new_message = static_cast<char*>(wally_ops.malloc_fn(len + 1));
     if (!new_message)
     {
-        return nullptr;
+        throw std::runtime_error("Failed to allocate memory.");
     }
 
     memcpy(new_message, str, len);
+    new_message[len] = '\0';
     return new_message;
 }
 

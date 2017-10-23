@@ -93,7 +93,7 @@ Error* get_account_address_string(
     try
     {
         const auto& address = account->get_address(address_type, index);
-        *out_address = copy_string(address.get_address_string().c_str());
+        *out_address = copy_string(address.get_address_string());
     }
     catch(...)
     {
@@ -118,7 +118,7 @@ Error* get_account_address_path(
     try
     {
         const auto& address = account->get_address(address_type, index);
-        *out_address_path = copy_string(address.get_path_string().c_str());
+        *out_address_path = copy_string(address.get_path_string());
     }
     catch(...)
     {
