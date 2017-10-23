@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #ifndef VALUE_PRINTERS_H
 #define VALUE_PRINTERS_H
 
@@ -37,6 +43,5 @@ inline void PrintTo(const std::unique_ptr<T, D>& up, std::ostream* out)
         PrintTo(nullptr, out);
     }
 }
-
 
 #endif // VALUE_PRINTERS_H

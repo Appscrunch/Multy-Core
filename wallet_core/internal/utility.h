@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #ifndef WALLET_CORE_UTILITY_H
 #define WALLET_CORE_UTILITY_H
 
@@ -11,11 +17,15 @@
 
 struct Error;
 
-#define ARG_CHECK(arg) do {\
-    if (!(arg)) {\
-        return make_error(ERROR_INVALID_ARGUMENT, "Argument check failed: " #arg); \
-    }\
-} while (false)
+#define ARG_CHECK(arg)                                                         \
+    do                                                                         \
+    {                                                                          \
+        if (!(arg))                                                            \
+        {                                                                      \
+            return make_error(                                                 \
+                    ERROR_INVALID_ARGUMENT, "Argument check failed: " #arg);   \
+        }                                                                      \
+    } while (false)
 
 namespace wallet_core
 {
@@ -49,7 +59,8 @@ Error* exception_to_error();
 
 /** Convenience function to copy a string.
  * @param str - string to copy, must not be null.
- * @return - copy of a string, must be freed with free_string(), can be null on error.
+ * @return - copy of a string, must be freed with free_string(), can be null on
+ * error.
  */
 char* copy_string(const char* str);
 
@@ -58,7 +69,8 @@ char* copy_string(const std::string& str);
 /** Convenience to simplify passing C++ smart_pointers (like std::unique_ptr<T>)
  * to C-like functions than take T** and store address of new object there.
  * Should be used in conjunction with reset_sp() function.
- * Resets value of smart pointer if it was requested to be converted to pointer-to-pointer (T**)
+ * Resets value of smart pointer if it was requested to be converted to
+ * pointer-to-pointer (T**)
  * and that value was modified during lifetime of the object.
  */
 template <typename SP>
@@ -67,12 +79,12 @@ class UniquePointerUpdater
     typedef typename SP::pointer Pointer;
     SP& sp;
     mutable Pointer p;
+
 public:
     // TODO: change from reference to pointer
-    explicit UniquePointerUpdater(SP& sp)
-        : sp(sp),
-          p(sp.get())
-    {}
+    explicit UniquePointerUpdater(SP& sp) : sp(sp), p(sp.get())
+    {
+    }
     ~UniquePointerUpdater()
     {
         if (p != sp.get())

@@ -1,13 +1,19 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #include "wallet_core/mnemonic.h"
 
-#include "wallet_test/value_printers.h"
 #include "wallet_test/bip39_test_cases.h"
 #include "wallet_test/utility.h"
+#include "wallet_test/value_printers.h"
 
 #include "gtest/gtest.h"
 
-#include <string>
 #include <memory>
+#include <string>
 #include <vector>
 
 namespace
@@ -38,27 +44,34 @@ struct MnemonicTestCase
     const std::string expected_mnemonic;
     const bytes expected_seed;
 
-    MnemonicTestCase(const char* entropy,
+    MnemonicTestCase(
+            const char* entropy,
             const char* expected_mnemonic,
             const char* expected_seed)
-      : entropy(from_hex(entropy)),
-        expected_mnemonic(expected_mnemonic),
-        expected_seed(from_hex(expected_seed))
-    {}
+        : entropy(from_hex(entropy)),
+          expected_mnemonic(expected_mnemonic),
+          expected_seed(from_hex(expected_seed))
+    {
+    }
 
     MnemonicTestCase(const BIP39TestCase& bip39_test_case)
-      : MnemonicTestCase(bip39_test_case.entropy,
-                bip39_test_case.mnemonic,
-                bip39_test_case.seed)
-    {}
+        : MnemonicTestCase(
+                  bip39_test_case.entropy,
+                  bip39_test_case.mnemonic,
+                  bip39_test_case.seed)
+    {
+    }
 };
 
 class MnemonicTestValidCasesP : public ::testing::TestWithParam<BIP39TestCase>
-{};
+{
+};
 
 } // namespace
 
-INSTANTIATE_TEST_CASE_P(BIP39, MnemonicTestValidCasesP,
+INSTANTIATE_TEST_CASE_P(
+        BIP39,
+        MnemonicTestValidCasesP,
         ::testing::ValuesIn(BIP39_DEFAULT_TEST_CASES));
 
 TEST_P(MnemonicTestValidCasesP, Test)
@@ -74,8 +87,7 @@ TEST_P(MnemonicTestValidCasesP, Test)
     ASSERT_EQ(nullptr, mnemonic_str);
     ASSERT_EQ(nullptr, error);
 
-    auto fill_entropy = [](void* data, ::size_t size, void* dest) -> ::size_t
-    {
+    auto fill_entropy = [](void* data, ::size_t size, void* dest) -> ::size_t {
         const bytes* entropy = (const bytes*)(data);
         const size_t result_size = std::min(size, entropy->size());
         memcpy(dest, entropy->data(), result_size);
@@ -107,7 +119,8 @@ GTEST_TEST(MnemonicTest, empty_null_password)
     ASSERT_NE(nullptr, empty_pass_seed);
 
     auto null_pass_seed = null_unique_ptr<BinaryData>(free_binarydata);
-    error.reset(make_seed(mnemonic_str.get(), nullptr, reset_sp(null_pass_seed)));
+    error.reset(
+            make_seed(mnemonic_str.get(), nullptr, reset_sp(null_pass_seed)));
     ASSERT_NE(nullptr, null_pass_seed);
 
     ASSERT_EQ(*null_pass_seed, *empty_pass_seed);
@@ -118,7 +131,9 @@ GTEST_TEST(MnemonicTestInvalidArgs, make_mnemonic)
     auto mnemonic_str = null_unique_ptr<const char>(free_string);
     auto error = null_unique_ptr<Error>(free_error);
 
-    error.reset(make_mnemonic(EntropySource{nullptr, nullptr}, reset_sp(mnemonic_str)));
+    error.reset(
+            make_mnemonic(
+                    EntropySource{nullptr, nullptr}, reset_sp(mnemonic_str)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, mnemonic_str);
 
@@ -151,9 +166,9 @@ GTEST_TEST(MnemonicTestInvalidArgs, make_seed)
 GTEST_TEST(MnemonicTestInvalidArgs, seed_to_string)
 {
     unsigned char data_vals[] = {1U, 2U, 3U, 4U};
-    const BinaryData data {data_vals, 3};
-    const BinaryData null_data {nullptr, 0};
-    const BinaryData zero_len_data {nullptr, 0};
+    const BinaryData data{data_vals, 3};
+    const BinaryData null_data{nullptr, 0};
+    const BinaryData zero_len_data{nullptr, 0};
 
     auto seed_str = null_unique_ptr<const char>(free_string);
     auto error = null_unique_ptr<Error>(free_error);
@@ -173,4 +188,3 @@ GTEST_TEST(MnemonicTestInvalidArgs, seed_to_string)
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, seed_str);
 }
-

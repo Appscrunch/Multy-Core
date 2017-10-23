@@ -1,10 +1,16 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #include "wallet_test/utility.h"
 
 #include "wallet_core/internal/key.h"
 #include "wally_core.h"
 
-#include <string.h>
 #include <memory.h>
+#include <string.h>
 
 namespace
 {
@@ -16,11 +22,12 @@ namespace test_utility
 
 bytes from_hex(const char* hex_str)
 {
-    const size_t expected_size = strlen(hex_str)/2;
+    const size_t expected_size = strlen(hex_str) / 2;
     bytes result(expected_size);
     size_t bytes_written = 0;
 
-    E(wally_hex_to_bytes(hex_str, result.data(), result.size(), &bytes_written));
+    E(wally_hex_to_bytes(
+            hex_str, result.data(), result.size(), &bytes_written));
     result.resize(bytes_written);
 
     return result;
@@ -54,8 +61,7 @@ BinaryData to_binary_data(const bytes& data)
 
 bool operator==(const BinaryData& lhs, const BinaryData& rhs)
 {
-    return lhs.len == rhs.len
-            && memcmp(lhs.data, rhs.data, lhs.len) == 0;
+    return lhs.len == rhs.len && memcmp(lhs.data, rhs.data, lhs.len) == 0;
 }
 
 bool operator==(const Key& lhs, const Key& rhs)

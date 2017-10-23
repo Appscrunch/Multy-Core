@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #ifndef TEST_UTILITY_CPP
 #define TEST_UTILITY_CPP
 
@@ -12,7 +18,8 @@ namespace
 using namespace wallet_core::internal;
 
 struct A
-{};
+{
+};
 
 static const char* const TEST_VALUE1 = "test value1";
 static const char* const TEST_VALUE2 = "test value2";
@@ -20,7 +27,7 @@ static const char* const TEST_VALUE2 = "test value2";
 
 GTEST_TEST(UtilityTest, null_unique_ptr)
 {
-    auto p_char = null_unique_ptr<const char>([](const char*){});
+    auto p_char = null_unique_ptr<const char>([](const char*) {});
     EXPECT_EQ(nullptr, p_char);
 
     p_char.reset(TEST_VALUE1);

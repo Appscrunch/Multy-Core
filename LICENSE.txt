@@ -1,0 +1,6 @@
+Copyright Multy.io
+Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+(CC BY-NC-ND 4.0)
+
+You can obtain a copy of a license at:
+https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode

@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #ifndef WALLET_CORE_ACCOUNT_H
 #define WALLET_CORE_ACCOUNT_H
 
@@ -58,8 +64,7 @@ WALLET_CORE_API Error* get_account_address_path(
         const char** out_address_path);
 
 WALLET_CORE_API Error* get_account_currency(
-        Account* account,
-        Currency* out_currency);
+        Account* account, Currency* out_currency);
 
 WALLET_CORE_API void free_account(Account*);
 

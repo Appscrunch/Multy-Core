@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #include "wallet_core/internal/bitcoin_account.h"
 
 #include "wallet_core/internal/key.h"
@@ -25,19 +31,21 @@ struct BitcoinAddress : public AccountAddress
         const auto& key = get_key();
         throw_if_wally_error(
                 // skip the first byte of the pub_key since it contains prefix.
-                wally_sha256(&key.key.pub_key[1],
-                        sizeof(key.key.pub_key) - 1,
+                wally_sha256(
+                        &key.key.pub_key[1], sizeof(key.key.pub_key) - 1,
                         pub_hash, sizeof(pub_hash)),
                 "Hashing public key failed");
         throw_if_wally_error(
-                wally_hash160(pub_hash, sizeof(pub_hash),
-                        hash_hash, sizeof(hash_hash)),
+                wally_hash160(
+                        pub_hash, sizeof(pub_hash), hash_hash,
+                        sizeof(hash_hash)),
                 "Hashing hash of public key failed");
 
         auto base58_string_ptr = null_unique_ptr<char>(wally_free_string);
         throw_if_wally_error(
-                wally_base58_from_bytes(hash_hash, sizeof(hash_hash),
-                        BASE58_FLAG_CHECKSUM, reset_sp(base58_string_ptr)),
+                wally_base58_from_bytes(
+                        hash_hash, sizeof(hash_hash), BASE58_FLAG_CHECKSUM,
+                        reset_sp(base58_string_ptr)),
                 "Converting to base58 failed");
         std::string result(base58_string_ptr.get());
         result.insert(0, 1, '1');
@@ -55,23 +63,28 @@ namespace internal
 
 BitcoinAccount::BitcoinAccount(const Key& bip44_master_key, uint32_t index)
     : Account(bip44_master_key, CURRENCY_BITCOIN, index)
-{}
+{
+}
 
 BitcoinAccount::~BitcoinAccount()
-{}
+{
+}
 
-AccountAddressPtr BitcoinAccount::make_address(const Key& parent_key, AddressType type, uint32_t index)
+AccountAddressPtr BitcoinAccount::make_address(
+        const Key& parent_key, AddressType type, uint32_t index)
 {
     KeyPtr address_key;
 
-    throw_if_error(make_child_key(&parent_key,
-                                  KEY_TYPE_PRIVATE,
-                                  index,
-                                  reset_sp(address_key)));
+    throw_if_error(
+            make_child_key(
+                    &parent_key, KEY_TYPE_PRIVATE, index,
+                    reset_sp(address_key)));
 
-    return std::unique_ptr<AccountAddress>(new BitcoinAddress(
-            make_child_path(make_child_path(get_path_string(), type), index),
-            std::move(address_key)));
+    return std::unique_ptr<AccountAddress>(
+            new BitcoinAddress(
+                    make_child_path(
+                            make_child_path(get_path_string(), type), index),
+                    std::move(address_key)));
 }
 
 } // namespace wallet_core

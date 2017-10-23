@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #ifndef UTILITY_H
 #define UTILITY_H
 
@@ -7,7 +13,8 @@
 #include <string>
 #include <vector>
 
-#define E(statement) wallet_core::internal::throw_if_wally_error((statement), #statement)
+#define E(statement)                                                           \
+    wallet_core::internal::throw_if_wally_error((statement), #statement)
 
 struct Key;
 

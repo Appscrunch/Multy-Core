@@ -1,14 +1,20 @@
-#include "wallet_core/keys.h"
-#include "wallet_core/internal/key.h"
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
 
-#include "wallet_test/value_printers.h"
+#include "wallet_core/internal/key.h"
+#include "wallet_core/keys.h"
+
 #include "wallet_test/bip39_test_cases.h"
 #include "wallet_test/utility.h"
+#include "wallet_test/value_printers.h"
 
 #include "gtest/gtest.h"
 
-#include <string>
 #include <memory>
+#include <string>
 
 namespace
 {
@@ -23,11 +29,14 @@ Key make_dummy_key()
 }
 
 class KeysTestValidCasesP : public ::testing::TestWithParam<BIP39TestCase>
-{};
+{
+};
 
 } // namespace
 
-INSTANTIATE_TEST_CASE_P(BIP39, KeysTestValidCasesP,
+INSTANTIATE_TEST_CASE_P(
+        BIP39,
+        KeysTestValidCasesP,
         ::testing::ValuesIn(BIP39_DEFAULT_TEST_CASES));
 
 TEST_P(KeysTestValidCasesP, Test)
@@ -44,7 +53,8 @@ TEST_P(KeysTestValidCasesP, Test)
     EXPECT_EQ(nullptr, error);
     ASSERT_NE(nullptr, key);
 
-    error.reset(key_to_base58(key.get(), KEY_TYPE_PRIVATE, reset_sp(key_string)));
+    error.reset(
+            key_to_base58(key.get(), KEY_TYPE_PRIVATE, reset_sp(key_string)));
     EXPECT_EQ(nullptr, error);
     EXPECT_STREQ(param.root_key, key_string.get());
 }
@@ -52,7 +62,7 @@ TEST_P(KeysTestValidCasesP, Test)
 GTEST_TEST(KeysTestInvalidArgs, make_master_key)
 {
     const unsigned char data_vals[] = {1U, 2U, 3U, 4U};
-    const BinaryData data {data_vals, 3};
+    const BinaryData data{data_vals, 3};
 
     auto error = null_unique_ptr<Error>(free_error);
     auto key = null_unique_ptr<Key>(free_key);
@@ -79,15 +89,20 @@ GTEST_TEST(KeysTestInvalidArgs, make_child_key)
     auto child_key = null_unique_ptr<Key>(free_key);
 
     // Event though all parameters are preset, parent_key is still invalid
-    error.reset(make_child_key(&parent_key, KEY_TYPE_PRIVATE, 0, reset_sp(child_key)));
+    error.reset(
+            make_child_key(
+                    &parent_key, KEY_TYPE_PRIVATE, 0, reset_sp(child_key)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, child_key);
 
-    error.reset(make_child_key(nullptr, KEY_TYPE_PRIVATE, 0, reset_sp(child_key)));
+    error.reset(
+            make_child_key(nullptr, KEY_TYPE_PRIVATE, 0, reset_sp(child_key)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, child_key);
 
-    error.reset(make_child_key(&parent_key, INVALID_KEY_TYPE, 0, reset_sp(child_key)));
+    error.reset(
+            make_child_key(
+                    &parent_key, INVALID_KEY_TYPE, 0, reset_sp(child_key)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, child_key);
 

@@ -1,11 +1,17 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #include "wallet_core/mnemonic.h"
 
-#include "wallet_core/error.h"
 #include "wallet_core/common.h"
+#include "wallet_core/error.h"
 #include "wallet_core/internal/utility.h"
 
-#include "wally_core.h"
 #include "wally_bip39.h"
+#include "wally_core.h"
 
 #include <cstring>
 #include <memory>
@@ -18,13 +24,9 @@ using namespace wallet_core::internal;
 size_t round_to_supported_entropy_size(size_t entropy_size)
 {
     static const size_t supported_entropy_sizes[] = {
-        BIP39_ENTROPY_LEN_128,
-        BIP39_ENTROPY_LEN_160,
-        BIP39_ENTROPY_LEN_192,
-        BIP39_ENTROPY_LEN_224,
-        BIP39_ENTROPY_LEN_256,
-        BIP39_ENTROPY_LEN_288,
-        BIP39_ENTROPY_LEN_320,
+            BIP39_ENTROPY_LEN_128, BIP39_ENTROPY_LEN_160, BIP39_ENTROPY_LEN_192,
+            BIP39_ENTROPY_LEN_224, BIP39_ENTROPY_LEN_256, BIP39_ENTROPY_LEN_288,
+            BIP39_ENTROPY_LEN_320,
     };
 
     size_t result = 0;
@@ -43,7 +45,7 @@ size_t round_to_supported_entropy_size(size_t entropy_size)
 }
 } // namespace
 
-Error* make_mnemonic(EntropySource entropy_source, const char ** mnemonic)
+Error* make_mnemonic(EntropySource entropy_source, const char** mnemonic)
 {
     static const size_t max_entropy_size = BIP39_ENTROPY_LEN_320;
     unsigned char entropy[max_entropy_size] = {'\0'};
@@ -54,24 +56,27 @@ Error* make_mnemonic(EntropySource entropy_source, const char ** mnemonic)
     try
     {
         const size_t entropy_size = round_to_supported_entropy_size(
-                entropy_source.fill_entropy(entropy_source.data,
-                        max_entropy_size, &entropy[0]));
+                entropy_source.fill_entropy(
+                        entropy_source.data, max_entropy_size, &entropy[0]));
         if (entropy_size == 0)
         {
-            return make_error(ERROR_BAD_ENTROPY,
+            return make_error(
+                    ERROR_BAD_ENTROPY,
                     "Unable to get required amount of entropy");
         }
 
         const words* dictionary = nullptr;
-        throw_if_wally_error(bip39_get_wordlist(nullptr, &dictionary),
+        throw_if_wally_error(
+                bip39_get_wordlist(nullptr, &dictionary),
                 "Failed to obtain wordlist");
         char* out = nullptr;
         throw_if_wally_error(
-                bip39_mnemonic_from_bytes(dictionary, entropy, entropy_size, &out),
+                bip39_mnemonic_from_bytes(
+                        dictionary, entropy, entropy_size, &out),
                 "Failed to generated mnemonic");
         *mnemonic = out;
     }
-    catch(...)
+    catch (...)
     {
         return exception_to_error();
     }
@@ -95,8 +100,9 @@ Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
 
         std::unique_ptr<unsigned char[]> data(new unsigned char[max_seed_size]);
         throw_if_wally_error(
-                bip39_mnemonic_to_seed(mnemonic, password, data.get(),
-                        max_seed_size, &written),
+                bip39_mnemonic_to_seed(
+                        mnemonic, password, data.get(), max_seed_size,
+                        &written),
                 "Faield to generate seed from mnemonic");
 
         BinaryData* out = new BinaryData;
@@ -104,7 +110,7 @@ Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
         out->len = written;
         *seed = out;
     }
-    catch(...)
+    catch (...)
     {
         return exception_to_error();
     }

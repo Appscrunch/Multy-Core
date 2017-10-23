@@ -1,10 +1,16 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #include "value_printers.h"
 
-#include "wallet_test/utility.h"
 #include "wallet_test/bip39_test_cases.h"
+#include "wallet_test/utility.h"
 
-#include "wallet_core/error.h"
 #include "wallet_core/common.h"
+#include "wallet_core/error.h"
 
 #include "wallet_core/internal/account_base.h"
 #include "wallet_core/internal/key.h"
@@ -46,7 +52,8 @@ void PrintTo(const Error& e, std::ostream* out)
 
 void PrintTo(const BinaryData& data, std::ostream* out)
 {
-    *out << "BinaryData{ " << (data.data ? to_hex(data) :  std::string("<null>")) << ", " << data.len << " }";
+    *out << "BinaryData{ " << (data.data ? to_hex(data) : std::string("<null>"))
+         << ", " << data.len << " }";
 }
 
 void PrintTo(const Key& key, std::ostream* out)

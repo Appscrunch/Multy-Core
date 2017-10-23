@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #include "wallet_core/mnemonic.h"
 
 #include "wallet_core/common.h"
@@ -6,9 +12,9 @@
 
 #include "wallet_test/run_tests.h"
 
-#include <string.h>
 #include <iostream>
 #include <memory>
+#include <string.h>
 
 namespace
 {
@@ -37,10 +43,10 @@ using namespace wallet_core::internal;
 
 } // namespace
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
 #ifdef WITH_TESTS
-      return run_tests(argc, argv);
+    return run_tests(argc, argv);
 #else
     try
     {
@@ -53,14 +59,14 @@ int main(int argc, char **argv)
         std::getline(std::cin, password);
 
         auto seed = null_unique_ptr<BinaryData>(free_binarydata);
-        throw_if_error(make_seed(mnemonic.get(), password.c_str(),
-                reset_sp(seed)));
+        throw_if_error(
+                make_seed(mnemonic.get(), password.c_str(), reset_sp(seed)));
 
         auto seed_string = null_unique_ptr<const char>(free_string);
         throw_if_error(seed_to_string(seed.get(), reset_sp(seed_string)));
         std::cout << "Seed: " << seed_string.get() << std::endl;
     }
-    catch(Error* e)
+    catch (Error* e)
     {
         std::cerr << "Got error: " << e->message << std::endl;
         free_error(e);

@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #ifndef WALLET_CORE_COMMON_H
 #define WALLET_CORE_COMMON_H
 
@@ -16,12 +22,14 @@ extern "C" {
  */
 struct EntropySource
 {
-    void* data; /// Opaque caller-supplied pointer, passed as first argument to fill_entropy().
+    void* data; /// Opaque caller-supplied pointer, passed as first argument to
+                /// fill_entropy().
     size_t (*fill_entropy)(void* data, size_t size, void* dest);
 };
 
 /** Binary data, just a pointer and a size in bytes. */
-struct BinaryData {
+struct BinaryData
+{
     const unsigned char* data;
     size_t len;
 };

@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #include "wallet_core/account.h"
 
 #include "wallet_core/common.h"
@@ -18,8 +24,11 @@ namespace
 using namespace wallet_core::internal;
 } // namespace
 
-Error* make_account(const Key* master_key, Currency currency, uint32_t index,
-                    Account** new_account)
+Error* make_account(
+        const Key* master_key,
+        Currency currency,
+        uint32_t index,
+        Account** new_account)
 {
     ARG_CHECK(master_key != nullptr);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
@@ -41,8 +50,8 @@ Error* make_account(const Key* master_key, Currency currency, uint32_t index,
             }
             default:
             {
-                return make_error(ERROR_GENERAL_ERROR,
-                        "Currency not supported yet");
+                return make_error(
+                        ERROR_GENERAL_ERROR, "Currency not supported yet");
             }
         }
     }
@@ -60,7 +69,8 @@ Error* get_account_address_key(
         Key** out_key)
 {
     ARG_CHECK(account != nullptr);
-    ARG_CHECK(address_type == ADDRESS_EXTERNAL
+    ARG_CHECK(
+            address_type == ADDRESS_EXTERNAL
             || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
     ARG_CHECK(out_key != nullptr);
@@ -85,7 +95,8 @@ Error* get_account_address_string(
         const char** out_address)
 {
     ARG_CHECK(account);
-    ARG_CHECK(address_type == ADDRESS_EXTERNAL
+    ARG_CHECK(
+            address_type == ADDRESS_EXTERNAL
             || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
     ARG_CHECK(out_address);
@@ -95,7 +106,7 @@ Error* get_account_address_string(
         const auto& address = account->get_address(address_type, index);
         *out_address = copy_string(address.get_address_string());
     }
-    catch(...)
+    catch (...)
     {
         return exception_to_error();
     }
@@ -110,7 +121,8 @@ Error* get_account_address_path(
         const char** out_address_path)
 {
     ARG_CHECK(account);
-    ARG_CHECK(address_type == ADDRESS_EXTERNAL
+    ARG_CHECK(
+            address_type == ADDRESS_EXTERNAL
             || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
     ARG_CHECK(out_address_path);
@@ -120,7 +132,7 @@ Error* get_account_address_path(
         const auto& address = account->get_address(address_type, index);
         *out_address_path = copy_string(address.get_path_string());
     }
-    catch(...)
+    catch (...)
     {
         return exception_to_error();
     }
@@ -137,7 +149,7 @@ Error* get_account_currency(Account* account, Currency* out_currency)
     {
         *out_currency = account->get_currency();
     }
-    catch(...)
+    catch (...)
     {
         return exception_to_error();
     }

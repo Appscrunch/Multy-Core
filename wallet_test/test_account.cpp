@@ -1,16 +1,22 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #include "wallet_core/account.h"
 
-#include "wallet_core/internal/key.h"
 #include "wallet_core/internal/account_base.h"
+#include "wallet_core/internal/key.h"
 
-#include "wallet_test/value_printers.h"
 #include "wallet_test/bip39_test_cases.h"
 #include "wallet_test/utility.h"
+#include "wallet_test/value_printers.h"
 
 #include "gtest/gtest.h"
 
-#include <string>
 #include <memory>
+#include <string>
 
 namespace
 {
@@ -36,10 +42,9 @@ struct TestAccountAddress : public wallet_core::internal::AccountAddress
 {
 public:
     TestAccountAddress(KeyPtr key, std::string address, std::string path)
-        : AccountAddress(std::move(key)),
-          address(address),
-          path(path)
-    {}
+        : AccountAddress(std::move(key)), address(address), path(path)
+    {
+    }
 
     std::string get_address_string() const override
     {
@@ -58,22 +63,24 @@ struct TestAccount : public Account
 {
     TestAccount()
         : TestAccount(make_dummy_key(), TEST_CURRENCY, TEST_ADDRESS, TEST_PATH)
-    {}
+    {
+    }
 
-    TestAccount(const Key& key, Currency currency, std::string address, std::string path)
-        : Account(key, currency, 0),
-          key(key),
-          address(address),
-          path(path)
-    {}
+    TestAccount(
+            const Key& key,
+            Currency currency,
+            std::string address,
+            std::string path)
+        : Account(key, currency, 0), key(key), address(address), path(path)
+    {
+    }
 
     AccountAddressPtr make_address(
-            const Key& /*parent_key*/,
-            AddressType /*type*/,
-            uint32_t /*index*/)
+            const Key& /*parent_key*/, AddressType /*type*/, uint32_t /*index*/)
     {
         KeyPtr address_key(new Key(key));
-        return AccountAddressPtr(new TestAccountAddress(std::move(address_key), address, path));
+        return AccountAddressPtr(
+                new TestAccountAddress(std::move(address_key), address, path));
     }
 
     const Key key;
@@ -103,11 +110,14 @@ GTEST_TEST(AccountTest, fake_account)
     const Currency EXPECTED_CURRENCY = CURRENCY_BITCOIN;
 
     auto error = null_unique_ptr<Error>(free_error);
-    TestAccount account(expected_key, EXPECTED_CURRENCY, EXPECTED_ADDRESS, EXPECTED_PATH);
+    TestAccount account(
+            expected_key, EXPECTED_CURRENCY, EXPECTED_ADDRESS, EXPECTED_PATH);
 
     {
         KeyPtr key;
-        error.reset(get_account_address_key(&account, ADDRESS_EXTERNAL, 0, reset_sp(key)));
+        error.reset(
+                get_account_address_key(
+                        &account, ADDRESS_EXTERNAL, 0, reset_sp(key)));
         EXPECT_EQ(nullptr, error);
         ASSERT_NE(nullptr, key);
         ASSERT_EQ(expected_key, *key);
@@ -115,7 +125,9 @@ GTEST_TEST(AccountTest, fake_account)
 
     {
         auto address_str = null_unique_ptr<const char>(free_string);
-        error.reset(get_account_address_string(&account, ADDRESS_EXTERNAL, 0, reset_sp(address_str)));
+        error.reset(
+                get_account_address_string(
+                        &account, ADDRESS_EXTERNAL, 0, reset_sp(address_str)));
         EXPECT_EQ(nullptr, error);
         ASSERT_NE(nullptr, address_str);
         ASSERT_STREQ(EXPECTED_ADDRESS, address_str.get());
@@ -123,7 +135,9 @@ GTEST_TEST(AccountTest, fake_account)
 
     {
         auto path_str = null_unique_ptr<const char>(free_string);
-        error.reset(get_account_address_path(&account, ADDRESS_EXTERNAL, 0, reset_sp(path_str)));
+        error.reset(
+                get_account_address_path(
+                        &account, ADDRESS_EXTERNAL, 0, reset_sp(path_str)));
         EXPECT_EQ(nullptr, error);
         ASSERT_NE(nullptr, path_str);
         ASSERT_STREQ(EXPECTED_PATH, path_str.get());
@@ -149,11 +163,15 @@ GTEST_TEST(AccountTestInvalidArgs, make_account)
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, account);
 
-    error.reset(make_account(&master_key, INVALID_CURRENCY, 0, reset_sp(account)));
+    error.reset(
+            make_account(&master_key, INVALID_CURRENCY, 0, reset_sp(account)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, account);
 
-    error.reset(make_account(&master_key, CURRENCY_BITCOIN, INVALID_INDEX, reset_sp(account)));
+    error.reset(
+            make_account(
+                    &master_key, CURRENCY_BITCOIN, INVALID_INDEX,
+                    reset_sp(account)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, account);
 
@@ -168,19 +186,26 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_address_key)
 
     TestAccount account;
 
-    error.reset(get_account_address_key(nullptr, ADDRESS_EXTERNAL, 0, reset_sp(key)));
+    error.reset(
+            get_account_address_key(
+                    nullptr, ADDRESS_EXTERNAL, 0, reset_sp(key)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, key);
 
-    error.reset(get_account_address_key(&account, INVALID_ADDRESS, 0, reset_sp(key)));
+    error.reset(
+            get_account_address_key(
+                    &account, INVALID_ADDRESS, 0, reset_sp(key)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, key);
 
-    error.reset(get_account_address_key(&account, ADDRESS_EXTERNAL, INVALID_INDEX, reset_sp(key)));
+    error.reset(
+            get_account_address_key(
+                    &account, ADDRESS_EXTERNAL, INVALID_INDEX, reset_sp(key)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, key);
 
-    error.reset(get_account_address_key(&account, ADDRESS_EXTERNAL, 0, nullptr));
+    error.reset(
+            get_account_address_key(&account, ADDRESS_EXTERNAL, 0, nullptr));
     EXPECT_NE(nullptr, error);
 }
 
@@ -191,19 +216,27 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_address_string)
 
     TestAccount account;
 
-    error.reset(get_account_address_string(nullptr, ADDRESS_EXTERNAL, 0, reset_sp(address_str)));
+    error.reset(
+            get_account_address_string(
+                    nullptr, ADDRESS_EXTERNAL, 0, reset_sp(address_str)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, address_str);
 
-    error.reset(get_account_address_string(&account, INVALID_ADDRESS, 0, reset_sp(address_str)));
+    error.reset(
+            get_account_address_string(
+                    &account, INVALID_ADDRESS, 0, reset_sp(address_str)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, address_str);
 
-    error.reset(get_account_address_string(&account, ADDRESS_EXTERNAL, INVALID_INDEX, reset_sp(address_str)));
+    error.reset(
+            get_account_address_string(
+                    &account, ADDRESS_EXTERNAL, INVALID_INDEX,
+                    reset_sp(address_str)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, address_str);
 
-    error.reset(get_account_address_string(&account, ADDRESS_EXTERNAL, 0, nullptr));
+    error.reset(
+            get_account_address_string(&account, ADDRESS_EXTERNAL, 0, nullptr));
     EXPECT_NE(nullptr, error);
 }
 
@@ -214,19 +247,27 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_address_path)
 
     TestAccount account;
 
-    error.reset(get_account_address_path(nullptr, ADDRESS_EXTERNAL, 0, reset_sp(path_str)));
+    error.reset(
+            get_account_address_path(
+                    nullptr, ADDRESS_EXTERNAL, 0, reset_sp(path_str)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, path_str);
 
-    error.reset(get_account_address_path(&account, INVALID_ADDRESS, 0, reset_sp(path_str)));
+    error.reset(
+            get_account_address_path(
+                    &account, INVALID_ADDRESS, 0, reset_sp(path_str)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, path_str);
 
-    error.reset(get_account_address_path(&account, ADDRESS_EXTERNAL, INVALID_INDEX, reset_sp(path_str)));
+    error.reset(
+            get_account_address_path(
+                    &account, ADDRESS_EXTERNAL, INVALID_INDEX,
+                    reset_sp(path_str)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, path_str);
 
-    error.reset(get_account_address_path(&account, ADDRESS_EXTERNAL, 0, nullptr));
+    error.reset(
+            get_account_address_path(&account, ADDRESS_EXTERNAL, 0, nullptr));
     EXPECT_NE(nullptr, error);
 }
 
@@ -248,17 +289,16 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_currency)
 namespace
 {
 class AccountTestCurrencySupportP : public ::testing::TestWithParam<Currency>
-{};
-
-const Currency SUPPORTED_CURRENCIES[] =
 {
-    CURRENCY_BITCOIN,
-    CURRENCY_ETHEREUM
 };
+
+const Currency SUPPORTED_CURRENCIES[] = {CURRENCY_BITCOIN, CURRENCY_ETHEREUM};
 
 } // namespace
 
-INSTANTIATE_TEST_CASE_P(SupportedCurrencies, AccountTestCurrencySupportP,
+INSTANTIATE_TEST_CASE_P(
+        SupportedCurrencies,
+        AccountTestCurrencySupportP,
         ::testing::ValuesIn(SUPPORTED_CURRENCIES));
 
 TEST_P(AccountTestCurrencySupportP, generic)
@@ -283,14 +323,18 @@ TEST_P(AccountTestCurrencySupportP, generic)
         auto external_address_str = null_unique_ptr<const char>(free_string);
         auto internal_address_str = null_unique_ptr<const char>(free_string);
 
-        error.reset(get_account_address_string(account.get(),
-                ADDRESS_EXTERNAL, 0, reset_sp(external_address_str)));
+        error.reset(
+                get_account_address_string(
+                        account.get(), ADDRESS_EXTERNAL, 0,
+                        reset_sp(external_address_str)));
         EXPECT_EQ(nullptr, error);
         EXPECT_NE(nullptr, external_address_str);
         EXPECT_STRNE("", external_address_str.get());
 
-        error.reset(get_account_address_string(account.get(),
-                ADDRESS_INTERNAL, 0, reset_sp(internal_address_str)));
+        error.reset(
+                get_account_address_string(
+                        account.get(), ADDRESS_INTERNAL, 0,
+                        reset_sp(internal_address_str)));
         EXPECT_EQ(nullptr, error);
         EXPECT_NE(nullptr, internal_address_str);
         EXPECT_STRNE("", internal_address_str.get());
@@ -304,14 +348,18 @@ TEST_P(AccountTestCurrencySupportP, generic)
         auto external_path_str = null_unique_ptr<const char>(free_string);
         auto internal_path_str = null_unique_ptr<const char>(free_string);
 
-        error.reset(get_account_address_path(account.get(),
-                ADDRESS_EXTERNAL, 0, reset_sp(external_path_str)));
+        error.reset(
+                get_account_address_path(
+                        account.get(), ADDRESS_EXTERNAL, 0,
+                        reset_sp(external_path_str)));
         EXPECT_EQ(nullptr, error);
         EXPECT_NE(nullptr, external_path_str);
         EXPECT_STRNE("", external_path_str.get());
 
-        error.reset(get_account_address_path(account.get(),
-                ADDRESS_INTERNAL, 0, reset_sp(internal_path_str)));
+        error.reset(
+                get_account_address_path(
+                        account.get(), ADDRESS_INTERNAL, 0,
+                        reset_sp(internal_path_str)));
         EXPECT_EQ(nullptr, error);
         EXPECT_NE(nullptr, internal_path_str);
         EXPECT_STRNE("", internal_path_str.get());
@@ -319,11 +367,11 @@ TEST_P(AccountTestCurrencySupportP, generic)
         EXPECT_STRNE(external_path_str.get(), internal_path_str.get());
     }
 
-//    {
-//        auto path_str = null_unique_ptr<const char>(free_string);
-//        error.reset(get_account_address_path(account.get(), ADDRESS_EXTERNAL, 0, reset_sp(address_str)));
-//        EXPECT_EQ(nullptr, error);
-//        EXPECT_EQ(nullptr, address_str);
-//    }
+    //    {
+    //        auto path_str = null_unique_ptr<const char>(free_string);
+    //        error.reset(get_account_address_path(account.get(),
+    //        ADDRESS_EXTERNAL, 0, reset_sp(address_str)));
+    //        EXPECT_EQ(nullptr, error);
+    //        EXPECT_EQ(nullptr, address_str);
+    //    }
 }
-

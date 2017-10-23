@@ -1,3 +1,9 @@
+/* Copyright Multy.io
+ * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
+ * (CC BY-NC-ND 4.0)
+ * See LICENSE for details
+ */
+
 #ifndef WALLET_CORE_ACCOUNT_BASE_H
 #define WALLET_CORE_ACCOUNT_BASE_H
 
@@ -31,7 +37,7 @@ public:
     virtual ~AccountAddress();
 
     virtual std::string get_address_string() const = 0;
-    //virtual std::string get_key() const = 0;
+    // virtual std::string get_key() const = 0;
     virtual std::string get_path_string() const;
 
     const HDPath& get_path() const;
@@ -69,7 +75,9 @@ public:
 
 protected:
     Account(const Key& bip44_master_key, Currency currency, uint32_t index);
-    virtual AccountAddressPtr make_address(const Key& parent_key, AddressType type, uint32_t index) = 0;
+    virtual AccountAddressPtr make_address(
+            const Key& parent_key, AddressType type, uint32_t index)
+            = 0;
 
 private:
     KeyPtr m_account_key;
