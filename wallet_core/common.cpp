@@ -20,4 +20,3 @@ void free_string(const char* str)
     }
     wally_free_string(const_cast<char*>(str));
 }
-

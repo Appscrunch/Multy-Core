@@ -33,13 +33,33 @@ enum AddressType
  * @param index - acccount index
  * @param account - (out) new account
  */
-WALLET_CORE_API Error* make_account(const Key* master_key, Currency currency, uint32_t index,
-                    Account** account);
+WALLET_CORE_API Error* make_account(
+        const Key* master_key,
+        Currency currency,
+        uint32_t index,
+        Account** new_account);
 
-WALLET_CORE_API Error* get_account_address_key(Account* account, AddressType address_type, uint32_t index, Key** key);
-WALLET_CORE_API Error* get_account_address_string(Account* account, AddressType address_type, uint32_t index, const char** address);
-WALLET_CORE_API Error* get_account_address_path(Account* account, AddressType address_type, uint32_t index, const char** address_path);
-WALLET_CORE_API Error* get_account_currency(Account* account, Currency* currency);
+WALLET_CORE_API Error* get_account_address_key(
+        Account* account,
+        AddressType address_type,
+        uint32_t index,
+        Key** out_key);
+
+WALLET_CORE_API Error* get_account_address_string(
+        Account* account,
+        AddressType address_type,
+        uint32_t index,
+        const char** out_address);
+
+WALLET_CORE_API Error* get_account_address_path(
+        Account* account,
+        AddressType address_type,
+        uint32_t index,
+        const char** out_address_path);
+
+WALLET_CORE_API Error* get_account_currency(
+        Account* account,
+        Currency* out_currency);
 
 WALLET_CORE_API void free_account(Account*);
 

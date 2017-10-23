@@ -69,9 +69,9 @@ AccountAddressPtr EthereumAccount::make_address(const Key& parent_key, AddressTy
 {
     KeyPtr address_key;
     throw_if_error(make_child_key(&parent_key,
-                                  KEY_TYPE_PRIVATE,
-                                  index,
-                                  reset_sp(address_key)));
+            KEY_TYPE_PRIVATE,
+            index,
+            reset_sp(address_key)));
 
     AccountAddressPtr result(new EthereumAccountAddress(
             make_child_path(make_child_path(get_path_string(), type), index),
