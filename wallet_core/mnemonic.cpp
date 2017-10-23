@@ -135,12 +135,3 @@ void free_mnemonic(const char* mnemonic)
     }
     wally_free_string(const_cast<char*>(mnemonic));
 }
-
-void free_seed_string(const char* str)
-{
-    if (!str)
-    {
-        return;
-    }
-    wally_free_string(const_cast<char*>(str));
-}
