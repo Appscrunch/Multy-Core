@@ -44,7 +44,7 @@ public:
 
     std::string get_address_string() const override
     {
-        std::string result(hex_data_size(m_address.size()), '\0');
+        std::string result(hex_str_size(m_address.size()), '\0');
         hex_encode(m_address.data(), m_address.size(),
                 const_cast<char*>(result.data()), result.size());
         return result;
