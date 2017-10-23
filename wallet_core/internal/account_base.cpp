@@ -85,9 +85,9 @@ const Key& AccountAddress::get_key() const
     return *m_extended_key;
 }
 
-HDPath make_child_path(const HDPath& parent_path, uint32_t child_chain_code)
+HDPath make_child_path(HDPath parent_path, uint32_t child_chain_code)
 {
-    HDPath result(parent_path);
+    HDPath result(std::move(parent_path));
     result.push_back(child_chain_code);
     return result;
 }
@@ -151,7 +151,7 @@ const AccountAddress& Account::get_address(AddressType type, uint32_t index)
                                       reset_sp(key_ptr)));
     }
 
-    AccountAddressPtr new_address = make_address(*key_ptr, index);
+    AccountAddressPtr new_address = make_address(*key_ptr, type, index);
     // TODO: use glsl::not_null
     if (!new_address)
     {

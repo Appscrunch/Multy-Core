@@ -1,6 +1,8 @@
 #ifndef VALUE_PRINTERS_H
 #define VALUE_PRINTERS_H
 
+#include "wallet_core/account.h"
+
 #include <memory>
 #include <ostream>
 
@@ -20,6 +22,8 @@ void PrintTo(const BinaryData&, std::ostream*);
 void PrintTo(const Key&, std::ostream*);
 void PrintTo(const BIP39TestCase& e, std::ostream* out);
 void PrintTo(const Account& e, std::ostream* out);
+void PrintTo(const Currency& e, std::ostream* out);
+void PrintTo(const AddressType& e, std::ostream* out);
 
 template <typename T, typename D>
 inline void PrintTo(const std::unique_ptr<T, D>& up, std::ostream* out)

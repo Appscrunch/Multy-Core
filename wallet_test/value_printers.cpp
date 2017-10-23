@@ -73,3 +73,35 @@ void PrintTo(const Account& a, std::ostream* out)
          << "\tpath: " << a.get_path_string() << "\n"
          << "}";
 }
+
+void PrintTo(const Currency& c, std::ostream* out)
+{
+    switch (c)
+    {
+        case CURRENCY_BITCOIN:
+            *out << "CURRENCY_BITCOIN";
+            break;
+        case CURRENCY_ETHEREUM:
+            *out << "CURRENCY_ETHEREUM";
+            break;
+        default:
+            *out << "unknown currency " << c;
+            break;
+    }
+}
+
+void PrintTo(const AddressType& a, std::ostream* out)
+{
+    switch (a)
+    {
+        case ADDRESS_EXTERNAL:
+            *out << "ADDRESS_EXTERNAL";
+            break;
+        case ADDRESS_INTERNAL:
+            *out << "ADDRESS_INTERNAL";
+            break;
+        default:
+            *out << "unknown address " << a;
+            break;
+    }
+}

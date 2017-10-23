@@ -60,14 +60,17 @@ struct TestAccount : public Account
         : TestAccount(make_dummy_key(), TEST_CURRENCY, TEST_ADDRESS, TEST_PATH)
     {}
 
-    TestAccount(Key key, Currency currency, std::string address, std::string path)
+    TestAccount(const Key& key, Currency currency, std::string address, std::string path)
         : Account(key, currency, 0),
           key(key),
           address(address),
           path(path)
     {}
 
-    AccountAddressPtr make_address(const Key& /*parent_key*/, uint32_t /*index*/)
+    AccountAddressPtr make_address(
+            const Key& /*parent_key*/,
+            AddressType /*type*/,
+            uint32_t /*index*/)
     {
         KeyPtr address_key(new Key(key));
         return AccountAddressPtr(new TestAccountAddress(std::move(address_key), address, path));
@@ -241,3 +244,86 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_currency)
     error.reset(get_account_currency(&account, nullptr));
     EXPECT_NE(nullptr, error);
 }
+
+namespace
+{
+class AccountTestCurrencySupportP : public ::testing::TestWithParam<Currency>
+{};
+
+const Currency SUPPORTED_CURRENCIES[] =
+{
+    CURRENCY_BITCOIN,
+    CURRENCY_ETHEREUM
+};
+
+} // namespace
+
+INSTANTIATE_TEST_CASE_P(SupportedCurrencies, AccountTestCurrencySupportP,
+        ::testing::ValuesIn(SUPPORTED_CURRENCIES));
+
+TEST_P(AccountTestCurrencySupportP, generic)
+{
+    const Key master_key = make_dummy_key();
+
+    auto error = null_unique_ptr<Error>(free_error);
+    auto account = null_unique_ptr<Account>(free_account);
+
+    error.reset(make_account(&master_key, GetParam(), 0, reset_sp(account)));
+    EXPECT_EQ(nullptr, error);
+    EXPECT_NE(nullptr, account);
+
+    {
+        Currency actual_currency;
+        error.reset(get_account_currency(account.get(), &actual_currency));
+        EXPECT_EQ(nullptr, error);
+        EXPECT_EQ(GetParam(), actual_currency);
+    }
+
+    {
+        auto external_address_str = null_unique_ptr<const char>(free_string);
+        auto internal_address_str = null_unique_ptr<const char>(free_string);
+
+        error.reset(get_account_address_string(account.get(),
+                ADDRESS_EXTERNAL, 0, reset_sp(external_address_str)));
+        EXPECT_EQ(nullptr, error);
+        EXPECT_NE(nullptr, external_address_str);
+        EXPECT_STRNE("", external_address_str.get());
+
+        error.reset(get_account_address_string(account.get(),
+                ADDRESS_INTERNAL, 0, reset_sp(internal_address_str)));
+        EXPECT_EQ(nullptr, error);
+        EXPECT_NE(nullptr, internal_address_str);
+        EXPECT_STRNE("", internal_address_str.get());
+
+        EXPECT_STRNE(external_address_str.get(), internal_address_str.get());
+        internal_address_str.reset();
+        external_address_str.reset();
+    }
+
+    {
+        auto external_path_str = null_unique_ptr<const char>(free_string);
+        auto internal_path_str = null_unique_ptr<const char>(free_string);
+
+        error.reset(get_account_address_path(account.get(),
+                ADDRESS_EXTERNAL, 0, reset_sp(external_path_str)));
+        EXPECT_EQ(nullptr, error);
+        EXPECT_NE(nullptr, external_path_str);
+        EXPECT_STRNE("", external_path_str.get());
+
+        error.reset(get_account_address_path(account.get(),
+                ADDRESS_INTERNAL, 0, reset_sp(internal_path_str)));
+        EXPECT_EQ(nullptr, error);
+        EXPECT_NE(nullptr, internal_path_str);
+        EXPECT_STRNE("", internal_path_str.get());
+
+        EXPECT_STRNE(external_path_str.get(), internal_path_str.get());
+    }
+
+//    {
+//        auto path_str = null_unique_ptr<const char>(free_string);
+//        error.reset(get_account_address_path(account.get(), ADDRESS_EXTERNAL, 0, reset_sp(address_str)));
+//        EXPECT_EQ(nullptr, error);
+//        EXPECT_EQ(nullptr, address_str);
+//    }
+}
+

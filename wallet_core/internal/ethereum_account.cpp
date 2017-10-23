@@ -65,7 +65,7 @@ EthereumAccount::EthereumAccount(const Key& bip44_master_key, uint32_t index)
     : Account(bip44_master_key, CURRENCY_ETHEREUM, index)
 {}
 
-AccountAddressPtr EthereumAccount::make_address(const Key& parent_key, uint32_t index)
+AccountAddressPtr EthereumAccount::make_address(const Key& parent_key, AddressType type, uint32_t index)
 {
     KeyPtr address_key;
     throw_if_error(make_child_key(&parent_key,
@@ -74,7 +74,7 @@ AccountAddressPtr EthereumAccount::make_address(const Key& parent_key, uint32_t 
                                   reset_sp(address_key)));
 
     AccountAddressPtr result(new EthereumAccountAddress(
-            make_child_path(get_path_string(), index),
+            make_child_path(make_child_path(get_path_string(), type), index),
             std::move(address_key)));
 
     return std::move(result);

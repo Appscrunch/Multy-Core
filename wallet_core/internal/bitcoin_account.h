@@ -14,7 +14,7 @@ public:
     BitcoinAccount(const Key& bip44_master_key, uint32_t index);
     ~BitcoinAccount();
 
-    AccountAddressPtr make_address(const Key& parent_key, uint32_t index) override;
+    AccountAddressPtr make_address(const Key& parent_key, AddressType type, uint32_t index) override;
 };
 
 } // namespace wallet_core

@@ -14,7 +14,7 @@ public:
     EthereumAccount(const Key& bip44_master_key, uint32_t index);
 
 protected:
-    AccountAddressPtr make_address(const Key& parent_key, uint32_t index) override;
+    AccountAddressPtr make_address(const Key& parent_key, AddressType type, uint32_t index) override;
 };
 
 } // namespace internal

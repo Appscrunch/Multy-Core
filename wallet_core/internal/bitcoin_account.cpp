@@ -60,7 +60,7 @@ BitcoinAccount::BitcoinAccount(const Key& bip44_master_key, uint32_t index)
 BitcoinAccount::~BitcoinAccount()
 {}
 
-AccountAddressPtr BitcoinAccount::make_address(const Key& parent_key, uint32_t index)
+AccountAddressPtr BitcoinAccount::make_address(const Key& parent_key, AddressType type, uint32_t index)
 {
     KeyPtr address_key;
 
@@ -70,7 +70,7 @@ AccountAddressPtr BitcoinAccount::make_address(const Key& parent_key, uint32_t i
                                   reset_sp(address_key)));
 
     return std::unique_ptr<AccountAddress>(new BitcoinAddress(
-            make_child_path(get_path_string(), index),
+            make_child_path(make_child_path(get_path_string(), type), index),
             std::move(address_key)));
 }
 

@@ -44,7 +44,7 @@ private:
 
 typedef std::unique_ptr<AccountAddress> AccountAddressPtr;
 
-HDPath make_child_path(const HDPath& parent_path, uint32_t child_chain_code);
+HDPath make_child_path(HDPath parent_path, uint32_t child_chain_code);
 
 } // namespace wallet_core
 
@@ -69,7 +69,7 @@ public:
 
 protected:
     Account(const Key& bip44_master_key, Currency currency, uint32_t index);
-    virtual AccountAddressPtr make_address(const Key& parent_key, uint32_t index) = 0;
+    virtual AccountAddressPtr make_address(const Key& parent_key, AddressType type, uint32_t index) = 0;
 
 private:
     KeyPtr m_account_key;
