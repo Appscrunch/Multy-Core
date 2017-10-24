@@ -9,7 +9,7 @@ if(LIBWALLY_BIN)
         ${LIBWALLY_BIN}
     )
     message("Using prebuild libwally-core : ${LIBWALLY_BIN}")
-elseif()
+elseif(LIBWALLY_BIN_PATH)
     add_library(libwally-core SHARED IMPORTED GLOBAL)
     message("ANDROID_ABI : ${ANDROID_ABI}")
     # TODO: use FIND_LIBRARY

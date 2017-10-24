@@ -8,6 +8,8 @@
 
 #include "wallet_core/internal/utility.h"
 
+#include <sstream>
+
 namespace
 {
 using namespace wallet_core::internal;
@@ -72,15 +74,12 @@ AccountAddress::~AccountAddress()
 
 std::string AccountAddress::get_path_string() const
 {
-    std::string result;
-    result.reserve(m_path.size() * 10);
-    result.append("m");
+    std::stringstream stream("m");
     for (const auto& p : get_path())
     {
-        result.append("/");
-        result.append(std::to_string(p));
+        stream << "/" << p;
     }
-    return result;
+    return stream.str();
 }
 
 const HDPath& AccountAddress::get_path() const
