@@ -8,6 +8,8 @@
  */
 #include "keccak-tiny.h"
 
+#define memset_s(W,WL,V,OL)=memset(W,V,OL)
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
