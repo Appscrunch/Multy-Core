@@ -12,6 +12,45 @@
 
 #include <string.h>
 
+namespace
+{
+struct ErrorDeleter
+{
+    inline void operator()(Error* error)
+    {
+        free_error(error);
+    }
+};
+
+typedef std::unique_ptr<Error, ErrorDeleter> ErrorPtr;
+
+class ErrorWrapperException : public std::exception
+{
+public:
+    explicit ErrorWrapperException(ErrorPtr error) : m_error(std::move(error))
+    {
+    }
+
+    explicit ErrorWrapperException(Error* error) : m_error(error)
+    {
+    }
+
+    const char* what() const noexcept override
+    {
+        return m_error->message;
+    }
+
+    Error* steal()
+    {
+        return m_error.release();
+    }
+
+private:
+    ErrorPtr m_error;
+};
+
+} // namespace
+
 namespace wallet_core
 {
 
@@ -49,6 +88,18 @@ char* copy_string(const char* str)
     return new_message;
 }
 
+void throw_if_wally_error(int err_code, const char* message)
+{
+    if (err_code != 0)
+    {
+        ErrorPtr error(internal_make_error(err_code, message));
+        if (error)
+        {
+            throw ErrorWrapperException(std::move(error));
+        }
+    }
+}
+
 Error* exception_to_error()
 {
     try
@@ -58,6 +109,10 @@ Error* exception_to_error()
     catch (Error* error)
     {
         return error;
+    }
+    catch (ErrorWrapperException& exception)
+    {
+        return exception.steal();
     }
     catch (std::exception const& exception)
     {

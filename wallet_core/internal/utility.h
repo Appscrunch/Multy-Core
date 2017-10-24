@@ -40,13 +40,7 @@ inline void throw_if_error(Error* err)
     }
 }
 
-inline void throw_if_wally_error(int err_code, const char* message)
-{
-    if (err_code != 0)
-    {
-        throw_if_error(internal_make_error(err_code, message));
-    }
-}
+void throw_if_wally_error(int err_code, const char* message);
 
 template <typename T, size_t N>
 constexpr size_t array_size(T (&)[N])
