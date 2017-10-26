@@ -14,14 +14,14 @@ namespace wallet_core
 namespace internal
 {
 
-class EthereumAccount : public ::Account
+class EthereumHDAccount : public ::HDAccount
 {
 public:
-    EthereumAccount(const Key& bip44_master_key, uint32_t index);
+    EthereumHDAccount(const Key& bip44_master_key, uint32_t index);
 
 protected:
-    AccountAddressPtr make_address(
-            const Key& parent_key, AddressType type, uint32_t index) override;
+    AccountPtr make_account(
+            const Key& parent_key, AddressType type, uint32_t index) const override;
 };
 
 } // namespace internal

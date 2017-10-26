@@ -8,6 +8,7 @@ add_library(multy_core
     error.cpp
     keys.cpp
     mnemonic.cpp
+    internal/account.cpp
     internal/account_base.cpp
     internal/bitcoin_account.cpp
     internal/ethereum_account.cpp

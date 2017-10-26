@@ -6,7 +6,7 @@
 
 #include "multy_core/account.h"
 
-#include "multy_core/internal/account_base.h"
+#include "multy_core/internal/account.h"
 #include "multy_core/internal/key.h"
 
 #include "multy_test/bip39_test_cases.h"
@@ -38,10 +38,10 @@ Key make_dummy_key()
     return result;
 }
 
-struct TestAccountAddress : public wallet_core::internal::AccountAddress
+struct TestAddress : public wallet_core::internal::Account
 {
 public:
-    TestAccountAddress(KeyPtr key, std::string address, std::string path)
+    TestAddress(KeyPtr key, std::string address, std::string path)
         : AccountAddress(std::move(key)), address(address), path(path)
     {
     }
@@ -59,19 +59,19 @@ public:
     const std::string path;
 };
 
-struct TestAccount : public Account
+struct TestHDAccount : public HDAccount
 {
-    TestAccount()
-        : TestAccount(make_dummy_key(), TEST_CURRENCY, TEST_ADDRESS, TEST_PATH)
+    TestHDAccount()
+        : TestHDAccount(make_dummy_key(), TEST_CURRENCY, TEST_ADDRESS, TEST_PATH)
     {
     }
 
-    TestAccount(
+    TestHDAccount(
             const Key& key,
             Currency currency,
             std::string address,
             std::string path)
-        : Account(key, currency, 0), key(key), address(address), path(path)
+        : HDAccount(key, currency, 0), key(key), address(address), path(path)
     {
     }
 
@@ -80,7 +80,7 @@ struct TestAccount : public Account
     {
         KeyPtr address_key(new Key(key));
         return AccountAddressPtr(
-                new TestAccountAddress(std::move(address_key), address, path));
+                new TestAddress(std::move(address_key), address, path));
     }
 
     const Key key;
@@ -110,7 +110,7 @@ GTEST_TEST(AccountTest, fake_account)
     const Currency EXPECTED_CURRENCY = CURRENCY_BITCOIN;
 
     auto error = null_unique_ptr<Error>(free_error);
-    TestAccount account(
+    TestHDAccount account(
             expected_key, EXPECTED_CURRENCY, EXPECTED_ADDRESS, EXPECTED_PATH);
 
     {
@@ -157,7 +157,7 @@ GTEST_TEST(AccountTestInvalidArgs, make_account)
     const Key master_key = make_dummy_key();
 
     auto error = null_unique_ptr<Error>(free_error);
-    auto account = null_unique_ptr<Account>(free_account);
+    auto account = null_unique_ptr<HDAccount>(free_account);
 
     error.reset(make_account(nullptr, CURRENCY_BITCOIN, 0, reset_sp(account)));
     EXPECT_NE(nullptr, error);
@@ -184,7 +184,7 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_address_key)
     auto error = null_unique_ptr<Error>(free_error);
     KeyPtr key;
 
-    TestAccount account;
+    TestHDAccount account;
 
     error.reset(
             get_account_address_key(
@@ -214,7 +214,7 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_address_string)
     auto error = null_unique_ptr<Error>(free_error);
     auto address_str = null_unique_ptr<const char>(free_string);
 
-    TestAccount account;
+    TestHDAccount account;
 
     error.reset(
             get_account_address_string(
@@ -245,7 +245,7 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_address_path)
     auto error = null_unique_ptr<Error>(free_error);
     auto path_str = null_unique_ptr<const char>(free_string);
 
-    TestAccount account;
+    TestHDAccount account;
 
     error.reset(
             get_account_address_path(
@@ -276,7 +276,7 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_currency)
     auto error = null_unique_ptr<Error>(free_error);
     Currency currency = INVALID_CURRENCY;
 
-    TestAccount account;
+    TestHDAccount account;
 
     error.reset(get_account_currency(nullptr, &currency));
     EXPECT_NE(nullptr, error);
@@ -306,7 +306,7 @@ TEST_P(AccountTestCurrencySupportP, generic)
     const Key master_key = make_dummy_key();
 
     auto error = null_unique_ptr<Error>(free_error);
-    auto account = null_unique_ptr<Account>(free_account);
+    auto account = null_unique_ptr<HDAccount>(free_account);
 
     error.reset(make_account(&master_key, GetParam(), 0, reset_sp(account)));
     EXPECT_EQ(nullptr, error);

@@ -13,9 +13,9 @@
 
 namespace wallet_core
 {
-
 namespace internal
 {
+
 struct KeyDeleter
 {
     inline void operator()(Key* key)
@@ -26,7 +26,6 @@ struct KeyDeleter
 typedef std::unique_ptr<Key, KeyDeleter> KeyPtr;
 
 } // namespace wallet_core
-
 } // namespace internal
 
 #endif // WALLET_CORE_INTERNAL_KEY_PTR_H

@@ -47,16 +47,16 @@ EthereumAddressValue make_address(const Key& key)
     return result;
 }
 
-class EthereumAccountAddress : public AccountAddress
+class EthereumAccount : public AccountBase
 {
 public:
-    EthereumAccountAddress(const HDPath& path, KeyPtr extended_key)
-        : AccountAddress(path, std::move(extended_key)),
+    EthereumAccount(const HDPath& path, KeyPtr extended_key)
+        : AccountBase(path, std::move(extended_key)),
           m_address(make_address(get_key()))
     {
     }
 
-    std::string get_address_string() const override
+    std::string get_address() const override
     {
         auto out = null_unique_ptr<char>(free_string);
         wally_hex_from_bytes(m_address.data(), m_address.size(), reset_sp(out));
@@ -74,13 +74,13 @@ namespace wallet_core
 namespace internal
 {
 
-EthereumAccount::EthereumAccount(const Key& bip44_master_key, uint32_t index)
-    : Account(bip44_master_key, CURRENCY_ETHEREUM, index)
+EthereumHDAccount::EthereumHDAccount(const Key& bip44_master_key, uint32_t index)
+    : HDAccount(bip44_master_key, CURRENCY_ETHEREUM, index)
 {
 }
 
-AccountAddressPtr EthereumAccount::make_address(
-        const Key& parent_key, AddressType type, uint32_t index)
+AccountPtr EthereumHDAccount::make_account(
+        const Key& parent_key, AddressType type, uint32_t index) const
 {
     KeyPtr address_key;
     throw_if_error(
@@ -88,10 +88,10 @@ AccountAddressPtr EthereumAccount::make_address(
                     &parent_key, KEY_TYPE_PRIVATE, index,
                     reset_sp(address_key)));
 
-    AccountAddressPtr result(
-            new EthereumAccountAddress(
+    AccountPtr result(
+            new EthereumHDAccount(
                     make_child_path(
-                            make_child_path(get_path_string(), type), index),
+                            make_child_path(get_path(), type), index),
                     std::move(address_key)));
 
     return std::move(result);

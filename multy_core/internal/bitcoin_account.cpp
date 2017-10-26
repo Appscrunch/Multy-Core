@@ -7,6 +7,7 @@
 #include "multy_core/internal/bitcoin_account.h"
 
 #include "multy_core/internal/key.h"
+#include "multy_core/internal/hd_path.h"
 #include "multy_core/internal/utility.h"
 
 #include "wally_crypto.h"
@@ -16,12 +17,12 @@
 namespace
 {
 using namespace wallet_core::internal;
-struct BitcoinAddress : public AccountAddress
+struct BitcoinAccount : public AccountBase
 {
     // using parent constructor
-    using AccountAddress::AccountAddress;
+    using AccountBase::AccountBase;
 
-    std::string get_address_string() const override
+    std::string get_address() const override
     {
         // P2PKH address generated from public key.
         // https://en.bitcoin.it/wiki/Technical_background_of_version_1_Bitcoin_addresses
@@ -32,7 +33,7 @@ struct BitcoinAddress : public AccountAddress
         throw_if_wally_error(
                 // skip the first byte of the pub_key since it contains prefix.
                 wally_sha256(
-                        &key.key.pub_key[1], sizeof(key.key.pub_key) - 1,
+                        &key->key.pub_key[1], sizeof(key->key.pub_key) - 1,
                         pub_hash, sizeof(pub_hash)),
                 "Hashing public key failed");
         throw_if_wally_error(
@@ -61,17 +62,17 @@ namespace wallet_core
 namespace internal
 {
 
-BitcoinAccount::BitcoinAccount(const Key& bip44_master_key, uint32_t index)
-    : Account(bip44_master_key, CURRENCY_BITCOIN, index)
+BitcoinHDAccount::BitcoinHDAccount(const Key& bip44_master_key, uint32_t index)
+    : HDAccount(bip44_master_key, CURRENCY_BITCOIN, index)
 {
 }
 
-BitcoinAccount::~BitcoinAccount()
+BitcoinHDAccount::~BitcoinHDAccount()
 {
 }
 
-AccountAddressPtr BitcoinAccount::make_address(
-        const Key& parent_key, AddressType type, uint32_t index)
+AccountPtr BitcoinHDAccount::make_account(
+        const Key& parent_key, AddressType type, uint32_t index) const
 {
     KeyPtr address_key;
 
@@ -80,11 +81,11 @@ AccountAddressPtr BitcoinAccount::make_address(
                     &parent_key, KEY_TYPE_PRIVATE, index,
                     reset_sp(address_key)));
 
-    return std::unique_ptr<AccountAddress>(
-            new BitcoinAddress(
-                    make_child_path(
-                            make_child_path(get_path_string(), type), index),
-                    std::move(address_key)));
+    return std::unique_ptr<Account>(
+            new BitcoinAccount(
+                    CURRENCY_BITCOIN,
+                    std::move(address_key)),
+                    make_child_path(make_child_path(get_path(), type), index));
 }
 
 } // namespace wallet_core

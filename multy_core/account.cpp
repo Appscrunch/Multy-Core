@@ -25,11 +25,11 @@ namespace
 using namespace wallet_core::internal;
 } // namespace
 
-Error* make_account(
+Error* make_hd_account(
         const Key* master_key,
         Currency currency,
         uint32_t index,
-        Account** new_account)
+        HDAccount** new_account)
 {
     ARG_CHECK(master_key != nullptr);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
@@ -41,12 +41,12 @@ Error* make_account(
         {
             case CURRENCY_BITCOIN:
             {
-                *new_account = new BitcoinAccount(*master_key, index);
+                *new_account = new BitcoinHDAccount(*master_key, index);
                 return nullptr;
             }
             case CURRENCY_ETHEREUM:
             {
-                *new_account = new EthereumAccount(*master_key, index);
+                *new_account = new EthereumHDAccount(*master_key, index);
                 return nullptr;
             }
             default:
@@ -70,17 +70,14 @@ Error* get_account_address_key(
         Key** out_key)
 {
     ARG_CHECK(account != nullptr);
-    ARG_CHECK(
-            address_type == ADDRESS_EXTERNAL
+    ARG_CHECK(address_type == ADDRESS_EXTERNAL
             || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
     ARG_CHECK(out_key != nullptr);
 
     try
     {
-        const auto& address = account->get_address(address_type, index);
-        KeyPtr key(new Key(address.get_key()));
-        *out_key = key.release();
+        *out_key = account->get_key().release();
     }
     catch (...)
     {
@@ -96,16 +93,14 @@ Error* get_account_address_string(
         const char** out_address)
 {
     ARG_CHECK(account);
-    ARG_CHECK(
-            address_type == ADDRESS_EXTERNAL
+    ARG_CHECK(address_type == ADDRESS_EXTERNAL
             || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
     ARG_CHECK(out_address);
 
     try
     {
-        const auto& address = account->get_address(address_type, index);
-        *out_address = copy_string(address.get_address_string());
+        *out_address = copy_string(account->get_address());
     }
     catch (...)
     {
@@ -122,16 +117,14 @@ Error* get_account_address_path(
         const char** out_address_path)
 {
     ARG_CHECK(account);
-    ARG_CHECK(
-            address_type == ADDRESS_EXTERNAL
+    ARG_CHECK(address_type == ADDRESS_EXTERNAL
             || address_type == ADDRESS_INTERNAL);
     ARG_CHECK(index < HARDENED_INDEX_BASE);
     ARG_CHECK(out_address_path);
 
     try
     {
-        const auto& address = account->get_address(address_type, index);
-        *out_address_path = copy_string(address.get_path_string());
+        *out_address_path = copy_string(to_string(account->get_path()));
     }
     catch (...)
     {
@@ -157,7 +150,7 @@ Error* get_account_currency(Account* account, Currency* out_currency)
     return nullptr;
 }
 
-void free_account(Account* account)
+void free_account(HDAccount* account)
 {
     delete account;
 }

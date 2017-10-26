@@ -7,21 +7,21 @@ option(WITH_TESTS "Build tests shared library (DLL)" NO)
 set(LIBWALLY_BIN "" CACHE FILEPATH "Path to prebuild libwally-core")
 set(LIBWALLY_BIN_PATH "" CACHE PATH "Path to directory with prebuild libwally-core")
 
-project(wallet)
+project(multy)
 
 add_executable(
-    wallet
+    multy
     main.cpp
 )
-target_link_libraries(wallet PRIVATE multy_core)
-target_include_directories(wallet PRIVATE .)
+target_link_libraries(multy PRIVATE multy_core)
+target_include_directories(multy PRIVATE .)
 
 add_subdirectory(multy_core)
 add_subdirectory(third-party)
 
 if(WITH_TESTS)
-    target_compile_definitions(wallet PRIVATE WITH_TESTS)
+    target_compile_definitions(multy PRIVATE WITH_TESTS)
     add_subdirectory(multy_test)
-    target_link_libraries(wallet PRIVATE multy_test)
+    target_link_libraries(multy PRIVATE multy_test)
 endif()
 

@@ -6,9 +6,9 @@
 
 #include "multy_core/internal/account_base.h"
 
-#include "multy_core/internal/utility.h"
+#include "multy_core/internal/key.h"
 
-#include <sstream>
+#include "multy_core/internal/utility.h"
 
 namespace
 {
@@ -57,52 +57,31 @@ namespace wallet_core
 {
 namespace internal
 {
-
-AccountAddress::AccountAddress(KeyPtr extended_key)
-    : m_extended_key(std::move(extended_key))
+AccountBase::AccountBase(Currency currency, KeyPtr extended_key, const HDPath& path)
+  : m_currency(currency),
+    m_extended_key(std::move(extended_key)),
+    m_path(path)
 {
 }
 
-AccountAddress::AccountAddress(const HDPath& path, KeyPtr extended_key)
-    : m_path(path), m_extended_key(std::move(extended_key))
+AccountBase::~AccountBase()
 {
 }
 
-AccountAddress::~AccountAddress()
-{
-}
-
-std::string AccountAddress::get_path_string() const
-{
-    std::stringstream stream("m");
-    for (const auto& p : get_path())
-    {
-        stream << "/" << p;
-    }
-    return stream.str();
-}
-
-const HDPath& AccountAddress::get_path() const
+HDPath AccountBase::get_path() const
 {
     return m_path;
 }
 
-const Key& AccountAddress::get_key() const
+Currency AccountBase::get_currency() const
 {
-    return *m_extended_key;
-}
-
-HDPath make_child_path(HDPath parent_path, uint32_t child_chain_code)
-{
-    HDPath result(std::move(parent_path));
-    result.push_back(child_chain_code);
-    return result;
+    return m_currency;
 }
 
 } // namespace wallet_core
 } // namespace internal
 
-Account::Account(const Key& master_key, Currency currency, uint32_t index)
+HDAccount::HDAccount(const Key& master_key, Currency currency, uint32_t index)
     : m_currency(currency), m_bip44_path(BIP44_ACCOUNT_PATH_DEPTH)
 {
     // BIP44 derive account key:
@@ -129,51 +108,30 @@ Account::Account(const Key& master_key, Currency currency, uint32_t index)
     m_bip44_path[BIP44_ACCOUNT] = account_index;
 }
 
-Account::~Account()
+HDAccount::~HDAccount()
 {
 }
 
-Currency Account::get_currency() const
-{
-    return m_currency;
-}
-
-const AccountAddress& Account::get_address(AddressType type, uint32_t index)
-{
-    const uint64_t address_map_key = to_map_key(type, index);
-    {
-        // get cached AccountAddress first
-        auto address_iterator = m_addresses.find(address_map_key);
-        if (address_iterator != m_addresses.end())
-        {
-            return *address_iterator->second;
-        }
-    }
-
-    KeyPtr& key_ptr = m_type_keys.at(type);
-    if (!key_ptr)
-    {
-        throw_if_error(
-                make_child_key(
-                        m_account_key.get(), KEY_TYPE_PRIVATE,
-                        static_cast<uint32_t>(type), reset_sp(key_ptr)));
-    }
-
-    AccountAddressPtr new_address = make_address(*key_ptr, type, index);
-    // TODO: use glsl::not_null
-    if (!new_address)
-    {
-        throw std::runtime_error(
-                "Internal error: make_address() returned a null");
-    }
-
-    AccountAddress* result = new_address.get();
-    m_addresses[address_map_key].swap(new_address);
-
-    return *result;
-}
-
-const HDPath& Account::get_path_string() const
+const HDPath& HDAccount::get_path() const
 {
     return m_bip44_path;
+}
+
+AccountPtr HDAccount::make_leaf_account(AddressType type, uint32_t index) const
+{
+    KeyPtr key_ptr;
+    throw_if_error(
+            make_child_key(
+                    m_account_key.get(), KEY_TYPE_PRIVATE,
+                    static_cast<uint32_t>(type), reset_sp(key_ptr)));
+
+    AccountPtr new_account = make_account(*key_ptr, type, index);
+    // TODO: use glsl::not_null
+    if (!new_account)
+    {
+        throw std::runtime_error(
+                "Internal error: make_account() returned a null");
+    }
+
+    return std::move(new_account);
 }
