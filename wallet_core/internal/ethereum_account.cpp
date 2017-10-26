@@ -6,17 +6,22 @@
 
 #include "wallet_core/internal/ethereum_account.h"
 
+#include "wallet_core/common.h"
 #include "wallet_core/internal/key.h"
 #include "wallet_core/internal/utility.h"
 
 extern "C" {
-#include "ccan/str/hex/hex.h"
+// TODO: Fix issue with not exported symbols from libwally-core for iOS builds,
+//   and then re-enable using hex-converting functions from CCAN.
+//#include "ccan/str/hex/hex.h"
 #include "keccak-tiny/keccak-tiny.h"
 } // extern "C"
 
+#include "wally_core.h"
 #include "wally_crypto.h"
 
 #include <string.h>
+#include <string>
 
 namespace
 {
@@ -53,11 +58,9 @@ public:
 
     std::string get_address_string() const override
     {
-        std::string result(hex_str_size(m_address.size()), '\0');
-        hex_encode(
-                m_address.data(), m_address.size(),
-                const_cast<char*>(result.data()), result.size());
-        return result;
+        auto out = null_unique_ptr<char>(free_string);
+        wally_hex_from_bytes(m_address.data(), m_address.size(), reset_sp(out));
+        return std::string(out.get());
     }
 
 private:

@@ -11,6 +11,7 @@
 #include "wally_core.h"
 
 #include <string.h>
+#include <string>
 
 namespace
 {

@@ -18,6 +18,7 @@
 #include "wallet_core/internal/utility.h"
 
 #include <memory>
+#include <string>
 
 namespace
 {

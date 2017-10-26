@@ -7,6 +7,7 @@
 #ifndef WALLET_CORE_ACCOUNT_BASE_H
 #define WALLET_CORE_ACCOUNT_BASE_H
 
+#include "wallet_core/api.h"
 #include "wallet_core/account.h"
 #include "wallet_core/keys.h"
 
