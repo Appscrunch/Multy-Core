@@ -1,6 +1,6 @@
-/* Copyright Multy.io
- * Licensed under Attribution-NonCommercial-NoDerivatives 4.0 International
- * (CC BY-NC-ND 4.0)
+/* Copyright 2017 by Multy.io
+ * Licensed under Multy.io license
+ *
  * See LICENSE for details
  */
 
