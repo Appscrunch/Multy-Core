@@ -5,7 +5,7 @@
  */
 
 #define BUILDING_MULTY_TESTS 1
-#include "wallet_test/run_tests.h"
+#include "multy_test/run_tests.h"
 
 #include "gtest/gtest.h"
 

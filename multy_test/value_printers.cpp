@@ -6,8 +6,8 @@
 
 #include "value_printers.h"
 
-#include "wallet_test/bip39_test_cases.h"
-#include "wallet_test/utility.h"
+#include "multy_test/bip39_test_cases.h"
+#include "multy_test/utility.h"
 
 #include "multy_core/common.h"
 #include "multy_core/error.h"

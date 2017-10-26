@@ -1,5 +1,5 @@
 
-add_library(wallet_test SHARED
+add_library(multy_test SHARED
     run_tests.cpp
     test_account.cpp
     test_keys.cpp
@@ -10,7 +10,7 @@ add_library(wallet_test SHARED
 )
 
 target_include_directories(
-    wallet_test
+    multy_test
     PRIVATE
     ..
     ../third-party/googletest/googletest/include
@@ -19,7 +19,7 @@ target_include_directories(
 )
 
 target_link_libraries(
-    wallet_test
+    multy_test
     PRIVATE
     gtest
     multy_core

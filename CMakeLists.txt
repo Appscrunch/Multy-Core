@@ -21,7 +21,7 @@ add_subdirectory(third-party)
 
 if(WITH_TESTS)
     target_compile_definitions(wallet PRIVATE WITH_TESTS)
-    add_subdirectory(wallet_test)
-    target_link_libraries(wallet PRIVATE wallet_test)
+    add_subdirectory(multy_test)
+    target_link_libraries(wallet PRIVATE multy_test)
 endif()
 

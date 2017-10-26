@@ -10,7 +10,7 @@
 #include "multy_core/error.h"
 #include "multy_core/internal/utility.h"
 
-#include "wallet_test/run_tests.h"
+#include "multy_test/run_tests.h"
 
 #include <iostream>
 #include <memory>

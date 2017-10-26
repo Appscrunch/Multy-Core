@@ -4,8 +4,8 @@
  * See LICENSE for details
  */
 
-#ifndef WALLET_TEST_RUN_TESTS_H
-#define WALLET_TEST_RUN_TESTS_H
+#ifndef MULTY_TEST_RUN_TESTS_H
+#define MULTY_TEST_RUN_TESTS_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,4 +33,4 @@ MULTY_TESTS_API int run_tests(int argc, char **argv);
 } // extern "C"
 #endif
 
-#endif // WALLET_TEST_RUN_TESTS_H
+#endif // MULTY_TEST_RUN_TESTS_H

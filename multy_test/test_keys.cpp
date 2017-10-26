@@ -7,9 +7,9 @@
 #include "multy_core/internal/key.h"
 #include "multy_core/keys.h"
 
-#include "wallet_test/bip39_test_cases.h"
-#include "wallet_test/utility.h"
-#include "wallet_test/value_printers.h"
+#include "multy_test/bip39_test_cases.h"
+#include "multy_test/utility.h"
+#include "multy_test/value_printers.h"
 
 #include "gtest/gtest.h"
 

@@ -4,7 +4,7 @@
  * See LICENSE for details
  */
 
-#include "wallet_test/utility.h"
+#include "multy_test/utility.h"
 
 #include "multy_core/internal/key.h"
 #include "wally_core.h"
