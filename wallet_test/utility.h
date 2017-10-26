@@ -14,7 +14,7 @@
 #include <vector>
 
 #define E(statement)                                                           \
-    wallet_core::internal::throw_if_wally_error((statement), #statement)
+    if ((statement) != 0 ) { throw std::runtime_error(#statement); }
 
 struct Key;
 
