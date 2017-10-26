@@ -4,13 +4,13 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/keys.h"
+#include "multy_core/keys.h"
 
-#include "wallet_core/common.h"
-#include "wallet_core/error.h"
+#include "multy_core/common.h"
+#include "multy_core/error.h"
 
-#include "wallet_core/internal/key.h"
-#include "wallet_core/internal/utility.h"
+#include "multy_core/internal/key.h"
+#include "multy_core/internal/utility.h"
 
 #include "wally_bip32.h"
 #include "wally_core.h"

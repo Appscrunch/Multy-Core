@@ -4,7 +4,7 @@
  * See LICENSE for details
  */
 
-#define BUILDING_WALLET_TESTS 1
+#define BUILDING_MULTY_TESTS 1
 #include "wallet_test/run_tests.h"
 
 #include "gtest/gtest.h"

@@ -4,10 +4,10 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/account.h"
+#include "multy_core/account.h"
 
-#include "wallet_core/internal/account_base.h"
-#include "wallet_core/internal/key.h"
+#include "multy_core/internal/account_base.h"
+#include "multy_core/internal/key.h"
 
 #include "wallet_test/bip39_test_cases.h"
 #include "wallet_test/utility.h"

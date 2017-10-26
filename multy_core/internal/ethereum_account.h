@@ -4,10 +4,10 @@
  * See LICENSE for details
  */
 
-#ifndef WALLET_CORE_ETHEREUM_ACCOUNT_H
-#define WALLET_CORE_ETHEREUM_ACCOUNT_H
+#ifndef MULTY_CORE_ETHEREUM_ACCOUNT_H
+#define MULTY_CORE_ETHEREUM_ACCOUNT_H
 
-#include "wallet_core/internal/account_base.h"
+#include "multy_core/internal/account_base.h"
 
 namespace wallet_core
 {
@@ -27,4 +27,4 @@ protected:
 } // namespace internal
 } // namespace wallet_core
 
-#endif // WALLET_CORE_ETHEREUM_ACCOUNT_H
+#endif // MULTY_CORE_ETHEREUM_ACCOUNT_H

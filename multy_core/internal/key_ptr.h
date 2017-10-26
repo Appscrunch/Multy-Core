@@ -4,10 +4,10 @@
  * See LICENSE for details
  */
 
-#ifndef WALLET_KEY_PTR_H
-#define WALLET_KEY_PTR_H
+#ifndef WALLET_CORE_INTERNAL_KEY_PTR_H
+#define WALLET_CORE_INTERNAL_KEY_PTR_H
 
-#include "wallet_core/keys.h"
+#include "multy_core/keys.h"
 
 #include <memory>
 
@@ -29,4 +29,4 @@ typedef std::unique_ptr<Key, KeyDeleter> KeyPtr;
 
 } // namespace internal
 
-#endif // WALLET_KEY_PTR_H
+#endif // WALLET_CORE_INTERNAL_KEY_PTR_H

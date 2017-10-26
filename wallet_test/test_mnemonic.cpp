@@ -4,7 +4,7 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/mnemonic.h"
+#include "multy_core/mnemonic.h"
 
 #include "wallet_test/bip39_test_cases.h"
 #include "wallet_test/utility.h"

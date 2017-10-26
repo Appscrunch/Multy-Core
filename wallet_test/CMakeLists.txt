@@ -22,5 +22,5 @@ target_link_libraries(
     wallet_test
     PRIVATE
     gtest
-    wallet_core
+    multy_core
 )

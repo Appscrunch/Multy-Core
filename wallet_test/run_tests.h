@@ -11,23 +11,23 @@
 extern "C" {
 #endif
 
-#ifndef BUILDING_WALLET_TESTS
-#    define BUILDING_WALLET_TESTS 0
+#ifndef BUILDING_MULTY_TESTS
+#    define BUILDING_MULTY_TESTS 0
 #endif
 
 #if defined(_WIN32)
-#    if (BUILDING_WALLET_TESTS)
-#        define WALLET_TESTS_API __declspec(dllexport)
+#    if (BUILDING_MULTY_TESTS)
+#        define MULTY_TESTS_API __declspec(dllexport)
 #    else
-#        define WALLET_TESTS_API
+#        define MULTY_TESTS_API
 #    endif
-#elif defined(__GNUC__) && (BUILDING_WALLET_TESTS)
-#    define WALLET_TESTS_API __attribute__ ((visibility ("default")))
+#elif defined(__GNUC__) && (BUILDING_MULTY_TESTS)
+#    define MULTY_TESTS_API __attribute__ ((visibility ("default")))
 #else
-#    define WALLET_TESTS_API
+#    define MULTY_TESTS_API
 #endif
 
-WALLET_TESTS_API int run_tests(int argc, char **argv);
+MULTY_TESTS_API int run_tests(int argc, char **argv);
 
 #ifdef __cplusplus
 } // extern "C"

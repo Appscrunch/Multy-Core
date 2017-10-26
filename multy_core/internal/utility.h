@@ -4,14 +4,14 @@
  * See LICENSE for details
  */
 
-#ifndef WALLET_CORE_UTILITY_H
-#define WALLET_CORE_UTILITY_H
+#ifndef MULTY_CORE_UTILITY_H
+#define MULTY_CORE_UTILITY_H
 
 /** Set of utility functions/classes/etc.
  * Not part of the interface, and should not be used by clients.
  */
 
-#include "wallet_core/error.h"
+#include "multy_core/error.h"
 
 #include <memory>
 
@@ -109,4 +109,4 @@ inline std::unique_ptr<T, D> null_unique_ptr(D deleter)
 } // namespace internal
 } // namespace wallet_core
 
-#endif // WALLET_CORE_UTILITY_H
+#endif // MULTY_CORE_UTILITY_H

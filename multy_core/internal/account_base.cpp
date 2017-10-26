@@ -4,9 +4,9 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/internal/account_base.h"
+#include "multy_core/internal/account_base.h"
 
-#include "wallet_core/internal/utility.h"
+#include "multy_core/internal/utility.h"
 
 #include <sstream>
 

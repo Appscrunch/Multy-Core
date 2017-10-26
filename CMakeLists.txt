@@ -13,10 +13,10 @@ add_executable(
     wallet
     main.cpp
 )
-target_link_libraries(wallet PRIVATE wallet_core)
+target_link_libraries(wallet PRIVATE multy_core)
 target_include_directories(wallet PRIVATE .)
 
-add_subdirectory(wallet_core)
+add_subdirectory(multy_core)
 add_subdirectory(third-party)
 
 if(WITH_TESTS)

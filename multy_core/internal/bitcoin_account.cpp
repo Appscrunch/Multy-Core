@@ -4,10 +4,10 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/internal/bitcoin_account.h"
+#include "multy_core/internal/bitcoin_account.h"
 
-#include "wallet_core/internal/key.h"
-#include "wallet_core/internal/utility.h"
+#include "multy_core/internal/key.h"
+#include "multy_core/internal/utility.h"
 
 #include "wally_crypto.h"
 

@@ -6,7 +6,7 @@
 
 #include "wallet_test/utility.h"
 
-#include "wallet_core/internal/key.h"
+#include "multy_core/internal/key.h"
 #include "wally_core.h"
 
 #include <memory.h>

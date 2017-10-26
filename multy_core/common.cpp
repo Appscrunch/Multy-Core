@@ -4,7 +4,7 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/common.h"
+#include "multy_core/common.h"
 
 #include "wally_core.h"
 

@@ -4,8 +4,8 @@
  * See LICENSE for details
  */
 
-#ifndef WALLET_CORE_BITCOIN_ACCOUNT_H
-#define WALLET_CORE_BITCOIN_ACCOUNT_H
+#ifndef MULTY_CORE_BITCOIN_ACCOUNT_H
+#define MULTY_CORE_BITCOIN_ACCOUNT_H
 
 #include "account_base.h"
 
@@ -27,4 +27,4 @@ public:
 } // namespace wallet_core
 } // namespace internal
 
-#endif // WALLET_CORE_BITCOIN_ACCOUNT_H
+#endif // MULTY_CORE_BITCOIN_ACCOUNT_H

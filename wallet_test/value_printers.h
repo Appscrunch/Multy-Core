@@ -7,7 +7,7 @@
 #ifndef VALUE_PRINTERS_H
 #define VALUE_PRINTERS_H
 
-#include "wallet_core/account.h"
+#include "multy_core/account.h"
 
 #include <memory>
 #include <ostream>

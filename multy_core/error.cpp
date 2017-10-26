@@ -4,9 +4,9 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/error.h"
+#include "multy_core/error.h"
 
-#include "wallet_core/common.h"
+#include "multy_core/common.h"
 
 #include "wally_core.h"
 

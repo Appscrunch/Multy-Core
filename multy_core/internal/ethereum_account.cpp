@@ -4,11 +4,11 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/internal/ethereum_account.h"
+#include "multy_core/internal/ethereum_account.h"
 
-#include "wallet_core/common.h"
-#include "wallet_core/internal/key.h"
-#include "wallet_core/internal/utility.h"
+#include "multy_core/common.h"
+#include "multy_core/internal/key.h"
+#include "multy_core/internal/utility.h"
 
 extern "C" {
 // TODO: Fix issue with not exported symbols from libwally-core for iOS builds,

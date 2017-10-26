@@ -4,10 +4,10 @@
  * See LICENSE for details
  */
 
-#ifndef WALLET_CORE_COMMON_H
-#define WALLET_CORE_COMMON_H
+#ifndef MULTY_CORE_COMMON_H
+#define MULTY_CORE_COMMON_H
 
-#include "wallet_core/api.h"
+#include "multy_core/api.h"
 
 #include <stddef.h>
 
@@ -35,11 +35,11 @@ struct BinaryData
 };
 
 /** Frees BinaryData, can take null */
-WALLET_CORE_API void free_binarydata(BinaryData*);
-WALLET_CORE_API void free_string(const char* str);
+MULTY_CORE_API void free_binarydata(BinaryData*);
+MULTY_CORE_API void free_string(const char* str);
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
-#endif // WALLET_CORE_COMMON_H
+#endif // MULTY_CORE_COMMON_H

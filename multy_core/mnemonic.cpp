@@ -4,11 +4,11 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/mnemonic.h"
+#include "multy_core/mnemonic.h"
 
-#include "wallet_core/common.h"
-#include "wallet_core/error.h"
-#include "wallet_core/internal/utility.h"
+#include "multy_core/common.h"
+#include "multy_core/error.h"
+#include "multy_core/internal/utility.h"
 
 #include "wally_bip39.h"
 #include "wally_core.h"

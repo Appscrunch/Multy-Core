@@ -4,14 +4,14 @@
  * See LICENSE for details
  */
 
-#ifndef WALLET_CORE_ACCOUNT_BASE_H
-#define WALLET_CORE_ACCOUNT_BASE_H
+#ifndef MULTY_CORE_ACCOUNT_BASE_H
+#define MULTY_CORE_ACCOUNT_BASE_H
 
-#include "wallet_core/api.h"
-#include "wallet_core/account.h"
-#include "wallet_core/keys.h"
+#include "multy_core/api.h"
+#include "multy_core/account.h"
+#include "multy_core/keys.h"
 
-#include "wallet_core/internal/key_ptr.h"
+#include "multy_core/internal/key_ptr.h"
 
 #include <array>
 #include <memory>
@@ -30,7 +30,7 @@ typedef std::vector<uint32_t> HDPath;
 
 const uint32_t HARDENED_INDEX_BASE = 0x80000000;
 
-class WALLET_CORE_API AccountAddress
+class MULTY_CORE_API AccountAddress
 {
 public:
     AccountAddress(KeyPtr extended_key);
@@ -60,7 +60,7 @@ HDPath make_child_path(HDPath parent_path, uint32_t child_chain_code);
 // Base class for coin-specific accounts.
 // Declared a struct (and out of wallet_core::internal namespace)
 // for consitency with a C-like interface.
-struct WALLET_CORE_API Account
+struct MULTY_CORE_API Account
 {
 public:
     typedef wallet_core::internal::KeyPtr KeyPtr;
@@ -89,4 +89,4 @@ private:
     std::unordered_map<uint64_t, AccountAddressPtr> m_addresses;
 };
 
-#endif // WALLET_CORE_ACCOUNT_BASE_H
+#endif // MULTY_CORE_ACCOUNT_BASE_H

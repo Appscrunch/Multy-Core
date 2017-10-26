@@ -4,8 +4,8 @@
  * See LICENSE for details
  */
 
-#include "wallet_core/internal/key.h"
-#include "wallet_core/keys.h"
+#include "multy_core/internal/key.h"
+#include "multy_core/keys.h"
 
 #include "wallet_test/bip39_test_cases.h"
 #include "wallet_test/utility.h"

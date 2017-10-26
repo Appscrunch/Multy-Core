@@ -7,8 +7,8 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include "wallet_core/common.h"
-#include "wallet_core/internal/utility.h"
+#include "multy_core/common.h"
+#include "multy_core/internal/utility.h"
 
 #include <string>
 #include <vector>

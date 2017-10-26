@@ -4,10 +4,10 @@
  * See LICENSE for details
  */
 
-#ifndef WALLET_CORE_ACCOUNT_H
-#define WALLET_CORE_ACCOUNT_H
+#ifndef MULTY_CORE_ACCOUNT_H
+#define MULTY_CORE_ACCOUNT_H
 
-#include "wallet_core/api.h"
+#include "multy_core/api.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -39,37 +39,37 @@ enum AddressType
  * @param index - acccount index
  * @param account - (out) new account
  */
-WALLET_CORE_API Error* make_account(
+MULTY_CORE_API Error* make_account(
         const Key* master_key,
         Currency currency,
         uint32_t index,
         Account** new_account);
 
-WALLET_CORE_API Error* get_account_address_key(
+MULTY_CORE_API Error* get_account_address_key(
         Account* account,
         AddressType address_type,
         uint32_t index,
         Key** out_key);
 
-WALLET_CORE_API Error* get_account_address_string(
+MULTY_CORE_API Error* get_account_address_string(
         Account* account,
         AddressType address_type,
         uint32_t index,
         const char** out_address);
 
-WALLET_CORE_API Error* get_account_address_path(
+MULTY_CORE_API Error* get_account_address_path(
         Account* account,
         AddressType address_type,
         uint32_t index,
         const char** out_address_path);
 
-WALLET_CORE_API Error* get_account_currency(
+MULTY_CORE_API Error* get_account_currency(
         Account* account, Currency* out_currency);
 
-WALLET_CORE_API void free_account(Account*);
+MULTY_CORE_API void free_account(Account*);
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
-#endif // WALLET_CORE_ACCOUNT_H
+#endif // MULTY_CORE_ACCOUNT_H
