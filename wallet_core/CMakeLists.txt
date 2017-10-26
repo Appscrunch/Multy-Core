@@ -23,4 +23,5 @@ target_include_directories(wallet_core PRIVATE
 )
 
 target_link_libraries(wallet_core libwally-core keccak-tiny)
+set_target_properties(wallet_core PROPERTIES CXX_VISIBILITY_PRESET hidden)
 

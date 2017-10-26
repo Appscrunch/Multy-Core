@@ -29,7 +29,7 @@ typedef std::vector<uint32_t> HDPath;
 
 const uint32_t HARDENED_INDEX_BASE = 0x80000000;
 
-class AccountAddress
+class WALLET_CORE_API AccountAddress
 {
 public:
     AccountAddress(KeyPtr extended_key);
@@ -59,7 +59,7 @@ HDPath make_child_path(HDPath parent_path, uint32_t child_chain_code);
 // Base class for coin-specific accounts.
 // Declared a struct (and out of wallet_core::internal namespace)
 // for consitency with a C-like interface.
-struct Account
+struct WALLET_CORE_API Account
 {
 public:
     typedef wallet_core::internal::KeyPtr KeyPtr;
