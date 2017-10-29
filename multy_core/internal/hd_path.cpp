@@ -8,7 +8,8 @@ namespace internal
 {
 std::string to_string(const HDPath& path)
 {
-    std::stringstream stream("m");
+    std::stringstream stream;
+    stream << "m";
     for (const auto& p : path)
     {
         stream << "/" << p;
