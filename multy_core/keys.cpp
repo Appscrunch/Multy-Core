@@ -89,8 +89,7 @@ Error* extended_key_to_string(
 
     try
     {
-        throw std::runtime_error(
-                "Proper extended key serialization is not implemented yet");
+        *new_str = copy_string(extended_key->to_string());
     }
     catch (...)
     {
