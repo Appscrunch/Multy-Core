@@ -81,8 +81,8 @@ TEST_P(MnemonicTestValidCasesP, Test)
     const std::string expected_mnemonic(param.mnemonic);
     const bytes expected_seed(from_hex(param.seed));
 
-    auto mnemonic_str = null_unique_ptr<const char>(free_string);
-    auto error = null_unique_ptr<Error>(free_error);
+    ConstCharPtr mnemonic_str;
+    ErrorPtr error;
 
     ASSERT_EQ(nullptr, mnemonic_str);
     ASSERT_EQ(nullptr, error);
@@ -100,7 +100,7 @@ TEST_P(MnemonicTestValidCasesP, Test)
 
     EXPECT_STREQ(expected_mnemonic.c_str(), mnemonic_str.get());
 
-    auto seed = null_unique_ptr<BinaryData>(free_binarydata);
+    BinaryDataPtr seed;
     error.reset(make_seed(expected_mnemonic.c_str(), "TREZOR", reset_sp(seed)));
     ASSERT_NE(nullptr, seed);
     EXPECT_EQ(to_binary_data(expected_seed), *seed);
@@ -108,17 +108,17 @@ TEST_P(MnemonicTestValidCasesP, Test)
 
 GTEST_TEST(MnemonicTest, empty_null_password)
 {
-    auto mnemonic_str = null_unique_ptr<const char>(free_string);
-    auto error = null_unique_ptr<Error>(free_error);
+    ConstCharPtr mnemonic_str;
+    ErrorPtr error;
 
     error.reset(make_mnemonic(dummy_entropy_source, reset_sp(mnemonic_str)));
     ASSERT_NE(nullptr, mnemonic_str);
 
-    auto empty_pass_seed = null_unique_ptr<BinaryData>(free_binarydata);
+    BinaryDataPtr empty_pass_seed;
     error.reset(make_seed(mnemonic_str.get(), "", reset_sp(empty_pass_seed)));
     ASSERT_NE(nullptr, empty_pass_seed);
 
-    auto null_pass_seed = null_unique_ptr<BinaryData>(free_binarydata);
+    BinaryDataPtr null_pass_seed;
     error.reset(
             make_seed(mnemonic_str.get(), nullptr, reset_sp(null_pass_seed)));
     ASSERT_NE(nullptr, null_pass_seed);
@@ -128,8 +128,8 @@ GTEST_TEST(MnemonicTest, empty_null_password)
 
 GTEST_TEST(MnemonicTestInvalidArgs, make_mnemonic)
 {
-    auto mnemonic_str = null_unique_ptr<const char>(free_string);
-    auto error = null_unique_ptr<Error>(free_error);
+    ConstCharPtr mnemonic_str;
+    ErrorPtr error;
 
     error.reset(
             make_mnemonic(
@@ -143,8 +143,8 @@ GTEST_TEST(MnemonicTestInvalidArgs, make_mnemonic)
 
 GTEST_TEST(MnemonicTestInvalidArgs, make_seed)
 {
-    auto binary_data = null_unique_ptr<BinaryData>(free_binarydata);
-    auto error = null_unique_ptr<Error>(free_error);
+    BinaryDataPtr binary_data;
+    ErrorPtr error;
 
     error.reset(make_seed(nullptr, "pass", reset_sp(binary_data)));
     EXPECT_NE(nullptr, error);
@@ -170,8 +170,8 @@ GTEST_TEST(MnemonicTestInvalidArgs, seed_to_string)
     const BinaryData null_data{nullptr, 0};
     const BinaryData zero_len_data{nullptr, 0};
 
-    auto seed_str = null_unique_ptr<const char>(free_string);
-    auto error = null_unique_ptr<Error>(free_error);
+    ConstCharPtr seed_str;
+    ErrorPtr error;
 
     error.reset(seed_to_string(nullptr, reset_sp(seed_str)));
     EXPECT_NE(nullptr, error);

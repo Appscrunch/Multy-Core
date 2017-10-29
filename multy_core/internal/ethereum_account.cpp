@@ -160,7 +160,7 @@ public:
     {
         EthereumAddressValue m_address(
                 make_address(m_private_key->make_public_key()->get_content()));
-        auto out = null_unique_ptr<char>(free_string);
+        CharPtr out;
         wally_hex_from_bytes(m_address.data(), m_address.size(), reset_sp(out));
         return std::string(out.get());
     }

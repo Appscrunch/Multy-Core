@@ -272,7 +272,7 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_key)
             CURRENCY_BITCOIN, TEST_ADDRESS, TEST_PATH, make_test_private_key(),
             make_test_public_key());
 
-    auto error = null_unique_ptr<Error>(free_error);
+    ErrorPtr error;
     KeyPtr key;
 
     error.reset(get_account_key(nullptr, KEY_TYPE_PRIVATE, reset_sp(key)));
@@ -289,8 +289,8 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_key)
 
 GTEST_TEST(AccountTestInvalidArgs, get_account_address_string)
 {
-    auto error = null_unique_ptr<Error>(free_error);
-    auto address_str = null_unique_ptr<const char>(free_string);
+    ErrorPtr error;
+    ConstCharPtr address_str;
 
     const TestAccount account(
             CURRENCY_BITCOIN, TEST_ADDRESS, TEST_PATH, make_test_private_key(),
@@ -306,8 +306,8 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_address_string)
 
 GTEST_TEST(AccountTestInvalidArgs, get_account_address_path)
 {
-    auto error = null_unique_ptr<Error>(free_error);
-    auto path_str = null_unique_ptr<const char>(free_string);
+    ErrorPtr error;
+    ConstCharPtr path_str;
 
     const TestAccount account(
             CURRENCY_BITCOIN, TEST_ADDRESS, TEST_PATH, make_test_private_key(),
@@ -323,7 +323,7 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_address_path)
 
 GTEST_TEST(AccountTestInvalidArgs, get_account_currency)
 {
-    auto error = null_unique_ptr<Error>(free_error);
+    ErrorPtr error;
     Currency currency = INVALID_CURRENCY;
 
     const TestAccount account(
@@ -401,7 +401,7 @@ TEST_P(AccountTestCurrencySupportP, generic)
     }
 
     //    {
-    //        auto path_str = null_unique_ptr<const char>(free_string);
+    //        ConstCharPtr path_str;
     //        error.reset(get_account_address_path(account.get(),
     //        ADDRESS_EXTERNAL, 0, reset_sp(address_str)));
     //        EXPECT_EQ(nullptr, error);

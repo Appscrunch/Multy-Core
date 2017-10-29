@@ -135,7 +135,7 @@ struct BitcoinAccount : public AccountBase
                         sizeof(hash_hash)),
                 "Hashing hash of public key failed");
 
-        auto base58_string_ptr = null_unique_ptr<char>(wally_free_string);
+        CharPtr base58_string_ptr;
         throw_if_wally_error(
                 wally_base58_from_bytes(
                         hash_hash, sizeof(hash_hash), BASE58_FLAG_CHECKSUM,
