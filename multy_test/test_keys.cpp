@@ -80,11 +80,6 @@ GTEST_TEST(KeysTestInvalidArgs, make_child_key)
 
     ErrorPtr error;
     ExtendedKeyPtr child_key;
-    // Event though all parameters are preset, parent_key is still invalid
-    error.reset(make_child_key(&parent_key, 0, reset_sp(child_key)));
-    EXPECT_NE(nullptr, error);
-    EXPECT_EQ(nullptr, child_key);
-
     error.reset(make_child_key(nullptr, 0, reset_sp(child_key)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, child_key);
