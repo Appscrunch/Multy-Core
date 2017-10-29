@@ -17,27 +17,26 @@
 
 #include <memory>
 
-static_assert(
-        KEY_TYPE_PRIVATE == BIP32_FLAG_KEY_PRIVATE,
-        "invalid KEY_TYPE_PRIVATE value");
-static_assert(
-        KEY_TYPE_PUBLIC == BIP32_FLAG_KEY_PUBLIC,
-        "invalid KEY_TYPE_PUBLIC value");
+// static_assert(
+//        KEY_TYPE_PRIVATE == BIP32_FLAG_KEY_PRIVATE,
+//        "invalid KEY_TYPE_PRIVATE value");
+// static_assert(
+//        KEY_TYPE_PUBLIC == BIP32_FLAG_KEY_PUBLIC,
+//        "invalid KEY_TYPE_PUBLIC value");
 
 namespace
 {
 using namespace wallet_core::internal;
 } // namespace
 
-Error* make_master_key(const BinaryData* seed, Key** master_key)
+Error* make_master_key(const BinaryData* seed, ExtendedKey** new_master_key)
 {
     ARG_CHECK(seed);
-    ARG_CHECK(master_key);
+    ARG_CHECK(new_master_key);
 
     try
     {
-        auto key = null_unique_ptr<Key>(free_key);
-        key.reset(new Key);
+        ExtendedKeyPtr key(new ExtendedKey);
         const int result = bip32_key_from_seed(
                 seed->data, seed->len, BIP32_VER_MAIN_PRIVATE, 0, &key->key);
         if (result == WALLY_ERROR)
@@ -47,7 +46,7 @@ Error* make_master_key(const BinaryData* seed, Key** master_key)
                     "Can't generate master key with given entropy");
         }
         throw_if_wally_error(result, "Failed to generate master key");
-        *master_key = key.release();
+        *new_master_key = key.release();
     }
     catch (...)
     {
@@ -57,24 +56,23 @@ Error* make_master_key(const BinaryData* seed, Key** master_key)
 }
 
 Error* make_child_key(
-        const Key* parent_key,
-        KeyType type,
+        const ExtendedKey* parent_key,
         uint32_t chain_code,
-        Key** child_key)
+        ExtendedKey** new_child_key)
 {
+    ARG_CHECK(parent_key);
+    ARG_CHECK(new_child_key);
+
     try
     {
-        ARG_CHECK(parent_key);
-        ARG_CHECK(child_key);
-
-        auto key = null_unique_ptr<Key>(free_key);
-        key.reset(new Key);
+        ExtendedKeyPtr key(new ExtendedKey);
         throw_if_wally_error(
                 bip32_key_from_parent(
-                        &parent_key->key, chain_code, type, &key->key),
+                        &parent_key->key, chain_code, BIP32_FLAG_KEY_PRIVATE,
+                        &key->key),
                 "Failed to make child key");
 
-        *child_key = key.release();
+        *new_child_key = key.release();
     }
     catch (...)
     {
@@ -83,40 +81,112 @@ Error* make_child_key(
     return nullptr;
 }
 
-Error* key_to_base58(const Key* key, KeyType type, const char** str)
+Error* extended_key_to_string(
+        const ExtendedKey* extended_key, const char** new_str)
 {
-    static const size_t size = BIP32_SERIALIZED_LEN;
-    unsigned char serialized_key[size];
-
-    ARG_CHECK(key);
-    ARG_CHECK(str);
+    ARG_CHECK(extended_key);
+    ARG_CHECK(new_str);
 
     try
     {
-        const uint32_t flag = (type == KEY_TYPE_PRIVATE)
-                ? BIP32_FLAG_KEY_PRIVATE
-                : BIP32_FLAG_KEY_PUBLIC;
-        throw_if_wally_error(
-                bip32_key_serialize(&key->key, flag, serialized_key, size),
-                "Failed to serialize key");
-
-        throw_if_wally_error(
-                wally_base58_from_bytes(
-                        serialized_key, size, 0, const_cast<char**>(str)),
-                "Failed to covert key to string");
+        throw std::runtime_error(
+                "Proper extended key serialization is not implemented yet");
     }
     catch (...)
     {
         return exception_to_error();
     }
     return nullptr;
+}
+
+Error* private_to_public_key(
+        const PrivateKey* private_key, PublicKey** new_public_key)
+{
+    ARG_CHECK(private_key);
+    ARG_CHECK(new_public_key);
+    try
+    {
+        *new_public_key = private_key->make_public_key().release();
+    }
+    catch (...)
+    {
+        return exception_to_error();
+    }
+    return nullptr;
+}
+
+Error* key_to_string(const Key* key, const char** new_str)
+{
+    ARG_CHECK(key);
+    ARG_CHECK(new_str);
+    try
+    {
+        *new_str = copy_string(key->to_string());
+    }
+    catch (...)
+    {
+        return exception_to_error();
+    }
+    return nullptr;
+}
+
+//Error* sign_with_key(
+//        const Key* key, const BinaryData* data, BinaryData** new_signature)
+//{
+//    ARG_CHECK(key);
+//    ARG_CHECK(data);
+//    ARG_CHECK(new_signature);
+//    try
+//    {
+//        *new_signature = key->sign(data).release();
+//    }
+//    catch (...)
+//    {
+//        return exception_to_error();
+//    }
+//    return nullptr;
+//}
+
+//Error* encrypt_with_key(
+//        const Key* key, const BinaryData* data, BinaryData** new_encrypted_data)
+//{
+//    ARG_CHECK(key);
+//    ARG_CHECK(data);
+//    ARG_CHECK(new_encrypted_data);
+//    try
+//    {
+//        *new_encrypted_data = key->encrypt(data).release();
+//    }
+//    catch (...)
+//    {
+//        return exception_to_error();
+//    }
+//    return nullptr;
+//}
+
+//Error* decrypt_with_key(
+//        const Key* key, const BinaryData* data, BinaryData** new_decrypted_data)
+//{
+//    ARG_CHECK(key);
+//    ARG_CHECK(data);
+//    ARG_CHECK(new_decrypted_data);
+//    try
+//    {
+//        *new_decrypted_data = key->decrypt(data).release();
+//    }
+//    catch (...)
+//    {
+//        return exception_to_error();
+//    }
+//    return nullptr;
+//}
+
+void free_extended_key(ExtendedKey* key)
+{
+    delete key;
 }
 
 void free_key(Key* key)
 {
-    if (key)
-    {
-        return;
-    }
     delete key;
 }

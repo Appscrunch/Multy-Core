@@ -14,14 +14,14 @@ namespace wallet_core
 namespace internal
 {
 
-class BitcoinHDAccount : public ::HDAccount
+class BitcoinHDAccount : public HDAccountBase
 {
 public:
-    BitcoinHDAccount(const Key& bip44_master_key, uint32_t index);
+    BitcoinHDAccount(const ExtendedKey& bip44_master_key, uint32_t index);
     ~BitcoinHDAccount();
 
     AccountPtr make_account(
-            const Key& parent_key,
+            const ExtendedKey& parent_key,
             AddressType type,
             uint32_t index) const override;
 };

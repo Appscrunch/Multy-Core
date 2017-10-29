@@ -26,8 +26,10 @@ void PrintTo(const std::nullptr_t&, std::ostream*);
 void PrintTo(const Error&, std::ostream*);
 void PrintTo(const BinaryData&, std::ostream*);
 void PrintTo(const Key&, std::ostream*);
+void PrintTo(const ExtendedKey&, std::ostream*);
 void PrintTo(const BIP39TestCase& e, std::ostream* out);
 void PrintTo(const Account& e, std::ostream* out);
+void PrintTo(const HDAccount& e, std::ostream* out);
 void PrintTo(const Currency& e, std::ostream* out);
 void PrintTo(const AddressType& e, std::ostream* out);
 

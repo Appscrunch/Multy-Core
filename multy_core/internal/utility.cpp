@@ -15,15 +15,7 @@
 
 namespace
 {
-struct ErrorDeleter
-{
-    inline void operator()(Error* error)
-    {
-        free_error(error);
-    }
-};
-
-typedef std::unique_ptr<Error, ErrorDeleter> ErrorPtr;
+using namespace wallet_core::internal;
 
 class ErrorWrapperException : public std::exception
 {

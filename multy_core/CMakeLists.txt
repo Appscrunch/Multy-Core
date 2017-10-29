@@ -3,15 +3,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_library(multy_core
     SHARED
+
     account.cpp
     common.cpp
     error.cpp
     keys.cpp
     mnemonic.cpp
-    internal/account.cpp
+
     internal/account_base.cpp
+    internal/account.cpp
     internal/bitcoin_account.cpp
     internal/ethereum_account.cpp
+    internal/hd_path.cpp
+    internal/key.cpp
+    internal/u_ptr.cpp
     internal/utility.cpp
 )
 

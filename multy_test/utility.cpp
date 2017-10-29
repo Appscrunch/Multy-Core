@@ -6,6 +6,7 @@
 
 #include "multy_test/utility.h"
 
+#include "multy_core/common.h"
 #include "multy_core/internal/key.h"
 #include "wally_core.h"
 
@@ -35,7 +36,7 @@ bytes from_hex(const char* hex_str)
 
 std::string to_hex(const bytes& bytes)
 {
-    auto hex_str = null_unique_ptr<char>(free_string);
+    CharPtr hex_str;
     E(wally_hex_from_bytes(bytes.data(), bytes.size(), reset_sp(hex_str)));
     return std::string(hex_str.get());
 }
@@ -47,7 +48,7 @@ std::string to_hex(const BinaryData& data)
         throw std::runtime_error("BinaryData::data is null");
     }
 
-    auto hex_str = null_unique_ptr<char>(free_string);
+    CharPtr hex_str;
     E(wally_hex_from_bytes(data.data, data.len, reset_sp(hex_str)));
     return std::string(hex_str.get());
 }
@@ -55,6 +56,13 @@ std::string to_hex(const BinaryData& data)
 BinaryData to_binary_data(const bytes& data)
 {
     return BinaryData{data.data(), data.size()};
+}
+
+ExtendedKey make_dummy_extended_key()
+{
+    ExtendedKey result;
+    memset(&result, 0, sizeof(result));
+    return result;
 }
 
 } // namespace test_utility
@@ -66,5 +74,5 @@ bool operator==(const BinaryData& lhs, const BinaryData& rhs)
 
 bool operator==(const Key& lhs, const Key& rhs)
 {
-    return memcmp(&lhs, &rhs, sizeof(lhs)) == 0;
+    return lhs.get_content() == rhs.get_content();
 }

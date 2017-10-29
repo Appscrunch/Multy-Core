@@ -2,3 +2,6 @@
 
 Account::~Account()
 {}
+
+HDAccount::~HDAccount()
+{}

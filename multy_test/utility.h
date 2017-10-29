@@ -7,7 +7,6 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include "multy_core/common.h"
 #include "multy_core/internal/utility.h"
 
 #include <string>
@@ -16,7 +15,8 @@
 #define E(statement)                                                           \
     if ((statement) != 0 ) { throw std::runtime_error(#statement); }
 
-struct Key;
+struct BinaryData;
+struct ExtendedKey;
 
 namespace test_utility
 {
@@ -26,6 +26,7 @@ bytes from_hex(const char* hex_str);
 std::string to_hex(const bytes& bytes);
 std::string to_hex(const BinaryData& data);
 BinaryData to_binary_data(const bytes& data);
+ExtendedKey make_dummy_extended_key();
 } // test_utility
 
 bool operator==(const BinaryData& lhs, const BinaryData& rhs);

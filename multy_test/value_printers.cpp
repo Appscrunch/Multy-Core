@@ -33,6 +33,29 @@ std::ostream& operator<<(std::ostream& ostr, HDPath const& path)
     return ostr;
 }
 
+std::ostream& operator<<(std::ostream& ostr, BinaryData const& data)
+{
+    return ostr << (data.data ? to_hex(data) : std::string("<null>")) << ", "
+                << data.len;
+}
+
+std::ostream& operator<<(std::ostream& ostr, Currency currency)
+{
+    switch (currency)
+    {
+        case CURRENCY_BITCOIN:
+            ostr << "CURRENCY_BITCOIN";
+            break;
+        case CURRENCY_ETHEREUM:
+            ostr << "CURRENCY_ETHEREUM";
+            break;
+        default:
+            ostr << "unknown currency " << static_cast<uint32_t>(currency);
+            break;
+    }
+    return ostr;
+}
+
 } // namespace
 
 namespace std
@@ -58,9 +81,12 @@ void PrintTo(const BinaryData& data, std::ostream* out)
 
 void PrintTo(const Key& key, std::ostream* out)
 {
-    unsigned char serialized_key[1024];
-    E(bip32_key_serialize(&key.key, 0, serialized_key, sizeof(serialized_key)));
-    *out << "Key{ " << serialized_key << " }";
+    *out << "Key{ " << key.to_string() << " }";
+}
+
+void PrintTo(const ExtendedKey& key, std::ostream* out)
+{
+    *out << "ExtendedKey{" << key.to_string() << " }";
 }
 
 void PrintTo(const BIP39TestCase& e, std::ostream* out)
@@ -77,24 +103,21 @@ void PrintTo(const Account& a, std::ostream* out)
 {
     *out << "Account{\n"
          << "\tcurrency: " << a.get_currency() << ",\n"
-         << "\tpath: " << a.get_path_string() << "\n"
+         << "\tpath: " << a.get_path() << "\n"
+         << "}";
+}
+
+void PrintTo(const HDAccount& a, std::ostream* out)
+{
+    *out << "HDAccount{\n"
+         << "\tcurrency: " << a.get_currency() << ",\n"
+         << "\tpath: " << a.get_path() << "\n"
          << "}";
 }
 
 void PrintTo(const Currency& c, std::ostream* out)
 {
-    switch (c)
-    {
-        case CURRENCY_BITCOIN:
-            *out << "CURRENCY_BITCOIN";
-            break;
-        case CURRENCY_ETHEREUM:
-            *out << "CURRENCY_ETHEREUM";
-            break;
-        default:
-            *out << "unknown currency " << c;
-            break;
-    }
+    *out << c;
 }
 
 void PrintTo(const AddressType& a, std::ostream* out)

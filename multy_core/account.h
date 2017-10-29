@@ -19,6 +19,7 @@ extern "C" {
 struct HDAccount;
 struct Account;
 struct Error;
+struct ExtendedKey;
 struct Key;
 
 enum Currency
@@ -33,6 +34,12 @@ enum AddressType
     ADDRESS_INTERNAL // change-address
 };
 
+enum KeyType
+{
+    KEY_TYPE_PRIVATE,
+    KEY_TYPE_PUBLIC,
+};
+
 /** Make an account of given currency with given id.
  *
  * @param master_key - master key, generated from seed.
@@ -41,7 +48,7 @@ enum AddressType
  * @param account - (out) new account
  */
 MULTY_CORE_API Error* make_hd_account(
-        const Key* master_key,
+        const ExtendedKey* master_key,
         Currency currency,
         uint32_t index,
         HDAccount** new_account);
@@ -59,34 +66,35 @@ MULTY_CORE_API Error* make_hd_leaf_account(
         uint32_t index,
         Account** new_account);
 
-/** Make regular account from private key anc currency.
+/** Make regular account from private key and currency.
  * @param currency - currency to use account for.
- * @param private_key - private key for account.
+ * @param serialized_private_key - private key for account.
  * @param new_account - newly created account, must be freed by caller with
  * free_account().
  */
 MULTY_CORE_API Error* make_account(
         Currency currency,
-        const Key* private_key,
+        const char* serialized_private_key,
         Account** new_account);
 
 MULTY_CORE_API Error* get_account_key(
-        Account* account,
+        const Account* account,
+        KeyType key_type,
         Key** out_key);
 
 MULTY_CORE_API Error* get_account_address_string(
-        Account* account,
+        const Account* account,
         const char** out_address);
 
 MULTY_CORE_API Error* get_account_address_path(
-        Account* account,
+        const Account* account,
         const char** out_address_path);
 
 MULTY_CORE_API Error* get_account_currency(
-        Account* account,
+        const Account* account,
         Currency* out_currency);
 
-MULTY_CORE_API void free_hd_account(HDAccount*);
+MULTY_CORE_API void free_hdaccount(HDAccount*);
 MULTY_CORE_API void free_account(Account*);
 
 #ifdef __cplusplus

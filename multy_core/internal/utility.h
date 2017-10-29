@@ -12,6 +12,7 @@
  */
 
 #include "multy_core/error.h"
+#include "multy_core/internal/u_ptr.h"
 
 #include <memory>
 
@@ -44,6 +45,12 @@ void throw_if_wally_error(int err_code, const char* message);
 
 template <typename T, size_t N>
 constexpr size_t array_size(T (&)[N])
+{
+    return N;
+}
+
+template <typename T, size_t N>
+constexpr size_t array_size(const std::array<T, N>&)
 {
     return N;
 }
@@ -100,10 +107,17 @@ inline UniquePointerUpdater<SP> reset_sp(SP& sp)
     return UniquePointerUpdater<SP>(sp);
 }
 
+// TODO: remove
 template <typename T, typename D>
 inline std::unique_ptr<T, D> null_unique_ptr(D deleter)
 {
     return std::unique_ptr<T, D>(nullptr, deleter);
+}
+
+template <typename T>
+UPtr<T> make_clone(const T& original)
+{
+    return UPtr<T>(new T(original));
 }
 
 } // namespace internal
