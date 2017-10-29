@@ -91,7 +91,7 @@ struct EthereumPrivateKey : public PrivateKey
         EthereumPublicKey::KeyData data;
         throw_if_wally_error(
                 wally_ec_public_key_from_private_key(
-                        m_data.data(), m_data.size(), data.data(),
+                        m_data.data() + 1, m_data.size() - 1, data.data(),
                         data.max_size()),
                 "Failed to derive public key from private key");
 
