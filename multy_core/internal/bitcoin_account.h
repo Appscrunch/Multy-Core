@@ -26,6 +26,8 @@ public:
             uint32_t index) const override;
 };
 
+AccountPtr make_bitcoin_account(const char* private_key);
+
 } // namespace wallet_core
 } // namespace internal
 

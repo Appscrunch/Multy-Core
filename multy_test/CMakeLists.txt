@@ -2,11 +2,12 @@
 add_library(multy_test SHARED
     run_tests.cpp
     test_account.cpp
+    test_bitcoin_account.cpp
     test_keys.cpp
     test_mnemonic.cpp
     test_utility.cpp
-    value_printers.cpp
     utility.cpp
+    value_printers.cpp
 )
 
 target_include_directories(

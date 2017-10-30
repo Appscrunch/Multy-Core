@@ -185,5 +185,26 @@ AccountPtr BitcoinHDAccount::make_account(
                     make_child_path(make_child_path(get_path(), type), index)));
 }
 
+AccountPtr make_bitcoin_account(const char* private_key)
+{
+    AccountPtr account;
+    size_t resulting_size;
+    throw_if_wally_error(
+            wally_base58_get_length(private_key, &resulting_size),
+            "Faield to process base-58 encoded private key");
+    BitcoinPrivateKey::KeyData key_data;
+    if (resulting_size != key_data.max_size())
+    {
+        throw std::runtime_error("Bitcoin private key invalid length");
+    }
+
+    throw_if_wally_error(
+            wally_base58_to_bytes(private_key, 0, key_data.data(), key_data.size(), &resulting_size),
+            "Faield deserialize base-58 encoded private key");
+
+    BitcoinPrivateKeyPtr key(new BitcoinPrivateKey(key_data));
+    return AccountPtr(new BitcoinAccount(std::move(key), HDPath()));
+}
+
 } // namespace wallet_core
 } // namespace internal
