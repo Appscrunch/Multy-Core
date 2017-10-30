@@ -1,3 +1,9 @@
+/* Copyright 2017 by Multy.io
+ * Licensed under Multy.io license.
+ *
+ * See LICENSE for details
+ */
+
 #ifndef MULTY_CORE_INTERNAL_HD_PATH_H
 #define MULTY_CORE_INTERNAL_HD_PATH_H
 
