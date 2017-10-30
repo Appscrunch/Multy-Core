@@ -187,12 +187,6 @@ GTEST_TEST(AccountTest, free_account)
     GTEST_SUCCEED();
 }
 
-GTEST_TEST(AccountTest, get_account_address_key)
-{
-    /// TODO: test that only private or public part of the key returned.
-    FAIL();
-}
-
 GTEST_TEST(AccountTest, fake_account)
 {
     const ExtendedKey expected_key = make_dummy_extended_key();
@@ -398,6 +392,20 @@ TEST_P(AccountTestCurrencySupportP, generic)
         EXPECT_EQ(nullptr, error);
         EXPECT_NE(nullptr, path_str);
         EXPECT_STRNE("", path_str.get());
+    }
+
+    {
+        KeyPtr private_key;
+        error.reset(get_account_key(account.get(), KEY_TYPE_PRIVATE, reset_sp(private_key)));
+        EXPECT_EQ(nullptr, error);
+        EXPECT_NE(nullptr, private_key);
+
+        KeyPtr public_key;
+        error.reset(get_account_key(account.get(), KEY_TYPE_PUBLIC, reset_sp(public_key)));
+        EXPECT_EQ(nullptr, error);
+        EXPECT_NE(nullptr, public_key);
+
+        EXPECT_NE(public_key, private_key);
     }
 
     //    {

@@ -79,14 +79,14 @@ struct BitcoinPrivateKey : public PrivateKey
 
     PublicKeyPtr make_public_key() const override
     {
-        BitcoinPublicKey::KeyData data;
+        BitcoinPublicKey::KeyData public_key_data;
         throw_if_wally_error(
                 wally_ec_public_key_from_private_key(
-                        m_data.data(), m_data.size(), data.data(),
-                        data.max_size()),
+                        m_data.data() + 1, m_data.size() - 1,
+                        public_key_data.data(), public_key_data.max_size()),
                 "Failed to derive public key from private key");
 
-        return PublicKeyPtr(new BitcoinPublicKey(data));
+        return PublicKeyPtr(new BitcoinPublicKey(public_key_data));
     }
 
     PrivateKeyPtr clone() const override
