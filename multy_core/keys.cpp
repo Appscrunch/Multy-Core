@@ -52,6 +52,8 @@ Error* make_master_key(const BinaryData* seed, ExtendedKey** new_master_key)
     {
         return exception_to_error();
     }
+    OUT_CHECK(*new_master_key);
+
     return nullptr;
 }
 
@@ -78,6 +80,8 @@ Error* make_child_key(
     {
         return exception_to_error();
     }
+    OUT_CHECK(*new_child_key);
+
     return nullptr;
 }
 
@@ -95,6 +99,8 @@ Error* extended_key_to_string(
     {
         return exception_to_error();
     }
+    OUT_CHECK(*new_str);
+
     return nullptr;
 }
 
@@ -111,6 +117,8 @@ Error* private_to_public_key(
     {
         return exception_to_error();
     }
+    OUT_CHECK(*new_public_key);
+
     return nullptr;
 }
 
@@ -126,6 +134,8 @@ Error* key_to_string(const Key* key, const char** new_str)
     {
         return exception_to_error();
     }
+    OUT_CHECK(*new_str);
+
     return nullptr;
 }
 

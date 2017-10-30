@@ -28,6 +28,16 @@ struct Error;
         }                                                                      \
     } while (false)
 
+#define OUT_CHECK(arg)                                                         \
+    do                                                                         \
+    {                                                                          \
+        if (!(arg))                                                            \
+        {                                                                      \
+            return make_error(                                                 \
+                    ERROR_INTERNAL, "Failed to create output value: " #arg);   \
+        }                                                                      \
+    } while (false)
+
 namespace wallet_core
 {
 

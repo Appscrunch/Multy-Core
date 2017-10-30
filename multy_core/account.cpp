@@ -41,12 +41,12 @@ Error* make_hd_account(
             case CURRENCY_BITCOIN:
             {
                 *new_account = new BitcoinHDAccount(*master_key, index);
-                return nullptr;
+                break;
             }
             case CURRENCY_ETHEREUM:
             {
                 *new_account = new EthereumHDAccount(*master_key, index);
-                return nullptr;
+                break;
             }
             default:
             {
@@ -59,6 +59,8 @@ Error* make_hd_account(
     {
         return exception_to_error();
     }
+    OUT_CHECK(*new_account);
+
     return nullptr;
 }
 
@@ -83,6 +85,8 @@ Error* make_hd_leaf_account(
     {
         return exception_to_error();
     }
+    OUT_CHECK(*new_account);
+
     return nullptr;
 }
 
@@ -104,6 +108,8 @@ MULTY_CORE_API Error* make_account(
     {
         return exception_to_error();
     }
+    OUT_CHECK(*new_account);
+
     return nullptr;
 }
 
@@ -128,6 +134,8 @@ Error* get_account_key(const Account* account, KeyType key_type, Key** out_key)
     {
         return exception_to_error();
     }
+    OUT_CHECK(*out_key);
+
     return nullptr;
 }
 
@@ -145,6 +153,7 @@ Error* get_account_address_string(
     {
         return exception_to_error();
     }
+    OUT_CHECK(*out_address);
 
     return nullptr;
 }
@@ -163,6 +172,7 @@ Error* get_account_address_path(
     {
         return exception_to_error();
     }
+    OUT_CHECK(*out_address_path);
 
     return nullptr;
 }
@@ -180,6 +190,7 @@ Error* get_account_currency(const Account* account, Currency* out_currency)
     {
         return exception_to_error();
     }
+
     return nullptr;
 }
 

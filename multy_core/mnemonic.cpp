@@ -80,6 +80,7 @@ Error* make_mnemonic(EntropySource entropy_source, const char** mnemonic)
     {
         return exception_to_error();
     }
+    OUT_CHECK(*mnemonic);
 
     return nullptr;
 }
@@ -87,13 +88,13 @@ Error* make_mnemonic(EntropySource entropy_source, const char** mnemonic)
 Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
 {
     static const size_t max_seed_size = BIP39_SEED_LEN_512;
-    size_t written = 0;
 
     ARG_CHECK(mnemonic);
     ARG_CHECK(seed);
 
     try
     {
+        size_t written = 0;
         throw_if_wally_error(
                 bip39_mnemonic_validate(nullptr, mnemonic),
                 "Invalid mnemonic value");
@@ -114,6 +115,8 @@ Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
     {
         return exception_to_error();
     }
+    OUT_CHECK(*seed);
+
     return nullptr;
 }
 
@@ -130,6 +133,8 @@ Error* seed_to_string(const BinaryData* seed, const char** str)
         return internal_make_error(result, "Failed to convert seed to string");
     }
     *str = out;
+    OUT_CHECK(*str);
+
     return nullptr;
 }
 
