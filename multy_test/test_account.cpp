@@ -253,7 +253,7 @@ GTEST_TEST(AccountTestInvalidArgs, make_account)
     error.reset(
             make_account(
                     CURRENCY_BITCOIN,
-                    "L33peSRvmY3MyRMdVqMKx72h4v8wugNhMwLCyzfD8xS1eZTRvkW1",
+                    INVALID_PRIVATE_KEY,
                     reset_sp(account)));
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, account);
