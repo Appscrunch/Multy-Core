@@ -22,6 +22,76 @@ elseif(LIBWALLY_BIN_PATH)
     endif()
     message("Found prebuild libwally-core at : ${LIBWALLY_BIN_PATH}")
 else()
+    message("Building libwally-core from source")
+    set(wally_sources
+        libwally-core/src/aes.c
+        libwally-core/src/base58.c
+        libwally-core/src/bip32.c
+        libwally-core/src/bip38.c
+        libwally-core/src/bip39.c
+    #    libwally-core/src/ccan/ccan/build_assert/test/compile_fail.c
+    #    libwally-core/src/ccan/ccan/build_assert/test/compile_fail-expr.c
+    #    libwally-core/src/ccan/ccan/build_assert/test/compile_ok.c
+    #    libwally-core/src/ccan/ccan/build_assert/test/run-BUILD_ASSERT_OR_ZERO.c
+    #    libwally-core/src/ccan/ccan/compiler/test/compile_fail-printf.c
+    #    libwally-core/src/ccan/ccan/compiler/test/run-is_compile_constant.c
+        libwally-core/src/ccan/ccan/crypto/ripemd160/ripemd160.c
+    #    libwally-core/src/ccan/ccan/crypto/ripemd160/test/run-lotsa-data.c
+    #    libwally-core/src/ccan/ccan/crypto/ripemd160/test/run-test-vectors.c
+    #    libwally-core/src/ccan/ccan/crypto/ripemd160/test/run-types.c
+        libwally-core/src/ccan/ccan/crypto/sha256/sha256.c
+    #    libwally-core/src/ccan/ccan/crypto/sha256/test/run-33-bit-test.c
+    #    libwally-core/src/ccan/ccan/crypto/sha256/test/run-lotsa-data.c
+    #    libwally-core/src/ccan/ccan/crypto/sha256/test/run-test-vectors.c
+    #    libwally-core/src/ccan/ccan/crypto/sha256/test/run-types.c
+        libwally-core/src/ccan/ccan/crypto/sha512/sha512.c
+    #    libwally-core/src/ccan/ccan/endian/test/compile_ok-constant.c
+    #    libwally-core/src/ccan/ccan/endian/test/run.c
+        libwally-core/src/ccan/ccan/str/hex/hex.c
+    #    libwally-core/src/ccan/ccan/str/hex/test/run.c
+    #    libwally-core/src/ccan/ccan/tap/tap.c
+    #    libwally-core/src/ccan/ccan/tap/test/run.c
+    #    libwally-core/src/cpufeatures/cpu-features.c # Android ?
+    #    libwally-core/src/ctaes/bench.c
+    #    libwally-core/src/ctaes/ctaes.c
+    #    libwally-core/src/ctaes/test.c
+    #    libwally-core/src/ctest/test_clear.c # move to test ?
+    #    libwally-core/src/data/wordlists/chinese_simplified.c
+    #    libwally-core/src/data/wordlists/chinese_traditional.c
+    #    libwally-core/src/data/wordlists/english.c
+    #    libwally-core/src/data/wordlists/french.c
+    #    libwally-core/src/data/wordlists/italian.c
+    #    libwally-core/src/data/wordlists/japanese.c
+    #    libwally-core/src/data/wordlists/spanish.c
+        libwally-core/src/elements.c
+        libwally-core/src/hex.c
+        libwally-core/src/hmac.c
+        libwally-core/src/internal.c
+        libwally-core/src/mnemonic.c
+        libwally-core/src/pbkdf2.c
+        libwally-core/src/scrypt.c
+    #    libwally-core/src/scrypt/crypto_scrypt.c
+    #    libwally-core/src/scrypt/crypto_scrypt_smix.c
+    #    libwally-core/src/scrypt/crypto_scrypt_smix_neon.c
+    #    libwally-core/src/scrypt/crypto_scrypt_smix_sse2.c
+        libwally-core/src/sign.c
+        libwally-core/src/wordlist.c
+    #    libwally-core/src/wrap_js/src/combined.c
+    #    libwally-core/src/wrap_js/src/combined_ccan2.c
+    #    libwally-core/src/wrap_js/src/combined_ccan.c
+    )
+
+    add_library(libwally-core SHARED ${wally_sources})
+    target_include_directories(libwally-core PRIVATE
+        .
+        libwally-core
+        libwally-core/src
+        libwally-core/src/ccan
+        libwally-core/src/secp256k1
+        libwally-core/src/secp256k1/include
+    )
+    target_link_libraries(libwally-core secp256k1)
+endif()
 
 if(LIBSECP256K1_BIN)
     add_library(secp256k1 SHARED IMPORTED GLOBAL)
@@ -43,7 +113,7 @@ elseif (LIBSECP256K1_BIN_PATH)
 
 else()
 
-message("Building libsecp256k1 and libwally-core from source")
+message("Building libsecp256k1 from source")
 # secp256k1 cmake-stuff was inspired by
 # https://github.com/chfast/secp256k1/blob/cb5dc20ecc116d27452f8ecb1ae50205834da172/CMakeLists.txt
 add_library(secp256k1 SHARED
@@ -76,77 +146,6 @@ target_compile_definitions(secp256k1
     PUBLIC -DUSE_NUM_NONE=1 -DUSE_FIELD_5X52=1 -DUSE_FIELD_INV_BUILTIN=1 -DUSE_SCALAR_4X64=1 -DUSE_SCALAR_INV_BUILTIN=1 -DHAVE___INT128=1 -DVERIFY=1
     PRIVATE -DENABLE_MODULE_ECDH -DENABLE_MODULE_RECOVERY -DENABLE_MODULE_GENERATOR -DENABLE_MODULE_RANGEPROOF -DENABLE_MODULE_SURJECTIONPROOF
 )
-endif()
-
-set(wally_sources
-    libwally-core/src/aes.c
-    libwally-core/src/base58.c
-    libwally-core/src/bip32.c
-    libwally-core/src/bip38.c
-    libwally-core/src/bip39.c
-#    libwally-core/src/ccan/ccan/build_assert/test/compile_fail.c
-#    libwally-core/src/ccan/ccan/build_assert/test/compile_fail-expr.c
-#    libwally-core/src/ccan/ccan/build_assert/test/compile_ok.c
-#    libwally-core/src/ccan/ccan/build_assert/test/run-BUILD_ASSERT_OR_ZERO.c
-#    libwally-core/src/ccan/ccan/compiler/test/compile_fail-printf.c
-#    libwally-core/src/ccan/ccan/compiler/test/run-is_compile_constant.c
-    libwally-core/src/ccan/ccan/crypto/ripemd160/ripemd160.c
-#    libwally-core/src/ccan/ccan/crypto/ripemd160/test/run-lotsa-data.c
-#    libwally-core/src/ccan/ccan/crypto/ripemd160/test/run-test-vectors.c
-#    libwally-core/src/ccan/ccan/crypto/ripemd160/test/run-types.c
-    libwally-core/src/ccan/ccan/crypto/sha256/sha256.c
-#    libwally-core/src/ccan/ccan/crypto/sha256/test/run-33-bit-test.c
-#    libwally-core/src/ccan/ccan/crypto/sha256/test/run-lotsa-data.c
-#    libwally-core/src/ccan/ccan/crypto/sha256/test/run-test-vectors.c
-#    libwally-core/src/ccan/ccan/crypto/sha256/test/run-types.c
-    libwally-core/src/ccan/ccan/crypto/sha512/sha512.c
-#    libwally-core/src/ccan/ccan/endian/test/compile_ok-constant.c
-#    libwally-core/src/ccan/ccan/endian/test/run.c
-    libwally-core/src/ccan/ccan/str/hex/hex.c
-#    libwally-core/src/ccan/ccan/str/hex/test/run.c
-#    libwally-core/src/ccan/ccan/tap/tap.c
-#    libwally-core/src/ccan/ccan/tap/test/run.c
-#    libwally-core/src/cpufeatures/cpu-features.c # Android ?
-#    libwally-core/src/ctaes/bench.c
-#    libwally-core/src/ctaes/ctaes.c
-#    libwally-core/src/ctaes/test.c
-#    libwally-core/src/ctest/test_clear.c # move to test ?
-#    libwally-core/src/data/wordlists/chinese_simplified.c
-#    libwally-core/src/data/wordlists/chinese_traditional.c
-#    libwally-core/src/data/wordlists/english.c
-#    libwally-core/src/data/wordlists/french.c
-#    libwally-core/src/data/wordlists/italian.c
-#    libwally-core/src/data/wordlists/japanese.c
-#    libwally-core/src/data/wordlists/spanish.c
-    libwally-core/src/elements.c
-    libwally-core/src/hex.c
-    libwally-core/src/hmac.c
-    libwally-core/src/internal.c
-    libwally-core/src/mnemonic.c
-    libwally-core/src/pbkdf2.c
-    libwally-core/src/scrypt.c
-#    libwally-core/src/scrypt/crypto_scrypt.c
-#    libwally-core/src/scrypt/crypto_scrypt_smix.c
-#    libwally-core/src/scrypt/crypto_scrypt_smix_neon.c
-#    libwally-core/src/scrypt/crypto_scrypt_smix_sse2.c
-    libwally-core/src/sign.c
-    libwally-core/src/wordlist.c
-#    libwally-core/src/wrap_js/src/combined.c
-#    libwally-core/src/wrap_js/src/combined_ccan2.c
-#    libwally-core/src/wrap_js/src/combined_ccan.c
-)
-
-add_library(libwally-core SHARED ${wally_sources})
-target_include_directories(libwally-core PRIVATE
-    .
-    libwally-core
-    libwally-core/src
-    libwally-core/src/ccan
-    libwally-core/src/secp256k1
-    libwally-core/src/secp256k1/include
-)
-target_link_libraries(libwally-core secp256k1)
-
 endif()
 
 add_library(keccak-tiny STATIC
