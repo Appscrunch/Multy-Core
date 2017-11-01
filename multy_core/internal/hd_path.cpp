@@ -3,7 +3,7 @@
  *
  * See LICENSE for details
  */
-
+ 
 #include "multy_core/internal/hd_path.h"
 
 #include <sstream>

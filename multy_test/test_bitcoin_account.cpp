@@ -30,6 +30,11 @@ void PrintTo(const BitcoinAccountTestCase& c, std::ostream* out)
 
 BitcoinAccountTestCase TEST_CASES[] = {
         {
+            "L5GRrPvFZswYD74UdHWsg1yVbZqvMDe9jj6frutVx8Y6Y2mgWtEk",
+            "",
+            "12pWhnTAfMro4rJVk32YjvFq1NqtwmBNwU"
+        },
+        {
             "L33peSRvmY3MyRMdVqMKx72h4v8wugNhMwLCyzfD8xS1eZTRvkW1",
             "mUyLSFTU6XUuNYJjHEoMJiUEsZdva77TYxV8tY4PD2VN",
             "1fjRrB4XXJWeiw1686zCKYGSNjFqLchYQ"
@@ -77,7 +82,7 @@ BitcoinAccountTestCase TEST_CASES[] = {
             "1Mh7iAQstKFJDePMJ5MG1C1ztsnmuLV5Y6"
         },
         {
-            "L5ABUi5Dup2KUXduFpRTa2jZyaK",
+            "L5ABUi5Dup2KUXduFpRTa2jZyaK8Jv8gxKS71XXvCe2KWxqSWP6s",
             "jxJGdL3YiAQz3kzXDU1YniQUcSKoBtLd1qZefTRmhUYc",
             "1Mu8765kCAuP5NaoKZUMgBieTT7KqcUBbZ"
         },
@@ -86,6 +91,11 @@ BitcoinAccountTestCase TEST_CASES[] = {
             "MhYEtBZVFPa7stZRurPVT8JFGztqZLMj5f9K53BvLhqgZ9CfHsNDNFeiC5hkWb2GZs"
             "QALysHYrVPaURsNfaPER9r",
             "1QFqqMUD55ZV3PJEJZtaKCsQmjLT6JkjvJ"
+        },
+        {
+            "KzpFvx31hSeesrRzEUYdZkcebNV5HfehYCdjtHB5kNEFBudXEBao",
+            "",
+            "12T6zBkXZT5Tyg1W7ssXL27MLoE3c8NmwX"
         }
 };
 
@@ -99,7 +109,7 @@ INSTANTIATE_TEST_CASE_P(
 
 } // namespace
 
-TEST_P(BitcoinAccountTestP, private_key)
+TEST_P(BitcoinAccountTestP, private_key_to_address)
 {
     const BitcoinAccountTestCase& param = GetParam();
     AccountPtr account;
@@ -107,20 +117,37 @@ TEST_P(BitcoinAccountTestP, private_key)
     error.reset(
             make_account(
                     CURRENCY_BITCOIN, param.private_key, reset_sp(account)));
-    EXPECT_NE(nullptr, error);
+    EXPECT_EQ(nullptr, error);
     ASSERT_NE(nullptr, account);
 
-    KeyPtr private_key;
-    error.reset(
-            get_account_key(
-                    account.get(), KEY_TYPE_PRIVATE, reset_sp(private_key)));
-    EXPECT_NE(nullptr, error);
-    ASSERT_NE(nullptr, private_key);
+//    KeyPtr private_key;
+//    error.reset(
+//            get_account_key(
+//                    account.get(), KEY_TYPE_PRIVATE, reset_sp(private_key)));
+//    EXPECT_EQ(nullptr, error);
+//    ASSERT_NE(nullptr, private_key);
 
-    ConstCharPtr serialized_private_key;
+//    ConstCharPtr serialized_private_key;
+//    error.reset(
+//            key_to_string(private_key.get(), reset_sp(serialized_private_key)));
+//    EXPECT_EQ(nullptr, error);
+//    ASSERT_NE(nullptr, serialized_private_key);
+//    ASSERT_STREQ(param.private_key, serialized_private_key.get());
+    ConstCharPtr public_key_string;
+    KeyPtr public_key;
     error.reset(
-            key_to_string(private_key.get(), reset_sp(serialized_private_key)));
-    EXPECT_NE(nullptr, error);
-    ASSERT_NE(nullptr, serialized_private_key);
-    ASSERT_STREQ(param.private_key, serialized_private_key.get());
+            get_account_key(account.get(), KEY_TYPE_PUBLIC, reset_sp(public_key)));
+    EXPECT_EQ(nullptr, error);
+    ASSERT_NE(nullptr, public_key);
+
+//    error.reset(key_to_string(public_key.get(), reset_sp(public_key_string)));
+//    EXPECT_EQ(nullptr, error);
+//    ASSERT_NE(nullptr, public_key_string);
+//    ASSERT_STREQ(param.public_key, public_key_string.get());
+
+    ConstCharPtr address;
+    error.reset(get_account_address_string(account.get(), reset_sp(address)));
+    EXPECT_EQ(nullptr, error);
+    ASSERT_NE(nullptr, address);
+    ASSERT_STREQ(param.address, address.get());
 }

@@ -95,14 +95,33 @@ MULTY_CORE_API Error* make_account(
         const char* serialized_private_key,
         Account** new_account)
 {
-    ARG_CHECK(currency == CURRENCY_BITCOIN
-            || currency == CURRENCY_ETHEREUM);
+    ARG_CHECK(currency == CURRENCY_BITCOIN || currency == CURRENCY_ETHEREUM);
     ARG_CHECK(serialized_private_key);
     ARG_CHECK(new_account);
 
     try
     {
-        return make_error(ERROR_INTERNAL, "Not implemented yet");
+        // TODO: make a factory
+        switch (currency)
+        {
+            case CURRENCY_BITCOIN:
+            {
+                *new_account = make_bitcoin_account(serialized_private_key)
+                                       .release();
+                break;
+            }
+            //            case CURRENCY_ETHEREUM:
+            //            {
+            //                *new_account = new EthereumHDAccount(*master_key,
+            //                index);
+            //                break;
+            //            }
+            default:
+            {
+                return make_error(
+                        ERROR_GENERAL_ERROR, "Currency not supported yet");
+            }
+        }
     }
     catch (...)
     {
