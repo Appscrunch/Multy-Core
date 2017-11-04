@@ -1,34 +1,12 @@
 #include "multy_core/account.h"
-#include "multy_core/keys.h"
 
-#include "multy_core/internal/u_ptr.h"
-#include "multy_core/internal/utility.h"
-
-#include "multy_test/value_printers.h"
+#include "multy_test/serialized_keys_test_base.h"
 
 #include "gtest/gtest.h"
 
 namespace
 {
-using namespace wallet_core::internal;
-
-struct BitcoinAccountTestCase
-{
-    const char* private_key;
-    const char* public_key;
-    const char* address;
-};
-
-void PrintTo(const BitcoinAccountTestCase& c, std::ostream* out)
-{
-    *out << "BitcoinAccountTestCase {\n"
-         << "\tprivate key: " << c.private_key << ",\n"
-         << "\tpublic key: " << c.public_key << ",\n"
-         << "\taddress: " << c.address << "\n"
-         << "}";
-}
-
-BitcoinAccountTestCase TEST_CASES[] = {
+SerializedKeyTestCase TEST_CASES[] = {
         {
             "L5GRrPvFZswYD74UdHWsg1yVbZqvMDe9jj6frutVx8Y6Y2mgWtEk",
             "",
@@ -99,55 +77,10 @@ BitcoinAccountTestCase TEST_CASES[] = {
         }
 };
 
-class BitcoinAccountTestP
-        : public ::testing::TestWithParam<BitcoinAccountTestCase>
-{
-};
-
 INSTANTIATE_TEST_CASE_P(
-        Generated, BitcoinAccountTestP, ::testing::ValuesIn(TEST_CASES));
+        Bitcoin, SerializedKeyTestP,
+        ::testing::Combine(
+                ::testing::Values(CURRENCY_BITCOIN),
+                ::testing::ValuesIn(TEST_CASES)));
 
 } // namespace
-
-TEST_P(BitcoinAccountTestP, private_key_to_address)
-{
-    const BitcoinAccountTestCase& param = GetParam();
-    AccountPtr account;
-    ErrorPtr error;
-    error.reset(
-            make_account(
-                    CURRENCY_BITCOIN, param.private_key, reset_sp(account)));
-    EXPECT_EQ(nullptr, error);
-    ASSERT_NE(nullptr, account);
-
-//    KeyPtr private_key;
-//    error.reset(
-//            get_account_key(
-//                    account.get(), KEY_TYPE_PRIVATE, reset_sp(private_key)));
-//    EXPECT_EQ(nullptr, error);
-//    ASSERT_NE(nullptr, private_key);
-
-//    ConstCharPtr serialized_private_key;
-//    error.reset(
-//            key_to_string(private_key.get(), reset_sp(serialized_private_key)));
-//    EXPECT_EQ(nullptr, error);
-//    ASSERT_NE(nullptr, serialized_private_key);
-//    ASSERT_STREQ(param.private_key, serialized_private_key.get());
-    ConstCharPtr public_key_string;
-    KeyPtr public_key;
-    error.reset(
-            get_account_key(account.get(), KEY_TYPE_PUBLIC, reset_sp(public_key)));
-    EXPECT_EQ(nullptr, error);
-    ASSERT_NE(nullptr, public_key);
-
-//    error.reset(key_to_string(public_key.get(), reset_sp(public_key_string)));
-//    EXPECT_EQ(nullptr, error);
-//    ASSERT_NE(nullptr, public_key_string);
-//    ASSERT_STREQ(param.public_key, public_key_string.get());
-
-    ConstCharPtr address;
-    error.reset(get_account_address_string(account.get(), reset_sp(address)));
-    EXPECT_EQ(nullptr, error);
-    ASSERT_NE(nullptr, address);
-    ASSERT_STREQ(param.address, address.get());
-}

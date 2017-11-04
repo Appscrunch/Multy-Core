@@ -1,6 +1,7 @@
 
 add_library(multy_test SHARED
     run_tests.cpp
+    serialized_keys_test_base.cpp
     test_account.cpp
     test_bitcoin_account.cpp
     test_keys.cpp
