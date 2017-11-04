@@ -8,6 +8,7 @@
 #define UTILITY_H
 
 #include "multy_core/internal/utility.h"
+#include "multy_core/common.h"
 
 #include <string>
 #include <vector>
@@ -27,6 +28,7 @@ std::string to_hex(const bytes& bytes);
 std::string to_hex(const BinaryData& data);
 BinaryData to_binary_data(const bytes& data);
 ExtendedKey make_dummy_extended_key();
+EntropySource make_dummy_entropy_source();
 } // test_utility
 
 bool operator==(const BinaryData& lhs, const BinaryData& rhs);

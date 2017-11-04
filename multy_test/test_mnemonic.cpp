@@ -22,22 +22,6 @@ using namespace wallet_core::internal;
 using namespace test_utility;
 typedef std::vector<unsigned char> bytes;
 
-size_t dummy_fill_entropy(void*, size_t size, void* dest)
-{
-    static const size_t entropy_max_size = 1024;
-    unsigned char silly_entropy[entropy_max_size];
-
-    if (size > entropy_max_size)
-    {
-        return 0;
-    }
-
-    memcpy(dest, silly_entropy, size);
-    return size;
-}
-
-static const EntropySource dummy_entropy_source{nullptr, dummy_fill_entropy};
-
 struct MnemonicTestCase
 {
     const bytes entropy;
@@ -111,7 +95,8 @@ GTEST_TEST(MnemonicTest, empty_null_password)
     ConstCharPtr mnemonic_str;
     ErrorPtr error;
 
-    error.reset(make_mnemonic(dummy_entropy_source, reset_sp(mnemonic_str)));
+    error.reset(
+            make_mnemonic(make_dummy_entropy_source(), reset_sp(mnemonic_str)));
     ASSERT_NE(nullptr, mnemonic_str);
 
     BinaryDataPtr empty_pass_seed;
@@ -137,7 +122,7 @@ GTEST_TEST(MnemonicTestInvalidArgs, make_mnemonic)
     EXPECT_NE(nullptr, error);
     EXPECT_EQ(nullptr, mnemonic_str);
 
-    error.reset(make_mnemonic(dummy_entropy_source, nullptr));
+    error.reset(make_mnemonic(make_dummy_entropy_source(), nullptr));
     EXPECT_NE(nullptr, error);
 }
 

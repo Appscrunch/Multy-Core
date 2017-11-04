@@ -5,6 +5,7 @@ add_library(multy_test SHARED
     test_account.cpp
     test_bitcoin_account.cpp
     test_ethereum_account.cpp
+    smoke_test.cpp
     test_keys.cpp
     test_mnemonic.cpp
     test_utility.cpp

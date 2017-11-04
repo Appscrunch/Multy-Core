@@ -16,7 +16,22 @@
 namespace
 {
 using namespace wallet_core::internal;
+
+size_t dummy_fill_entropy(void*, size_t size, void* dest)
+{
+    static const size_t entropy_max_size = 1024;
+    unsigned char silly_entropy[entropy_max_size];
+
+    if (size > entropy_max_size)
+    {
+        return 0;
+    }
+
+    memcpy(dest, silly_entropy, size);
+    return size;
 }
+
+} // namespace
 
 namespace test_utility
 {
@@ -63,6 +78,11 @@ ExtendedKey make_dummy_extended_key()
     ExtendedKey result;
     memset(&result, 0, sizeof(result));
     return result;
+}
+
+EntropySource make_dummy_entropy_source()
+{
+    return EntropySource{nullptr, dummy_fill_entropy};
 }
 
 } // namespace test_utility
