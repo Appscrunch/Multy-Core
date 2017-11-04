@@ -14,6 +14,11 @@ namespace internal
 {
 std::string to_string(const HDPath& path)
 {
+    if (path.size() == 0)
+    {
+        return "";
+    }
+
     std::stringstream stream;
     stream << "m";
     for (const auto& p : path)
