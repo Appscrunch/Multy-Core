@@ -25,9 +25,9 @@ using namespace wallet_core::internal;
 struct BitcoinPublicKey : public PublicKey
 {
 public:
-    typedef std::array<uint8_t, 33> KeyData;
+    typedef std::vector<uint8_t> KeyData;
 
-    BitcoinPublicKey(const KeyData& key_data) : m_data(key_data)
+    BitcoinPublicKey(KeyData key_data) : m_data(std::move(key_data))
     {
     }
 
@@ -59,12 +59,15 @@ struct BitcoinPrivateKey : public PrivateKey
 {
     typedef std::vector<uint8_t> KeyData;
 
-    BitcoinPrivateKey(KeyData data) : m_data(std::move(data))
+    BitcoinPrivateKey(KeyData data)
+        : m_data(std::move(data)),
+          m_use_compressed_public_key(false)
     {
     }
 
     BitcoinPrivateKey(const BinaryData& data)
-        : m_data(data.data, data.data + data.len)
+        : m_data(data.data, data.data + data.len),
+          m_use_compressed_public_key(false)
     {
     }
 
@@ -86,14 +89,25 @@ struct BitcoinPrivateKey : public PrivateKey
 
     PublicKeyPtr make_public_key() const override
     {
-        BitcoinPublicKey::KeyData public_key_data;
+        BitcoinPublicKey::KeyData key_data(EC_PUBLIC_KEY_LEN, 0);
         throw_if_wally_error(
                 wally_ec_public_key_from_private_key(
-                        m_data.data(), m_data.size(), public_key_data.data(),
-                        public_key_data.max_size()),
+                        m_data.data(), m_data.size(),
+                        key_data.data(), key_data.size()),
                 "Failed to derive public key from private key");
 
-        return PublicKeyPtr(new BitcoinPublicKey(public_key_data));
+        if (!m_use_compressed_public_key)
+        {
+            BitcoinPublicKey::KeyData uncompressed_data(EC_PUBLIC_KEY_UNCOMPRESSED_LEN, 0);
+            throw_if_wally_error(
+                    wally_ec_public_key_decompress(
+                            key_data.data(), key_data.size(),
+                            uncompressed_data.data(), uncompressed_data.size()),
+                    "(1) Failed to uncompress public key");
+            std::swap(key_data, uncompressed_data);
+        }
+
+        return PublicKeyPtr(new BitcoinPublicKey(key_data));
     }
 
     PrivateKeyPtr clone() const override
@@ -101,8 +115,14 @@ struct BitcoinPrivateKey : public PrivateKey
         return make_clone(*this);
     }
 
+    void set_use_compressed_public_key(bool compressed_public_key)
+    {
+        m_use_compressed_public_key = compressed_public_key;
+    }
+
 private:
     const KeyData m_data;
+    bool m_use_compressed_public_key;
 };
 
 typedef UPtr<BitcoinPrivateKey> BitcoinPrivateKeyPtr;
@@ -113,8 +133,7 @@ struct BitcoinAccount : public AccountBase
 
     BitcoinAccount(BitcoinPrivateKeyPtr key, HDPath path)
         : AccountBase(CURRENCY_BITCOIN, *key, path),
-          m_private_key(std::move(key)),
-          m_use_compressed_public_key(false)
+          m_private_key(std::move(key))
     {
     }
 
@@ -127,19 +146,10 @@ struct BitcoinAccount : public AccountBase
         unsigned char pub_hash[HASH160_LEN + 1] = {'\0'};
         unsigned char address[HASH160_LEN + 1 + 4] = {'\0'};
 
+        // 1 - Take the corresponding public key generated with it (33 or 65 bytes)
         KeyPtr public_key(m_private_key->make_public_key());
         BinaryData key_data = public_key->get_content();
         unsigned char uncompressed_key[EC_PUBLIC_KEY_UNCOMPRESSED_LEN] = {'\0'};
-
-        if (!m_use_compressed_public_key)
-        {
-            // 1 - Take the corresponding public key generated with it (65 bytes)
-            throw_if_wally_error(
-                    wally_ec_public_key_decompress(key_data.data, key_data.len,
-                                uncompressed_key, sizeof(uncompressed_key)),
-                    "(1) Failed to uncompress public key");
-            key_data = BinaryData{uncompressed_key, sizeof(uncompressed_key)};
-        }
 
         // 2 - Perform SHA-256 hashing on the public key
         // 3 - Perform RIPEMD-160 hashing on the result of SHA-256
@@ -171,14 +181,8 @@ struct BitcoinAccount : public AccountBase
         return result;
     }
 
-    void set_use_compressed_public_key(bool compressed_public_key)
-    {
-        m_use_compressed_public_key = compressed_public_key;
-    }
-
 private:
     BitcoinPrivateKeyPtr m_private_key;
-    bool m_use_compressed_public_key;
 };
 
 } // namespace
@@ -225,9 +229,8 @@ AccountPtr make_bitcoin_account(const char* private_key)
 
     throw_if_wally_error(
             wally_base58_to_bytes(
-                    private_key, BASE58_FLAG_CHECKSUM,
-                    key_data.data(), key_data.size(),
-                    &resulting_size),
+                    private_key, BASE58_FLAG_CHECKSUM, key_data.data(),
+                    key_data.size(), &resulting_size),
             "Faield to deserialize base-58 encoded private key");
 
     if (resulting_size > key_data.size())
@@ -255,10 +258,9 @@ AccountPtr make_bitcoin_account(const char* private_key)
             "Failed to verify private key");
 
     BitcoinPrivateKeyPtr key(new BitcoinPrivateKey(std::move(key_data)));
-    UPtr<BitcoinAccount> account(new BitcoinAccount(std::move(key), HDPath()));
-    account->set_use_compressed_public_key(use_compressed_public_key);
+    key->set_use_compressed_public_key(use_compressed_public_key);
 
-    return std::move(account);
+    return AccountPtr(new BitcoinAccount(std::move(key), HDPath()));
 }
 
 } // namespace wallet_core
