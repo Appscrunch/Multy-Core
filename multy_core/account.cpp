@@ -110,12 +110,12 @@ MULTY_CORE_API Error* make_account(
                                        .release();
                 break;
             }
-            //            case CURRENCY_ETHEREUM:
-            //            {
-            //                *new_account = new EthereumHDAccount(*master_key,
-            //                index);
-            //                break;
-            //            }
+            case CURRENCY_ETHEREUM:
+            {
+                *new_account = make_ethereum_account(serialized_private_key)
+                        .release();
+                break;
+            }
             default:
             {
                 return make_error(

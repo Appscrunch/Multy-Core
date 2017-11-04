@@ -31,10 +31,16 @@ typedef std::array<unsigned char, 20> EthereumAddressValue;
 struct EthereumPublicKey : public PublicKey
 {
 public:
-    typedef std::array<uint8_t, 33> KeyData;
+    static const size_t DATA_SIZE = 64;
+    typedef std::vector<uint8_t> KeyData;
 
-    EthereumPublicKey(const KeyData& key_data) : m_data(key_data)
+    EthereumPublicKey(KeyData key_data)
+        : m_data(std::move(key_data))
     {
+        if (m_data.size() != DATA_SIZE)
+        {
+            throw std::runtime_error("Ethereum: invalid public key length");
+        }
     }
 
     std::string to_string() const override
@@ -57,11 +63,6 @@ public:
         return make_clone(*this);
     }
 
-    const KeyData& get_data() const
-    {
-        return m_data;
-    }
-
 private:
     const KeyData m_data;
 };
@@ -70,7 +71,7 @@ typedef UPtr<EthereumPublicKey> EthereumPublicKeyPtr;
 
 struct EthereumPrivateKey : public PrivateKey
 {
-    typedef std::array<uint8_t, 33> KeyData;
+    typedef std::array<uint8_t, 32> KeyData;
 
     EthereumPrivateKey(const KeyData& data) : m_data(data)
     {
@@ -88,15 +89,27 @@ struct EthereumPrivateKey : public PrivateKey
 
     PublicKeyPtr make_public_key() const override
     {
-        EthereumPublicKey::KeyData data;
+        unsigned char public_key_data[EC_PUBLIC_KEY_LEN];
         throw_if_wally_error(
                 wally_ec_public_key_from_private_key(
-                        m_data.data() + 1, m_data.size() - 1, data.data(),
-                        data.max_size()),
+                        m_data.data(), m_data.size(),
+                        public_key_data, sizeof(public_key_data)),
                 "Failed to derive public key from private key");
 
-        return EthereumPublicKeyPtr(new EthereumPublicKey(data));
-        //        return PublicKeyPtr(make_ethereum_public_key().release());
+        EthereumPublicKey::KeyData uncompressed(EC_PUBLIC_KEY_UNCOMPRESSED_LEN, 0);
+        throw_if_wally_error(
+                wally_ec_public_key_decompress(
+                        public_key_data, sizeof(public_key_data),
+                        uncompressed.data(), uncompressed.size()),
+                "Failed to uncompress public key");
+
+        if (uncompressed[0] != 0x04)
+        {
+            throw std::runtime_error("Invalid uncompressed public key prefix");
+        }
+        uncompressed.erase(uncompressed.begin());
+
+        return EthereumPublicKeyPtr(new EthereumPublicKey(std::move(uncompressed)));
     }
 
     const BinaryData get_content() const override
@@ -120,12 +133,6 @@ private:
 
 EthereumAddressValue make_address(const BinaryData& key_data)
 {
-    if (key_data.data == nullptr
-        || key_data.len != array_size(EthereumPublicKey::KeyData()))
-    {
-        throw std::runtime_error(
-                "Ethereum: Invalid public key data for making an address");
-    }
     std::array<unsigned char, SHA256_LEN> address_hash;
     throw_if_wally_error(
             sha3_256(
@@ -138,6 +145,7 @@ EthereumAddressValue make_address(const BinaryData& key_data)
     static_assert(
             address_hash.size() - result.size() == 12,
             "Invalid EthereumAddressValue size");
+
     // Copy right 20 bytes
     memcpy(result.data(), address_hash.data() + 12, result.size());
     return result;
@@ -189,8 +197,8 @@ AccountPtr EthereumHDAccount::make_account(
     throw_if_error(make_child_key(&parent_key, index, reset_sp(address_key)));
 
     EthereumPrivateKey::KeyData data;
-    static_assert(sizeof(address_key->key.priv_key) == data.max_size(), "");
-    memcpy(data.data(), address_key->key.priv_key, data.size());
+    static_assert(sizeof(address_key->key.priv_key) == data.max_size() + 1, "");
+    memcpy(data.data(), address_key->key.priv_key + 1, data.size() - 1);
 
     EthereumPrivateKeyPtr private_key(new EthereumPrivateKey(data));
 
@@ -200,6 +208,31 @@ AccountPtr EthereumHDAccount::make_account(
                     make_child_path(make_child_path(get_path(), type), index)));
 
     return std::move(result);
+}
+
+AccountPtr make_ethereum_account(const char* serialized_private_key)
+{
+    const size_t private_key_len = strlen(serialized_private_key);
+    EthereumPrivateKey::KeyData key_data;
+    if (private_key_len != key_data.max_size() * 2)
+    {
+        throw std::runtime_error("Serialized private key has invalid length");
+    }
+    size_t resulting_size = 0;
+    throw_if_wally_error(
+            wally_hex_to_bytes(serialized_private_key,
+                    key_data.data(), key_data.size(), &resulting_size),
+            "Failed to convert private key from hex string.");
+    if (resulting_size != key_data.size())
+    {
+        throw std::runtime_error("Failed to deserialize private key");
+    }
+    throw_if_wally_error(
+            wally_ec_private_key_verify(key_data.data(), key_data.size()),
+            "Failed to verify private key");
+
+    EthereumPrivateKeyPtr private_key(new EthereumPrivateKey(key_data));
+    return AccountPtr(new EthereumAccount(std::move(private_key)));
 }
 
 } // namespace internal

@@ -24,6 +24,8 @@ protected:
             const ExtendedKey& parent_key, AddressType type, uint32_t index) const override;
 };
 
+AccountPtr make_ethereum_account(const char* serialized_private_key);
+
 } // namespace internal
 } // namespace wallet_core
 
