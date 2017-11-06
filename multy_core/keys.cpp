@@ -17,13 +17,6 @@
 
 #include <memory>
 
-// static_assert(
-//        KEY_TYPE_PRIVATE == BIP32_FLAG_KEY_PRIVATE,
-//        "invalid KEY_TYPE_PRIVATE value");
-// static_assert(
-//        KEY_TYPE_PUBLIC == BIP32_FLAG_KEY_PUBLIC,
-//        "invalid KEY_TYPE_PUBLIC value");
-
 namespace
 {
 using namespace wallet_core::internal;

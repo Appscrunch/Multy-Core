@@ -90,7 +90,7 @@ Error* make_hd_leaf_account(
     return nullptr;
 }
 
-MULTY_CORE_API Error* make_account(
+Error* make_account(
         Currency currency,
         const char* serialized_private_key,
         Account** new_account)

@@ -1,3 +1,9 @@
+/* Copyright 2017 by Multy.io
+ * Licensed under Multy.io license.
+ *
+ * See LICENSE for details
+ */
+
 #ifndef MULTY_TEST_SERIALIZED_KEYS_TEST_BASE_H
 #define MULTY_TEST_SERIALIZED_KEYS_TEST_BASE_H
 

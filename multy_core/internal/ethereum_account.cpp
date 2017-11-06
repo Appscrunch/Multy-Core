@@ -109,7 +109,8 @@ struct EthereumPrivateKey : public PrivateKey
         }
         uncompressed.erase(uncompressed.begin());
 
-        return EthereumPublicKeyPtr(new EthereumPublicKey(std::move(uncompressed)));
+        return EthereumPublicKeyPtr(
+                new EthereumPublicKey(std::move(uncompressed)));
     }
 
     const BinaryData get_content() const override

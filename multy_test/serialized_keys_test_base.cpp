@@ -1,3 +1,9 @@
+/* Copyright 2017 by Multy.io
+ * Licensed under Multy.io license.
+ *
+ * See LICENSE for details
+ */
+
 #include "serialized_keys_test_base.h"
 
 #include "multy_core/account.h"

@@ -32,10 +32,13 @@ struct Error
     bool owns_message;
 };
 
+/// Allocates Error object.
 MULTY_CORE_API Error* make_error(ErrorCode code, const char* message);
+
+/// Frees Error object, can take nullptr.
 MULTY_CORE_API void free_error(Error* error);
 
-MULTY_CORE_API Error* internal_make_error(int code, const char* message);
+Error* internal_make_error(int code, const char* message);
 
 #ifdef __cplusplus
 } // extern "C"

@@ -34,8 +34,10 @@ struct BinaryData
     size_t len;
 };
 
-/** Frees BinaryData, can take null */
-MULTY_CORE_API void free_binarydata(BinaryData*);
+/// Frees BinaryData, can take null.
+MULTY_CORE_API void free_binarydata(struct BinaryData*);
+
+/// Frees a string, can take null.
 MULTY_CORE_API void free_string(const char* str);
 
 #ifdef __cplusplus
