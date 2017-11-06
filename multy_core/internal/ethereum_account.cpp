@@ -137,8 +137,7 @@ EthereumAddressValue make_address(const BinaryData& key_data)
     throw_if_wally_error(
             sha3_256(
                     address_hash.data(), address_hash.size(),
-                    // skip first prefix byte.
-                    key_data.data + 1, key_data.len - 1),
+                    key_data.data, key_data.len),
             "Failed to compute sha3 of public key");
 
     EthereumAddressValue result;
