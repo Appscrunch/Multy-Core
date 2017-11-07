@@ -40,11 +40,11 @@ MULTY_CORE_API struct Error* make_seed(
 MULTY_CORE_API struct Error* seed_to_string(
         const struct BinaryData* seed, const char** str);
 
-/// Frees mnemonic, can take nullptr.
+/** Frees mnemonic, can take nullptr. **/
 MULTY_CORE_API void free_mnemonic(const char* mnemonic);
 
 #ifdef __cplusplus
-} // extern "C"
+} /* extern "C" */
 #endif
 
-#endif // MULTY_CORE_MNEMONIC_H
+#endif /* MULTY_CORE_MNEMONIC_H */

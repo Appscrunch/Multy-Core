@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 struct Key;
-struct ExtendedKey; /// used for HD-accounts derivation.
+struct ExtendedKey;
 struct PrivateKey;
 struct PublicKey;
 
@@ -46,9 +46,11 @@ MULTY_CORE_API struct Error* make_child_key(
 MULTY_CORE_API struct Error* extended_key_to_string(
         const struct ExtendedKey* extended_key, const char** new_str);
 
-// Not sure if we need this, since private key type depends on the account type.
-// MULTY_CORE_API struct Error* extended_to_private_key(
-//        const struct ExtendedKey* key, struct PrivateKey*** new_key);
+/*
+Not sure if we need this, since private key type depends on the account type.
+MULTY_CORE_API struct Error* extended_to_private_key(
+       const struct ExtendedKey* key, struct PrivateKey*** new_key);
+*/
 
 /** Make public key from private key.
  *
@@ -72,28 +74,30 @@ MULTY_CORE_API struct Error* private_to_public_key(
 MULTY_CORE_API struct Error* key_to_string(
         const struct Key* key, const char** new_str);
 
-// MULTY_CORE_API struct Error* sign_with_key(
-//        const struct Key** key, const struct BinaryData* data, struct
-//        BinaryData** new_signature);
+/*
+MULTY_CORE_API struct Error* sign_with_key(
+    const struct Key** key, const struct BinaryData* data, struct
+    BinaryData** new_signature);
 
-// MULTY_CORE_API struct Error* encrypt_with_key(
-//        const struct Key** key,
-//        const struct BinaryData* data,
-//        struct BinaryData** new_encrypted_data);
+MULTY_CORE_API struct Error* encrypt_with_key(
+    const struct Key** key,
+    const struct BinaryData* data,
+    struct BinaryData** new_encrypted_data);
 
-// MULTY_CORE_API struct Error* decrypt_with_key(
-//        const struct Key** key,
-//        const struct BinaryData* data,
-//        struct BinaryData** new_decrypted_data);
+MULTY_CORE_API struct Error* decrypt_with_key(
+    const struct Key** key,
+    const struct BinaryData* data,
+    struct BinaryData** new_decrypted_data);
+*/
 
-/// Frees ExtendedKey instance, can take nullptr.
+/** Frees ExtendedKey instance, can take nullptr. **/
 MULTY_CORE_API void free_extended_key(struct ExtendedKey* root);
 
-/// Frees struct Key* instance, can take nullptr.
+/** Frees struct Key* instance, can take nullptr. **/
 MULTY_CORE_API void free_key(struct Key* root);
 
 #ifdef __cplusplus
-} // extern "C"
+} /* extern "C" */
 #endif
 
-#endif // MULTY_CORE_KEYS_H
+#endif /* MULTY_CORE_KEYS_H */

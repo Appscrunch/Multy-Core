@@ -22,8 +22,8 @@ extern "C" {
  */
 struct EntropySource
 {
-    void* data; /// Opaque caller-supplied pointer, passed as first argument to
-                /// fill_entropy().
+    void* data; /** Opaque caller-supplied pointer, passed as first argument to
+                 fill_entropy(). **/
     size_t (*fill_entropy)(void* data, size_t size, void* dest);
 };
 
@@ -34,14 +34,14 @@ struct BinaryData
     size_t len;
 };
 
-/// Frees BinaryData, can take null.
+/** Frees BinaryData, can take null. **/
 MULTY_CORE_API void free_binarydata(struct BinaryData*);
 
-/// Frees a string, can take null.
+/** Frees a string, can take null. **/
 MULTY_CORE_API void free_string(const char* str);
 
 #ifdef __cplusplus
-} // extern "C"
+} /* extern "C" */
 #endif
 
-#endif // MULTY_CORE_COMMON_H
+#endif /* MULTY_CORE_COMMON_H */

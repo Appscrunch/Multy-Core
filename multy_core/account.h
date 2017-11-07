@@ -31,7 +31,7 @@ enum Currency
 enum AddressType
 {
     ADDRESS_EXTERNAL,
-    ADDRESS_INTERNAL // change-address
+    ADDRESS_INTERNAL /** change-address **/
 };
 
 enum KeyType
@@ -115,14 +115,14 @@ MULTY_CORE_API struct Error* get_account_currency(
         const struct Account* account,
         Currency* out_currency);
 
-/// Frees HDAccount instance, can accept nullptr.
+/** Frees HDAccount instance, can accept nullptr. **/
 MULTY_CORE_API void free_hdaccount(struct HDAccount*);
 
-/// Frees Account instance, can accept nullptr.
+/** Frees Account instance, can accept nullptr. **/
 MULTY_CORE_API void free_account(struct Account*);
 
 #ifdef __cplusplus
-} // extern "C"
+} /* extern "C" */
 #endif
 
-#endif // MULTY_CORE_ACCOUNT_H
+#endif /* MULTY_CORE_ACCOUNT_H */
