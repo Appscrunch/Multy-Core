@@ -132,8 +132,9 @@ private:
     const KeyData m_data;
 };
 
-EthereumAddressValue make_address(const BinaryData& key_data)
+EthereumAddressValue make_address(const EthereumPublicKey& key)
 {
+    const BinaryData key_data = key.get_content();
     std::array<unsigned char, SHA256_LEN> address_hash;
     throw_if_wally_error(
             sha3_256(
@@ -166,8 +167,10 @@ public:
 
     std::string get_address() const override
     {
-        EthereumAddressValue m_address(
-                make_address(m_private_key->make_public_key()->get_content()));
+        EthereumPublicKeyPtr public_key(
+                reinterpret_cast<EthereumPublicKey*>(
+                        m_private_key->make_public_key().release()));
+        EthereumAddressValue m_address(make_address(*public_key));
         CharPtr out;
         wally_hex_from_bytes(m_address.data(), m_address.size(), reset_sp(out));
         return std::string(out.get());
