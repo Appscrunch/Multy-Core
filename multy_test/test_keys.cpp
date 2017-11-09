@@ -16,6 +16,14 @@
 
 #include <memory>
 #include <string>
+#include <unordered_set>
+
+template <typename S>
+S& operator<<(S& s, const BinaryData& binary_data)
+{
+    PrintTo(binary_data, &s);
+    return s;
+}
 
 namespace
 {
@@ -25,8 +33,6 @@ using namespace test_utility;
 class KeysTestValidCasesP : public ::testing::TestWithParam<BIP39TestCase>
 {
 };
-
-} // namespace
 
 INSTANTIATE_TEST_CASE_P(
         BIP39,
@@ -87,3 +93,52 @@ GTEST_TEST(KeysTestInvalidArgs, make_child_key)
     error.reset(make_child_key(&parent_key, 0, nullptr));
     EXPECT_NE(nullptr, error);
 }
+
+std::string key_id_from_seed(const bytes& data)
+{
+    const BinaryData seed{data.data(), data.size()};
+
+    ErrorPtr error;
+    ExtendedKeyPtr key;
+    ConstCharPtr key_string;
+
+    error.reset(make_master_key(&seed, reset_sp(key)));
+    EXPECT_EQ(nullptr, error);
+    EXPECT_NE(nullptr, key);
+
+    ConstCharPtr key_id;
+    error.reset(make_key_id(key.get(), reset_sp(key_id)));
+    EXPECT_EQ(nullptr, error);
+    EXPECT_NE(nullptr, key_id);
+
+    return std::string(key_id ? key_id.get() : "");
+}
+
+GTEST_TEST(KeysTest, KeyId)
+{
+    const bytes seed_data = from_hex("00000000000000000000000000000000");
+    const std::string reference_id = key_id_from_seed(seed_data);
+    ASSERT_NE("", reference_id);
+
+    std::unordered_set<std::string> ids;
+    ids.insert(reference_id);
+
+    // Verify that changing 1 bit in seed produces new key_id
+    for (int byte_index = 0; byte_index != seed_data.size(); ++byte_index)
+    {
+        for (int bit_index = 0; bit_index < 8; ++bit_index)
+        {
+            bytes test_data = seed_data;
+            test_data[byte_index] |= (1 << bit_index);
+
+            SCOPED_TRACE(to_binary_data(test_data));
+            const std::string id = key_id_from_seed(test_data);
+
+            auto result = ids.insert(id);
+            ASSERT_NE("", id);
+            EXPECT_TRUE(result.second);
+        }
+    }
+}
+
+} // namespace

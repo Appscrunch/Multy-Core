@@ -38,8 +38,6 @@ const Currency ALL_CURRENCIES[] = {
 INSTANTIATE_TEST_CASE_P(
         Smoke, AccountSmokeTestP, ::testing::ValuesIn(ALL_CURRENCIES));
 
-} // namespace
-
 TEST_P(AccountSmokeTestP, AccountFromEntropy)
 {
     const Currency expected_currency = GetParam();
@@ -61,6 +59,12 @@ TEST_P(AccountSmokeTestP, AccountFromEntropy)
     error.reset(make_master_key(seed.get(), reset_sp(root_key)));
     ASSERT_EQ(nullptr, error);
     ASSERT_NE(nullptr, root_key);
+
+    ConstCharPtr root_id;
+    error.reset(make_key_id(root_key.get(), reset_sp(root_id)));
+    ASSERT_EQ(nullptr, error);
+    ASSERT_NE(nullptr, root_id);
+    ASSERT_STRCASENE("", root_id.get());
 
     HDAccountPtr root_account;
     error.reset(
@@ -115,3 +119,5 @@ TEST_P(AccountSmokeTestP, AccountFromEntropy)
     ASSERT_EQ(nullptr, error);
     ASSERT_EQ(expected_currency, currency);
 }
+
+} // namespace

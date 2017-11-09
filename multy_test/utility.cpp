@@ -80,6 +80,11 @@ ExtendedKey make_dummy_extended_key()
     return result;
 }
 
+ExtendedKeyPtr make_dummy_extended_key_ptr()
+{
+    return ExtendedKeyPtr(new ExtendedKey(make_dummy_extended_key()));
+}
+
 EntropySource make_dummy_entropy_source()
 {
     return EntropySource{nullptr, dummy_fill_entropy};

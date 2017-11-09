@@ -14,6 +14,17 @@
 
 #include "wally_bip32.h"
 #include "wally_core.h"
+#include "wally_crypto.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#include "keccak-tiny/keccak-tiny.h"
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
 
 #include <memory>
 
@@ -46,6 +57,38 @@ Error* make_master_key(const BinaryData* seed, ExtendedKey** new_master_key)
         return exception_to_error();
     }
     OUT_CHECK(*new_master_key);
+
+    return nullptr;
+}
+
+Error* make_key_id(
+        const ExtendedKey* key,
+        const char** out_key_id)
+{
+    ARG_CHECK(key);
+    ARG_CHECK(out_key_id);
+    try
+    {
+        const auto& pub_key = key->key.pub_key;
+        std::array<uint8_t, SHA256_LEN> address_hash;
+        throw_if_wally_error(
+                sha3_256(address_hash.data(), address_hash.size(),
+                        &pub_key[1], sizeof(pub_key) - 1),
+                "Failed to compute SHA3_256 of public key");
+
+        CharPtr out_id;
+        throw_if_wally_error(
+                wally_base58_from_bytes(address_hash.data(), address_hash.size(),
+                        BASE58_FLAG_CHECKSUM, reset_sp(out_id)),
+                "Failed to convert to base58");
+
+        *out_key_id = out_id.release();
+    }
+    catch (...)
+    {
+        return exception_to_error();
+    }
+    OUT_CHECK(*out_key_id);
 
     return nullptr;
 }

@@ -26,6 +26,10 @@ struct BinaryData;
 MULTY_CORE_API struct Error* make_master_key(
         const struct BinaryData* seed, struct ExtendedKey** new_master_key);
 
+MULTY_CORE_API struct Error* make_key_id(
+        const struct ExtendedKey* key,
+        const char** out_key_id);
+
 /** Make child key from parent key, see BIP32 for key derivation and HD
  * accounts.
  * @param parent_key - parent key.

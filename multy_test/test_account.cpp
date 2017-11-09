@@ -179,8 +179,6 @@ private:
     PublicKeyPtr m_public_key;
 };
 
-} // namespace
-
 GTEST_TEST(AccountTest, free_account)
 {
     free_account(nullptr);
@@ -332,15 +330,11 @@ GTEST_TEST(AccountTestInvalidArgs, get_account_currency)
     EXPECT_NE(nullptr, error);
 }
 
-namespace
-{
 class AccountTestCurrencySupportP : public ::testing::TestWithParam<Currency>
 {
 };
 
 const Currency SUPPORTED_CURRENCIES[] = {CURRENCY_BITCOIN, CURRENCY_ETHEREUM};
-
-} // namespace
 
 INSTANTIATE_TEST_CASE_P(
         SupportedCurrencies,
@@ -416,3 +410,5 @@ TEST_P(AccountTestCurrencySupportP, generic)
     //        EXPECT_EQ(nullptr, address_str);
     //    }
 }
+
+} // namespace

@@ -28,6 +28,7 @@ std::string to_hex(const bytes& bytes);
 std::string to_hex(const BinaryData& data);
 BinaryData to_binary_data(const bytes& data);
 ExtendedKey make_dummy_extended_key();
+wallet_core::internal::ExtendedKeyPtr make_dummy_extended_key_ptr();
 EntropySource make_dummy_entropy_source();
 } // test_utility
 
