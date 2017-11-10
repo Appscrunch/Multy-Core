@@ -57,17 +57,6 @@ if (IOS_PLATFORM)
     )
 endif (IOS_PLATFORM)
 
- add_library(libwally-core SHARED IMPORTED GLOBAL)
-    message("ANDROID_ABI : ${ANDROID_ABI}")
-    # TODO: use FIND_LIBRARY
-    if (ANDROID_ABI)
-        set_target_properties(libwally-core PROPERTIES IMPORTED_LOCATION
-            ${LIBWALLY_BIN_PATH}/${ANDROID_ABI}/libwallycore.so)
-    else()
-        set_target_properties(libwally-corePROPERTIES IMPORTED_LOCATION
-            ${LIBWALLY_BIN_PATH}/libwallycore.so)
-    endif()
-
 
     target_link_libraries (libwally-core secp256k1)
     target_include_directories(libwally-core

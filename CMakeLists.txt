@@ -22,28 +22,6 @@ target_include_directories(multy PRIVATE .)
 add_subdirectory(multy_core)
 add_subdirectory(third-party)
 
-find_library( # Sets the name of the path variable.
-             log-lib
-              # Specifies the name of the NDK library that
-              # you want CMake to locate.
-              log )
-
-
-add_library(core_jni
-   SHARED
-   /Users/pavel/AndroidStudioProjects/Multi/app/src/main/cpp/scratch.cpp
-)
-target_link_libraries(core_jni PRIVATE multy_core multy_test android ${log-lib})
-
-
-target_link_libraries(core_jni PRIVATE multy_core)
-target_include_directories(core_jni PRIVATE .)
-set_target_properties(core_jni PROPERTIES
-    C_STANDARD 11
-    POSITION_INDEPENDENT_CODE ON
-    LANGUAGE CXX
-)
-set_source_files_properties(scratch.cpp PROPERTIES LANGUAGE CXX)
 
 
 if(WITH_TESTS)

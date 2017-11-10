@@ -1,7 +1,7 @@
-if(IOS_PLATFORM)
+if(DEFINED IOS_PLATFORM)
     add_subdirectory(libwally-core)
 
-else(IOS_PLATFORM)
+else()
     if(LIBWALLY_BIN)
  #       if (IOS_PLATFORM)
  #           add_library(libwally-core STATIC IMPORTED GLOBAL)
@@ -105,7 +105,7 @@ else(IOS_PLATFORM)
 
     endif()
 
-endif(IOS_PLATFORM)
+endif()
 
 add_library(keccak-tiny STATIC
     ../third-party/keccak-tiny/keccak-tiny.c
