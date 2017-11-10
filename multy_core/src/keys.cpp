@@ -15,6 +15,7 @@
 #include "wally_bip32.h"
 #include "wally_core.h"
 #include "wally_crypto.h"
+#include <array>
 
 #ifdef __cplusplus
 extern "C" {
