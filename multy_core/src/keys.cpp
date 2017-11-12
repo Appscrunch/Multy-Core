@@ -15,6 +15,8 @@
 #include "wally_bip32.h"
 #include "wally_core.h"
 #include "wally_crypto.h"
+#include <array>
+#include <memory>
 
 #ifdef __cplusplus
 extern "C" {
@@ -26,8 +28,7 @@ extern "C" {
 } // extern "C"
 #endif
 
-#include <array>
-#include <memory>
+
 
 namespace
 {
