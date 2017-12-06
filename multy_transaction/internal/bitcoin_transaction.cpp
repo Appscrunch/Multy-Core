@@ -25,8 +25,6 @@
 #include <string.h>
 #include <unordered_map>
 
-#include <iostream>
-
 namespace
 {
 using namespace wallet_core::internal;
