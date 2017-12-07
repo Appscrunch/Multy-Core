@@ -35,7 +35,6 @@ if (ANDROID)
         CXX_STANDARD 11
         LANGUAGE CXX
     )
-    set_source_files_properties(scratch.cpp PROPERTIES LANGUAGE CXX)
 endif()
 
 if(WITH_TESTS)
