@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 option(WITH_TESTS "Build tests shared library (DLL)" NO)
-set(PATH_TO_JNI_WRAPPER "" CACHE PATH "path jni wrapper file")
+set(PATH_TO_JNI_WRAPPER "" CACHE PATH "Path to jni wrapper source file.")
 
 project(multy)
 
