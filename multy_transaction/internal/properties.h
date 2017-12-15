@@ -243,6 +243,26 @@ public:
         props.bind_property(name, &m_value, trait, std::move(predicate));
     }
 
+    const T& operator*() const
+    {
+        return get_value();
+    }
+
+    T& operator*()
+    {
+        return get_value();
+    }
+
+    const T* operator->() const
+    {
+        return &get_value();
+    }
+
+    T* operator->()
+    {
+        return &get_value();
+    }
+
     const T& get_value() const
     {
         throw_if_unset(&m_value);

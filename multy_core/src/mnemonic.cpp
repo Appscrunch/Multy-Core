@@ -115,6 +115,7 @@ Error* make_seed(const char* mnemonic, const char* password, BinaryData** seed)
 Error* seed_to_string(const BinaryData* seed, const char** str)
 {
     ARG_CHECK(seed);
+    ARG_CHECK(seed->data);
     ARG_CHECK(str);
 
     char* out = nullptr;
@@ -158,13 +159,4 @@ Error* mnemonic_get_dictionary(const char** new_dictionary)
     OUT_CHECK(*new_dictionary);
 
     return nullptr;
-}
-
-void free_mnemonic(const char* mnemonic)
-{
-    if (!mnemonic)
-    {
-        return;
-    }
-    wally_free_string(const_cast<char*>(mnemonic));
 }
