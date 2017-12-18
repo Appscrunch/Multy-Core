@@ -33,18 +33,17 @@ using namespace test_utility;
 GTEST_TEST(BitcoinTransactionTest, create_raw_transaction_public_api)
 {
     AccountPtr account;
-    ErrorPtr error(
-            make_account(
-                    CURRENCY_BITCOIN,
-                    "cQeGKosJjWPn9GkB7QmvmotmBbVg1hm8UjdN6yLXEWZ5HAcRwam7",
-                    reset_sp(account)));
+    HANDLE_ERROR(make_account(
+            CURRENCY_BITCOIN,
+            "cQeGKosJjWPn9GkB7QmvmotmBbVg1hm8UjdN6yLXEWZ5HAcRwam7",
+            reset_sp(account)));
+
 //    ASSERT_EQ(nullptr, error);
 //    ASSERT_NE(nullptr, account);
 //    EXPECT_EQ("mzqiDnETWkunRDZxjUQ34JzN1LDevh5DpU", account->get_address());
 
     TransactionPtr transaction;
-    error.reset(make_transaction(account.get(), reset_sp(transaction)));
-    ASSERT_EQ(nullptr, error);
+    HANDLE_ERROR(make_transaction(account.get(), reset_sp(transaction)));
     ASSERT_NE(nullptr, transaction);
 
     {
@@ -100,18 +99,16 @@ GTEST_TEST(BitcoinTransactionTest, create_raw_transaction_public_api)
 GTEST_TEST(BitcoinTransactionTest, SmokeTest_testnet)
 {
     AccountPtr account;
-    ErrorPtr error(
+    HANDLE_ERROR(
             make_account(
                     CURRENCY_BITCOIN,
                     "cQeGKosJjWPn9GkB7QmvmotmBbVg1hm8UjdN6yLXEWZ5HAcRwam7",
                     reset_sp(account)));
-    ASSERT_EQ(nullptr, error);
     ASSERT_NE(nullptr, account);
     EXPECT_EQ("mzqiDnETWkunRDZxjUQ34JzN1LDevh5DpU", account->get_address());
 
     TransactionPtr transaction;
-    error.reset(make_transaction(account.get(), reset_sp(transaction)));
-    ASSERT_EQ(nullptr, error);
+    HANDLE_ERROR(make_transaction(account.get(), reset_sp(transaction)));
     ASSERT_NE(nullptr, transaction);
 
     Amount available(Amount(1000) * 1000 * 1000 * 1000 * 1000);

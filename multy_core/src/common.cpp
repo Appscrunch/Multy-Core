@@ -28,7 +28,6 @@ Error* binary_data_clone(const BinaryData* source, BinaryData** new_binary_data)
 
 Error* make_binary_data(size_t size, BinaryData** new_binary_data)
 {
-    ARG_CHECK(size);
     ARG_CHECK(new_binary_data);
     try
     {
@@ -48,14 +47,16 @@ Error* make_binary_data(size_t size, BinaryData** new_binary_data)
 Error* make_binary_data_from_bytes(
         const unsigned char* data, size_t size, BinaryData** new_binary_data)
 {
-    ARG_CHECK(data);
-    ARG_CHECK(size);
+    ARG_CHECK(size == 0 || data);
     ARG_CHECK(new_binary_data);
     try
     {
         BinaryDataPtr result;
         throw_if_error(make_binary_data(size, reset_sp(result)));
-        memcpy(const_cast<unsigned char*>(result->data), data, size);
+        if (result->data && size != 0)
+        {
+            memcpy(const_cast<unsigned char*>(result->data), data, size);
+        }
         *new_binary_data = result.release();
     }
     CATCH_EXCEPTION_RETURN_ERROR();
@@ -72,18 +73,27 @@ Error* make_binary_data_from_hex(
     ARG_CHECK(new_binary_data);
     try
     {
-        const size_t data_len = strlen(hex_str) / 2;
+        const size_t hex_str_len = strlen(hex_str);
+        if (hex_str_len & 1)
+        {
+            return make_error(ERROR_INVALID_ARGUMENT, "Input string length must be even.");
+        }
+
+        const size_t data_len = hex_str_len / 2;
         BinaryDataPtr result;
         throw_if_error(make_binary_data(data_len, reset_sp(result)));
 
-        size_t real_size = 0;
-        throw_if_wally_error(
-                wally_hex_to_bytes(
-                        hex_str, const_cast<unsigned char*>(result->data),
-                        result->len, &real_size),
-                "Failed to convert hex string to binary data.");
+        if (data_len != 0)
+        {
+            size_t real_size = 0;
+            throw_if_wally_error(
+                    wally_hex_to_bytes(
+                            hex_str, const_cast<unsigned char*>(result->data),
+                            result->len, &real_size),
+                    "Failed to convert hex string to binary data.");
 
-        result->len = real_size;
+            result->len = real_size;
+        }
         *new_binary_data = result.release();
     }
     CATCH_EXCEPTION_RETURN_ERROR();

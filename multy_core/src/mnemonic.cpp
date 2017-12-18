@@ -30,7 +30,7 @@ size_t round_to_supported_entropy_size(size_t entropy_size)
             BIP39_ENTROPY_LEN_320,
     };
 
-    size_t result = 0;
+    size_t result = BIP39_ENTROPY_LEN_320;
     for (size_t i = 0; i < array_size(supported_entropy_sizes); ++i)
     {
         if (entropy_size >= supported_entropy_sizes[i])
