@@ -17,7 +17,7 @@ extern "C" {
 
 struct Amount;
 struct BinaryData;
-struct PublicKey;
+struct PrivateKey;
 struct Properties;
 
 /** Properties system.
@@ -81,18 +81,18 @@ MULTY_TRANSACTION_API struct Error* properties_set_binary_data_value(
         const char* name,
         const struct BinaryData* value);
 
-/** Set property PublicKey value.
+/** Set property PrivateKey value.
  *
- * Sets property value to a copy of given public key.
+ * Sets property value to a copy of given private key.
  * @param properties - non null valid properties object.
  * @param name - name of the property to reset.
- * @param value - public key to set as value.
+ * @param value - private key to set as value.
  * @return null if no error, Error object otherwise.
  */
-MULTY_TRANSACTION_API struct Error* properties_set_public_key_value(
+MULTY_TRANSACTION_API struct Error* properties_set_private_key_value(
         struct Properties* properties,
         const char* name,
-        const struct PublicKey* value);
+        const struct PrivateKey* value);
 
 /** Reset property value by key name.
  *
