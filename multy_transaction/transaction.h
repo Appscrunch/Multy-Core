@@ -64,12 +64,6 @@ MULTY_TRANSACTION_API struct Error* transaction_estimate_fee(
 MULTY_TRANSACTION_API struct Error* transaction_get_total_fee(
         struct Transaction* transaction, struct Amount* out_fee_total);
 
-///** Get total amount transferred from sources to destinations.
-// * @return
-// */
-//MULTY_TRANSACTION_API struct Error* transaction_get_total(
-//        struct Transaction* transaction, struct Amount* out_total);
-
 /** Validate and update transaction internal state.
  *
  * Validate sources, destinations, compute change, fee, sign etc.
@@ -87,14 +81,6 @@ MULTY_TRANSACTION_API struct Error* transaction_sign(
 MULTY_TRANSACTION_API struct Error* transaction_serialize(
         const struct Transaction* transaction,
         struct BinaryData** out_serialized_transaction);
-
-// MULTY_TRANSACTION_API struct Error* transaction_serialize_raw(
-//        const struct Transaction* transaction,
-//        const struct BinaryData** out_raw_transaction);
-
-//MULTY_TRANSACTION_API struct Error* transaction_get_hash(
-//        const struct Transaction* transaction,
-//        const struct BinaryData** out_transaction_hash);
 
 MULTY_TRANSACTION_API void free_transaction(struct Transaction* transaction);
 
