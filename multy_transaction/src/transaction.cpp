@@ -126,30 +126,36 @@ Error* transaction_get_fee(Transaction* transaction, Properties** fee)
 
     return nullptr;
 }
-Error* transaction_estimate_fee(Transaction* transaction, Amount* out_fee_estimate)
+Error* transaction_estimate_fee(Transaction* transaction, Amount** out_fee_estimate)
 {
     ARG_CHECK_OBJECT(transaction);
-    ARG_CHECK_OBJECT(out_fee_estimate);
+    ARG_CHECK(out_fee_estimate);
 
     try
     {
-        *out_fee_estimate = transaction->estimate_fee();
+        AmountPtr result(new Amount);
+        *result = transaction->estimate_fee();
+        *out_fee_estimate = result.release();
     }
     CATCH_EXCEPTION_RETURN_ERROR();
+    OUT_CHECK_OBJECT(*out_fee_estimate);
 
     return nullptr;
 }
 
-Error* transaction_get_total_fee(Transaction* transaction, Amount* out_total_fee)
+Error* transaction_get_total_fee(Transaction* transaction, Amount** out_total_fee)
 {
     ARG_CHECK_OBJECT(transaction);
-    ARG_CHECK_OBJECT(out_total_fee);
+    ARG_CHECK(out_total_fee);
 
     try
     {
-        *out_total_fee = transaction->get_total_fee();
+        AmountPtr result(new Amount);
+        *result = transaction->get_total_fee();
+        *out_total_fee = result.release();
     }
     CATCH_EXCEPTION_RETURN_ERROR();
+    OUT_CHECK_OBJECT(*out_total_fee);
 
     return nullptr;
 }
@@ -182,7 +188,7 @@ Error* transaction_sign(Transaction* transaction)
 
 Error* transaction_serialize(
         const Transaction* transaction,
-        BinaryData** const out_serialized_transaction)
+        BinaryData** out_serialized_transaction)
 {
     ARG_CHECK_OBJECT(transaction);
     ARG_CHECK(out_serialized_transaction);

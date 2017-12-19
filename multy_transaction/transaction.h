@@ -59,10 +59,10 @@ MULTY_TRANSACTION_API struct Error* transaction_get_fee(
  * Please note that final fee value might differ from this estimation.
  */
 MULTY_TRANSACTION_API struct Error* transaction_estimate_fee(
-        struct Transaction* transaction, struct Amount* out_fee_estimation);
+        struct Transaction* transaction, struct Amount** out_fee_estimation);
 
 MULTY_TRANSACTION_API struct Error* transaction_get_total_fee(
-        struct Transaction* transaction, struct Amount* out_fee_total);
+        struct Transaction* transaction, struct Amount** out_fee_total);
 
 /** Validate and update transaction internal state.
  *
