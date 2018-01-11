@@ -31,13 +31,8 @@ std::string my_to_string(const T& value)
     return sstr.str();
 }
 
-ExceptionBuilder throw_exception(const std::string& message)
-{
-    return build_and_throw_exception("SHA3: " + message);
-}
-
 #define DO_SHA3(size, in, out)                                                 \
-    throw_if_wally_error(                                                      \
+    THROW_IF_WALLY_ERROR(                                                      \
             ::sha3_##size(                                                     \
                     const_cast<uint8_t*>(output->data), output->len,           \
                     input.data, input.len),                                    \
@@ -70,7 +65,7 @@ void do_sha3(const BinaryData& input, BinaryData* output)
         }
         default:
         {
-            throw_exception("unsupported hash size: ")
+            THROW_EXCEPTION("unsupported hash size: ")
                     << my_to_string(output->len);
         }
     }
@@ -103,14 +98,14 @@ void sha3(const BinaryData& input, BinaryData* output)
 
     if (!output)
     {
-        throw_exception("output BinaryData is nullprt");
+        THROW_EXCEPTION("output BinaryData is nullprt");
     }
 
     const size_t hash_size = find_max_value(
             SUPPORTED_HASH_SIZES, default_value, output->len);
     if (hash_size == default_value)
     {
-        throw_exception("output BinaryData has not enough space available (")
+        THROW_EXCEPTION("output BinaryData has not enough space available (")
                 << my_to_string(output->len) << " bytes) to hold hash result.";
     }
     output->len = hash_size;
