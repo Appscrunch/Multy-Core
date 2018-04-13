@@ -123,8 +123,8 @@ GTEST_TEST(GolosTest, private_key_sign)
     make_account(BLOCKCHAIN_GOLOS, "5Hq2ZdSGZokcgLoNxNGL5kHKi4e3kUUCqorgFK6T6ka7KtSvYLj", reset_sp(account));
     PrivateKeyPtr prv_key =  account->get_private_key();
     // binary serialize TX to sign golos private key
-    BinaryDataPtr signature = prv_key->sign(as_binary_data(from_hex("782a3039b478c839e4cb0c941ff4eaeb7df40bdd68bd441afd444b9da763de1269466c1944189"
-            "fb3bb5a0102096d756c7479746573740b70617368616b6c7962696b010000000000000003474f4c4f5300000000")));
+    BinaryDataPtr signature = prv_key->sign(as_binary_data(from_hex("782a3039b478c839e4cb0c941ff4eaeb7df40bdd68bd441afd444b9da763de1269466c194418"
+            "9fb3bb5a0102096d756c7479746573740b70617368616b6c7962696b010000000000000003474f4c4f5300000000")));
     // signature generated form golos-core
     ASSERT_EQ(as_binary_data(from_hex(
             "1f2e6bb028760bacddd31dc9772e63240fd297ee2f9fcd29f3605aeb79f774fa4b7d1b4e6dc4a1cd6fd2d4e08b2ea2758680d6a5b1e49664522f391ff949b70018")),

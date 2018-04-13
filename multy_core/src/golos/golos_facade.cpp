@@ -45,7 +45,7 @@ AccountPtr GolosFacade::make_account(const char* serialized_private_key)
 
 TransactionPtr GolosFacade::make_transaction(const Account& account)
 {
-    return TransactionPtr(new GolosTransaction(account.get_blockchain_type()));
+    return TransactionPtr(new GolosTransaction(account));
 }
 
 void GolosFacade::validate_address(
