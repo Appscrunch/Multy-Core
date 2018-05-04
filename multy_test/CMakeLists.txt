@@ -76,13 +76,12 @@ if (MULTY_TEST_WITH_MEMORY_SANITIZER)
         multy_test
         PUBLIC
         -fsanitize=address -fno-omit-frame-pointer
-        -fsanitize=undefined
     )
 
     target_link_libraries(
         multy_test
         PUBLIC
-        $<$<CONFIG:Debug>:-fsanitize=address>
+        -fsanitize=address
     )
 endif()
 
