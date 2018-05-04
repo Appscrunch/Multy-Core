@@ -54,27 +54,13 @@ matrix:
         - MATRIX_EVAL="CC=clang && CXX=clang++"
         - BUILD_TYPE=Release
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
+    - os: osx
       env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++"
         - BUILD_TYPE=Release
         - EXTRA_CMAKE_OPTIONS=-DMULTY_TEST_WITH_MEMORY_SANITIZER=1
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
+    - os: osx
       env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++"
         - BUILD_TYPE=Debug
         - EXTRA_CMAKE_OPTIONS=-DMULTY_TEST_WITH_MEMORY_SANITIZER=1
 
