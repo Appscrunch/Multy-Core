@@ -71,6 +71,21 @@ target_link_libraries(
     libwally-core
 )
 
+if (MULTY_TEST_WITH_MEMORY_SANITIZER)
+    target_compile_options(
+        multy_test
+        PUBLIC
+        -fsanitize=address -fno-omit-frame-pointer
+        -fsanitize=undefined
+    )
+
+    target_link_libraries(
+        multy_test
+        PUBLIC
+        $<$<CONFIG:Debug>:-fsanitize=address>
+    )
+endif()
+
 if (MULTY_TEST_DISABLE_DEATH_TESTS)
     target_compile_definitions(multy_test PRIVATE MULTY_TEST_DISABLE_DEATH_TESTS)
     message("DEATH tests disabled.")
