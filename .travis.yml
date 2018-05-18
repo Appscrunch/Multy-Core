@@ -138,6 +138,7 @@ matrix:
 
 before_script:
     - eval "${MATRIX_EVAL}"
+    - echo "ASAN_OPTIONS: $ASAN_OPTIONS"
 
 script:
   - mkdir build && cd build
