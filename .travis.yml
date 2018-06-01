@@ -10,54 +10,49 @@ os:
 matrix:
   fast_finish: true
   include:
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-        - BUILD_TYPE=Debug
+    #- os: linux
+      #addons:
+        #apt:
+          #sources:
+            #- ubuntu-toolchain-r-test
+          #packages:
+            #- g++-5
+      #env:
+        #- MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+        #- BUILD_TYPE=Debug
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-        - BUILD_TYPE=Release
+    #- os: linux
+      #addons:
+        #apt:
+          #sources:
+            #- ubuntu-toolchain-r-test
+          #packages:
+            #- g++-5
+      #env:
+        #- MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+        #- BUILD_TYPE=Release
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++"
-        - BUILD_TYPE=Debug
+    #- os: linux
+      #addons:
+        #apt:
+          #sources:
+            #- ubuntu-toolchain-r-test
+          #packages:
+            #- g++-5
+      #env:
+        #- MATRIX_EVAL="CC=clang && CXX=clang++"
+        #- BUILD_TYPE=Debug
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++"
-        - BUILD_TYPE=Release
-
-    - os: osx
-      env:
-        - BUILD_TYPE=Release
-        - EXTRA_CMAKE_OPTIONS=-DMULTY_TEST_WITH_MEMORY_SANITIZER=1
+    #- os: linux
+      #addons:
+        #apt:
+          #sources:
+            #- ubuntu-toolchain-r-test
+          #packages:
+            #- g++-5
+      #env:
+        #- MATRIX_EVAL="CC=clang && CXX=clang++"
+        #- BUILD_TYPE=Release
 
     - os: osx
       env:
