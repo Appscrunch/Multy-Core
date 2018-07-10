@@ -68,7 +68,7 @@ AccountPtr GolosFacade::make_account(
 
 TransactionPtr GolosFacade::make_transaction(const Account& account) const
 {
-    return TransactionPtr(new GolosTransaction(account.get_blockchain_type()));
+    return TransactionPtr(new GolosTransaction(account));
 }
 
 void GolosFacade::validate_address(

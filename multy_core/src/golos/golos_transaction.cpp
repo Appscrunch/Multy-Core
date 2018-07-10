@@ -14,10 +14,13 @@
 
 #include "multy_core/src/api/properties_impl.h"
 #include "multy_core/src/blockchain_facade_base.h"
+#include "multy_core/src/api/key_impl.h"
 #include "multy_core/src/codec.h"
 #include "multy_core/src/exception.h"
 #include "multy_core/src/exception_stream.h"
 #include "multy_core/src/utility.h"
+
+#include "third-party/portable_endian.h"
 
 #include <chrono>
 #include <cstddef>
@@ -25,12 +28,14 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <iostream>
 
 namespace multy_core
 {
 namespace internal
 {
 
+const BinaryDataPtr GOLOS_CHAIN_ID = decode("782a3039b478c839e4cb0c941ff4eaeb7df40bdd68bd441afd444b9da763de12", CODEC_HEX);
 const char* ISO8601_TIME_FORMAT="%FT%T%z";
 
 std::string format_iso8601_string(const std::time_t& time)
@@ -75,7 +80,7 @@ public:
         : m_data()
     {}
 
-    void write_data(const unsigned char* data, size_t len)
+    void write_data(const uint8_t* data, size_t len)
     {
         if (!data)
         {
@@ -83,6 +88,7 @@ public:
         }
 
         m_data.insert(m_data.end(), data, data + len);
+
     }
 
     BinaryData get_content() const
@@ -91,7 +97,7 @@ public:
     }
 
 private:
-    std::vector<unsigned char> m_data;
+    std::vector<uint8_t> m_data;
 };
 
 class GolosJsonStream
@@ -174,6 +180,69 @@ GolosBinaryStream& operator<<(GolosBinaryStream& stream, const GolosTransactionO
     return stream;
 }
 
+GolosBinaryStream& operator<<(GolosBinaryStream& stream, const BinaryData& data)
+{
+    stream.write_data(
+            reinterpret_cast<const uint8_t*>(data.data), data.len);
+
+    return stream;
+}
+
+template <typename T>
+GolosBinaryStream& write_as_binary(const T& data, GolosBinaryStream& stream)
+{
+    stream.write_data(
+            reinterpret_cast<const uint8_t*>(&data), sizeof(data));
+
+    return stream;
+}
+
+GolosBinaryStream& operator<<(GolosBinaryStream& stream, const uint8_t data)
+{
+    write_as_binary(data, stream);
+
+    return stream;
+}
+
+GolosBinaryStream& operator<<(GolosBinaryStream& stream,  const uint16_t data)
+{
+    write_as_binary(htole16(data), stream);
+
+    return stream;
+}
+
+GolosBinaryStream& operator<<(GolosBinaryStream& stream, const uint32_t data)
+{
+    write_as_binary(htole32(data), stream);
+
+    return stream;
+}
+
+GolosBinaryStream& operator<<(GolosBinaryStream& stream, const uint64_t data)
+{
+    write_as_binary(htole64(data), stream);
+
+    return stream;
+}
+
+GolosBinaryStream& operator<<(GolosBinaryStream& stream, const std::time_t& time)
+{
+    stream.write_data(
+            reinterpret_cast<const uint8_t*>(time), sizeof(time));
+
+    return stream;
+}
+
+GolosBinaryStream& operator<<(GolosBinaryStream& stream, const std::string& str)
+{
+    stream.write_data(
+            reinterpret_cast<const uint8_t*>(str.c_str()), str.length());
+
+    return stream;
+}
+
+
+
 class GolosTransactionTransferOperation : public GolosTransactionOperation
 {
 public:
@@ -195,8 +264,30 @@ public:
         return TRANSFER;
     }
 
-    void write_to_stream(GolosBinaryStream* /*stream*/) const override
+    void write_to_stream(GolosBinaryStream* stream) const override
     {
+        *stream << (uint8_t)0x02;  // transfer_operation id
+        *stream << static_cast<uint8_t>(from.size());
+        *stream << from;
+        *stream << static_cast<uint8_t>(to.size());
+        *stream << to;
+
+        *stream << amount.get_value_as_uint64();
+        *stream << static_cast<uint8_t>(GOLOS_VALUE_DECIMAL_PLACES);
+
+        std::string temp (7, '\0');
+        temp.insert(0, token_name);
+        temp.resize(7);
+        *stream << temp;
+        *stream << static_cast<uint8_t>(memo.size());
+        if (memo.size() == 0)
+        {
+            *stream << (uint8_t)0;
+        } else
+        {
+            *stream << memo;
+        }
+
     }
 
     void write_to_stream(GolosJsonStream* stream) const override
@@ -299,8 +390,9 @@ public:
     PropertyT<BigInt> amount;
 };
 
-GolosTransaction::GolosTransaction(BlockchainType blockchain_type)
-    : TransactionBase(blockchain_type),
+GolosTransaction::GolosTransaction(const Account& account)
+    : TransactionBase(account.get_blockchain_type()),
+      m_account(account),
       m_message(),
       m_source(),
       m_destination(),
@@ -406,9 +498,23 @@ void GolosTransaction::update()
     m_signature = make_clone(as_binary_data("FAKE GOLOS TX SIGNATURE"));
 }
 
+void GolosTransaction::sign()
+{
+    GolosBinaryStream transaction_stream;
+    transaction_stream << *GOLOS_CHAIN_ID;
+    transaction_stream << static_cast<uint16_t>(static_cast<uint32_t>(*m_ref_block_num));
+    transaction_stream << reinterpret_cast<const uint32_t*>(m_ref_block_hash.get_value()->data)[1];
+    transaction_stream << static_cast<uint32_t>(m_expiration);
+    transaction_stream << (uint8_t)0x01;     // count operaions
+    transaction_stream << *m_operation;
+
+    m_signature = m_account.get_private_key()->sign(transaction_stream.get_content());
+}
+
 BinaryDataPtr GolosTransaction::serialize()
 {
     update();
+    sign();
 
     const uint16_t ref_block_num = static_cast<uint16_t>(
             static_cast<uint32_t>(*m_ref_block_num));
@@ -425,8 +531,8 @@ BinaryDataPtr GolosTransaction::serialize()
     char buffer[1024] = {'\0'};
     snprintf(buffer, sizeof(buffer), R"json(
     {
-        "ref_block_num": %ud,
-        "ref_block_prefix": %ud,
+        "ref_block_num": %u,
+        "ref_block_prefix": %u,
         "expiration": "%s",
         "operations": [%s],
         "extensions": [],
@@ -440,6 +546,7 @@ BinaryDataPtr GolosTransaction::serialize()
             encode(*m_signature, CODEC_HEX).c_str()
             );
 
+    std::cerr << buffer;
     return make_clone(as_binary_data(buffer));
 }
 

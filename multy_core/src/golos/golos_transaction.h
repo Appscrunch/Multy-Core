@@ -36,7 +36,7 @@ typedef std::unique_ptr<GolosTransactionOperation> GolosTransactionOperationPtr;
 class GolosTransaction : public TransactionBase
 {
 public:
-    GolosTransaction(BlockchainType blockchain_type);
+    GolosTransaction(const Account& account);
     ~GolosTransaction();
 
     void update() override;
@@ -52,8 +52,10 @@ public:
 private:
     void verify();
     void set_expiration(const std::string&);
+    void sign();
 
 private:
+    const Account& m_account;
     BinaryDataPtr m_message;
     GolosTransactionSourcePtr m_source;
     GolosTransactionDestinationPtr m_destination;
