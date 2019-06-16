@@ -10,49 +10,55 @@ os:
 matrix:
   fast_finish: true
   include:
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
+    #- os: linux
+      #addons:
+        #apt:
+          #sources:
+            #- ubuntu-toolchain-r-test
+          #packages:
+            #- g++-5
+      #env:
+        #- MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+        #- BUILD_TYPE=Debug
+
+    #- os: linux
+      #addons:
+        #apt:
+          #sources:
+            #- ubuntu-toolchain-r-test
+          #packages:
+            #- g++-5
+      #env:
+        #- MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+        #- BUILD_TYPE=Release
+
+    #- os: linux
+      #addons:
+        #apt:
+          #sources:
+            #- ubuntu-toolchain-r-test
+          #packages:
+            #- g++-5
+      #env:
+        #- MATRIX_EVAL="CC=clang && CXX=clang++"
+        #- BUILD_TYPE=Debug
+
+    #- os: linux
+      #addons:
+        #apt:
+          #sources:
+            #- ubuntu-toolchain-r-test
+          #packages:
+            #- g++-5
+      #env:
+        #- MATRIX_EVAL="CC=clang && CXX=clang++"
+        #- BUILD_TYPE=Release
+
+    - os: osx
       env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
         - BUILD_TYPE=Debug
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
-        - BUILD_TYPE=Release
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++"
-        - BUILD_TYPE=Debug
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-      env:
-        - MATRIX_EVAL="CC=clang && CXX=clang++"
-        - BUILD_TYPE=Release
+        - EXTRA_CMAKE_OPTIONS=-DMULTY_TEST_WITH_MEMORY_SANITIZER=1
+        - MATRIX_EVAL="export ASAN_OPTIONS=detect_container_overflow=0"
 
     - language: android
       jdk: oraclejdk8
@@ -130,6 +136,6 @@ before_script:
 
 script:
   - mkdir build && cd build
-  - cmake .. -G'Unix Makefiles' -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DMULTY_MORE_WARNINGS=ON -DMULTY_TEST_DISABLE_DEATH_TESTS=ON -DMULTY_WARNINGS_AS_ERRORS=ON -DMULTY_WITH_TESTS=ON -DMULTY_WITH_TEST_APP=ON
+  - cmake .. -G'Unix Makefiles' -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DMULTY_MORE_WARNINGS=ON -DMULTY_TEST_DISABLE_DEATH_TESTS=ON -DMULTY_WARNINGS_AS_ERRORS=ON -DMULTY_WITH_TESTS=ON -DMULTY_WITH_TEST_APP=ON ${EXTRA_CMAKE_OPTIONS}
   - cmake --build . --target all
   - ./multy

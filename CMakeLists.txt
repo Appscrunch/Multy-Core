@@ -7,15 +7,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # General options
-option(MULTY_WITH_TESTS "Build multy_test library" NO)
 option(MULTY_MORE_WARNINGS "More warnings" OFF)
 option(MULTY_WARNINGS_AS_ERRORS "Treat warnings as errors" OFF)
 option(MULTY_ENABLE_SIMULATE_ERROR "Enable simulating errors in multy_core, see THROW_IF_WALLY_ERROR for details." OFF)
 # This is a standard CMake option, but we are putting it here to emphasise.
 option(BUILD_SHARED_LIBS "Build as shared libraries." OFF)
+option(MULTY_FORCE_ENABLE_ERROR_BACKTRACE "Force collecting backtrace for Release builds." OFF)
+
+# Tests options
 option(MULTY_WITH_TEST_APP "Build sample app that runs the tests (consider MULTY_WITH_TESTS)." OFF)
 option(MULTY_TEST_DISABLE_DEATH_TESTS "Explicitly disable death tests." ON)
-option(MULTY_FORCE_ENABLE_ERROR_BACKTRACE "Force collecting backtrace for Release builds." OFF)
+option(MULTY_TEST_WITH_MEMORY_SANITIZER "Enable memory sanitizer for multy_test." OFF)
 
 project(multy C CXX)
 
